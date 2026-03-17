@@ -1,0 +1,3509 @@
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KUYA Solutions – Payroll Summary</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&amp;family=Syne:wght@700;800&amp;display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black:#050505; --black2:#0f0f0f; --black3:#161616; --black4:#1e1e1e;
+    --orange:#f5931e; --orange-dark:#c97510; --orange-light:#fff4e6; --orange-mid:#ffd49a;
+    --white:#e8e8e8; --off-white:#f0f0f0; --muted:#777777; --border:#242424;
+    --green:#22c55e; --green-light:#052e16; --red:#ef4444; --red-light:#1f0707;
+    --note-yellow:#fef08a; --note-border:#eab308; --note-bg:#1a1700;
+    --pt-color:#fb923c; --pt-bg:#1c0f00; --ft-color:#38bdf8; --ft-bg:#001a2e;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--black);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;color:var(--white);min-height:100vh;padding:32px 40px}
+  .page{max-width:1600px;margin:0 auto}
+
+  /* Banner */
+  .banner{background:var(--black2);border:1px solid var(--border);border-bottom:none;border-radius:16px 16px 0 0;padding:24px 32px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .banner-left{display:flex;align-items:center;gap:20px}
+  .logo-img{width:64px;height:64px;border-radius:10px;object-fit:contain;background:#000;padding:4px}
+  .brand-text{}
+  .company{font-family:'Syne',sans-serif;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--orange);margin-bottom:2px}
+  .report-title{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;line-height:1;color:var(--white)}
+  .report-title span{color:var(--orange)}
+  .banner-right{text-align:right}
+  .period-label{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+  select.period-pick{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;background:var(--black3);color:var(--white);border:1px solid var(--orange);border-radius:8px;padding:8px 14px;cursor:pointer;outline:none;max-width:260px}
+  select.period-pick:focus{border-color:var(--orange)}
+  .gen-date{font-size:10px;color:var(--muted);margin-top:6px}
+
+  /* KPI */
+  .kpi-bar{display:grid;grid-template-columns:repeat(4,1fr);background:var(--black3);border:1px solid var(--border);border-top:2px solid var(--orange);border-bottom:none}
+  .kpi{padding:18px 24px;border-right:1px solid var(--border)}
+  .kpi:last-child{border-right:none}
+  .kpi-label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .kpi-val{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;line-height:1}
+  .kpi-val.o{color:var(--orange)}.kpi-val.g{color:var(--green)}.kpi-val.r{color:var(--red)}.kpi-val.w{color:var(--white)}
+  .kpi-sub{font-size:10px;color:var(--muted);margin-top:4px}
+
+  /* Controls */
+  .controls{background:var(--black2);border:1px solid var(--border);border-bottom:none;padding:12px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .btn{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;padding:7px 14px;border-radius:7px;border:none;cursor:pointer;transition:all .15s;white-space:nowrap;letter-spacing:.3px}
+  .btn-orange{background:var(--orange);color:#000}.btn-orange:hover{background:var(--orange-dark)}
+  .btn-outline{background:transparent;color:var(--white);border:1px solid var(--border)}.btn-outline:hover{border-color:var(--orange);color:var(--orange)}
+  .btn-green{background:#16a34a;color:#fff}.btn-green:hover{background:#15803d}
+  .btn-red{background:#7f1d1d;color:#fca5a5;border:1px solid #991b1b}.btn-red:hover{background:#991b1b}
+  .btn-yellow{background:#713f12;color:var(--note-yellow);border:1px solid #92400e}.btn-yellow:hover{background:#92400e}
+  .btn-blue{background:#1e3a5f;color:#93c5fd;border:1px solid #1d4ed8}.btn-blue:hover{background:#1d4ed8;color:#fff}
+  .ctl-sep{width:1px;height:22px;background:var(--border);flex-shrink:0}
+
+  /* Card */
+  .card{background:var(--black2);border:1px solid var(--border);border-radius:0 0 16px 16px;overflow:hidden}
+  .period-bar{background:var(--black3);border-bottom:1px solid var(--border);padding:10px 24px;font-size:11px;color:var(--orange);font-weight:600;display:flex;align-items:center;gap:8px}
+  .period-bar span{color:var(--muted);font-weight:400}
+
+  /* Period Notes panel */
+  .notes-panel{background:var(--note-bg);border-bottom:1px solid var(--note-border);padding:16px 24px;display:none}
+  .notes-panel.open{display:block}
+  .notes-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .notes-title{font-weight:700;font-size:13px;color:var(--note-yellow);display:flex;align-items:center;gap:6px}
+  textarea.notes-area{width:100%;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;border:1px solid var(--note-border);border-radius:8px;padding:10px 12px;background:#0f0e00;color:var(--note-yellow);resize:vertical;min-height:72px;outline:none;line-height:1.6}
+  textarea.notes-area::placeholder{color:#6b6500}
+  .notes-saved{font-size:10px;color:var(--note-yellow);margin-top:5px;display:none;opacity:.7}
+
+  /* Table */
+  .tbl-wrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse}
+  thead th{background:var(--black3);padding:10px 12px;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+  thead th.r{text-align:right}
+  tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
+  tbody tr:hover{background:var(--black3)}
+  tbody td{padding:11px 12px;vertical-align:middle;font-size:12px}
+  tbody td.r{text-align:right;font-variant-numeric:tabular-nums}
+
+  .emp-id{font-size:10px;color:var(--muted);font-weight:500}
+  .emp-name{font-weight:600;color:var(--white)}
+  .badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+  .badge-pt{background:var(--pt-bg);color:var(--pt-color);border:1px solid #3d1f00}
+  .badge-ft{background:var(--ft-bg);color:var(--ft-color);border:1px solid #003d5c}
+  .comp-val{font-weight:600;color:var(--white)}
+  .net-null{color:#7f1d1d;font-size:11px;font-style:italic}
+  .comp-null{color:var(--border);font-style:italic;font-size:11px}
+
+  /* VA Note cell */
+  .va-note-cell{min-width:220px;width:220px}
+  .va-note-text{font-size:11px;background:#1a1400;border:1px solid var(--note-border);color:var(--note-yellow);padding:3px 8px;border-radius:5px;line-height:1.4;display:inline-block;max-width:100%;word-break:break-word}
+  .va-note-add{font-size:10px;color:var(--border);cursor:pointer;display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:4px;border:1px dashed var(--border);transition:all .15s;white-space:nowrap}
+  .va-note-add:hover{border-color:var(--orange);color:var(--orange)}
+
+  /* VA Note inline editor */
+  .va-note-editor{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center}
+  .va-note-editor.open{display:flex}
+  .va-note-box{background:var(--black2);border:1px solid var(--note-border);border-radius:12px;padding:22px;width:380px;max-width:92vw}
+  .va-note-box h3{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:var(--orange);margin-bottom:4px}
+  .va-note-box p{font-size:11px;color:var(--muted);margin-bottom:14px}
+  .va-note-box textarea{width:100%;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;border:1px solid var(--note-border);border-radius:7px;padding:9px 11px;background:#0f0e00;color:var(--note-yellow);resize:vertical;min-height:80px;outline:none;line-height:1.6}
+  .va-note-box textarea::placeholder{color:#6b6500}
+  .va-note-actions{display:flex;gap:8px;margin-top:12px}
+
+  tfoot tr{background:var(--black3);border-top:2px solid var(--orange)}
+  tfoot td{padding:12px 12px;font-weight:700;font-size:12px}
+  .tot-net{color:var(--orange);font-size:14px;text-align:right;font-family:'Syne',sans-serif}
+  .remark{font-size:10px;color:#fef08a;background:#1a1500;padding:3px 8px;border-radius:4px;border:1px solid #3d3400;display:inline-block;line-height:1.5;word-break:break-word;max-width:100%}
+
+  /* Employee editor */
+  .editor{display:none;background:var(--black3);border-bottom:1px solid var(--border);padding:20px 24px}
+  .editor.open{display:block}
+  .editor-title{font-weight:700;font-size:14px;margin-bottom:16px;color:var(--orange)}
+  .editor-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:12px;margin-bottom:14px}
+  .field label{display:block;font-size:10px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:4px;letter-spacing:.5px}
+  .field input,.field select{width:100%;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;border:1px solid var(--border);border-radius:6px;padding:7px 10px;outline:none;background:var(--black2);color:var(--white)}
+  .field input:focus,.field select:focus{border-color:var(--orange)}
+  .field select option{background:var(--black2)}
+  .editor-btns{display:flex;gap:8px}
+
+  /* New Schedule Modal */
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;align-items:center;justify-content:center}
+  .modal-overlay.open{display:flex}
+  .modal{background:var(--black2);border:1px solid var(--orange);border-radius:14px;padding:28px;max-width:460px;width:92%;box-shadow:0 0 60px rgba(245,147,30,.15)}
+  .modal-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--orange);margin-bottom:4px}
+  .modal-sub{font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.5}
+  .modal-field{margin-bottom:14px}
+  .modal-field label{display:block;font-size:10px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:5px;letter-spacing:.5px}
+  .modal-field input,.modal-field select{width:100%;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;border:1px solid var(--border);border-radius:8px;padding:9px 12px;outline:none;color:var(--white);background:var(--black3)}
+  .modal-field input:focus{border-color:var(--orange)}
+  .modal-field select option{background:var(--black2)}
+  .modal-note{font-size:11px;color:var(--note-yellow);background:var(--note-bg);border:1px solid var(--note-border);border-radius:6px;padding:8px 12px;margin-top:12px;line-height:1.5}
+  .modal-actions{display:flex;gap:10px;margin-top:18px}
+
+  /* Tab switcher */
+  .tab-bar{display:flex;gap:0;background:var(--black2);border:1px solid var(--border);border-bottom:none;border-radius:0}
+  .tab-btn{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;padding:11px 22px;background:transparent;border:none;border-bottom:3px solid transparent;color:var(--muted);cursor:pointer;transition:all .15s;letter-spacing:.3px;white-space:nowrap}
+  .tab-btn:hover{color:var(--white)}
+  .tab-btn.active{color:var(--orange);border-bottom-color:var(--orange);background:var(--black3)}
+  .tab-section{display:none}.tab-section.active{display:block}
+
+  /* Monthly billing */
+  .billing-controls{background:var(--black2);border:1px solid var(--border);border-bottom:none;padding:12px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .billing-month-select{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;background:var(--black3);color:var(--white);border:1px solid var(--orange);border-radius:8px;padding:8px 14px;cursor:pointer;outline:none}
+  .billing-card{background:var(--black2);border:1px solid var(--border);border-radius:0 0 16px 16px;overflow:hidden}
+  .billing-header{background:var(--black3);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  .billing-header-title{font-size:11px;color:var(--orange);font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+  .billing-header-meta{font-size:11px;color:var(--muted)}
+  .billing-kpi-bar{display:grid;grid-template-columns:repeat(3,1fr);background:var(--black3);border-bottom:1px solid var(--border)}
+  .billing-kpi{padding:14px 24px;border-right:1px solid var(--border)}
+  .billing-kpi:last-child{border-right:none}
+  .billing-empty{padding:48px 24px;text-align:center;color:var(--muted);font-size:13px}
+  .billing-empty span{font-size:28px;display:block;margin-bottom:8px}
+  @media print{.tab-bar,.billing-controls{display:none!important}}
+
+  /* Required field validation */
+  .field input.field-error,.field select.field-error{border-color:#ef4444!important;background:rgba(239,68,68,.07)!important}
+  .field-error-msg{font-size:10px;color:#ef4444;margin-top:3px;display:none;font-weight:600}
+  .field-error-msg.show{display:block}
+  .editor-error-banner{display:none;background:#2d0a0a;border:1px solid #7f1d1d;border-radius:8px;padding:10px 14px;font-size:12px;color:#fca5a5;font-weight:600;margin-bottom:12px}
+  .editor-error-banner.show{display:block}
+
+  .bank-cell{position:relative;display:inline-block;cursor:default}
+  .bank-label{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--orange);background:var(--black3);border:1px solid var(--border);padding:3px 9px;border-radius:6px;white-space:nowrap;transition:border-color .15s}
+  .bank-cell:hover .bank-label{border-color:var(--orange)}
+  .bank-tooltip{visibility:hidden;opacity:0;position:fixed;z-index:9999;background:var(--black2);border:1px solid var(--orange);border-radius:10px;padding:14px 16px;min-width:230px;max-width:290px;box-shadow:0 8px 40px rgba(0,0,0,.8);pointer-events:none;transition:opacity .15s;white-space:normal}
+  .bank-cell:hover .bank-tooltip{visibility:visible;opacity:1}
+  .bank-tooltip-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--orange);margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:7px}
+  .bank-tooltip-row{display:flex;gap:8px;margin-bottom:6px;font-size:11px;line-height:1.4}
+  .bank-tooltip-key{color:var(--muted);white-space:nowrap;min-width:76px;font-size:10px;text-transform:uppercase;letter-spacing:.4px;padding-top:1px;flex-shrink:0}
+  .bank-tooltip-val{color:var(--white);word-break:break-word}
+
+  /* Print — force dark KUYA brand theme */
+  @media print{
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+    .bank-tooltip{display:none!important}
+    .no-print,.controls,.editor,.notes-panel,.va-note-add,.va-note-editor{display:none!important}
+    body{background:#050505!important;color:#e8e8e8!important}
+    .banner{background:#0f0f0f!important;border:1px solid #242424!important;border-radius:0}
+    .kpi-bar{background:#161616!important;border:1px solid #242424!important;border-top:2px solid #f5931e!important}
+    .kpi-val{color:#fff!important}.kpi-val.o{color:#f5931e!important}.kpi-val.g{color:#22c55e!important}.kpi-val.r{color:#ef4444!important}
+    .kpi-label,.kpi-sub{color:#9a9a9a!important}
+    .card{background:#0f0f0f!important;border:1px solid #242424!important;border-radius:0}
+    .period-bar{background:#161616!important;color:#f5931e!important;border-bottom:1px solid #242424!important}
+    .period-bar span{color:#9a9a9a!important}
+    thead th{background:#161616!important;color:#777!important;border-bottom:1px solid #242424!important}
+    tbody tr{border-bottom:1px solid #242424!important;background:#0f0f0f!important}
+    tbody td{color:#fff!important}
+    .emp-name{color:#fff!important}.emp-id{color:#9a9a9a!important}
+    .comp-val{color:#fff!important}.net-null{color:#7f1d1d!important}
+    .muted{color:#9a9a9a!important}
+    tfoot tr{background:#161616!important;border-top:2px solid #f5931e!important}
+    tfoot td{color:#fff!important}
+    .tot-net{color:#f5931e!important}
+    .badge-pt{background:#1c0f00!important;color:#fb923c!important;border:1px solid #3d1f00!important}
+    .badge-ft{background:#001a2e!important;color:#38bdf8!important;border:1px solid #003d5c!important}
+    .remark{background:#1c0f00!important;color:#f5931e!important;border:1px solid #3d2000!important}
+    .bank-label{background:#161616!important;color:#f5931e!important;border:1px solid #242424!important}
+    .va-note-text{background:#1a1400!important;border-color:#eab308!important;color:#fef08a!important}
+    .report-title{color:#fff!important}.report-title span{color:#f5931e!important}
+    .company{color:#f5931e!important}
+    .notes-print{background:#1a1700!important;border-color:#eab308!important;color:#fef08a!important;display:block}
+    .notes-print-title{color:#fef08a!important}
+    .remark{background:#fff3e0;color:#c2410c}
+    .kpi-val{color:#111!important}
+    .kpi-val.o{color:#c97510!important}
+    .report-title{color:#000}.report-title span{color:#c97510}
+    .company{color:#c97510}
+    .period-bar span{color:#888}
+    .notes-print{display:block!important}
+  }
+  .notes-print{display:none;background:#fffde7;border:1px solid #f59e0b;border-radius:8px;margin:10px 24px 0;padding:10px 14px;font-size:12px;color:#78350f;line-height:1.6}
+  .notes-print-title{font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+
+  @media(max-width:700px){.kpi-bar{grid-template-columns:1fr 1fr}.banner{flex-direction:column}.report-title{font-size:20px}}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Banner -->
+  <div class="banner">
+    <div class="banner-left">
+      <img class="logo-img" id="logoImg" src="data:image/png;base64,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" alt="KUYA Solutions">
+      <div class="brand-text">
+        <div class="company">HR · Payroll</div>
+        <div class="report-title">Payroll <span>Summary</span></div>
+      </div>
+    </div>
+    <div class="banner-right">
+      <div class="period-label">Pay Schedule</div>
+      <select class="period-pick" id="periodSelect" onchange="switchPeriod(this.value)"><option value="jan5">January 5th Pay Schedule</option><option value="jan20">January 20th Pay Schedule</option><option value="feb5">February 5th Pay Schedule</option><option value="feb20">February 20th Pay Schedule</option><option value="mar5">March 5th Pay Schedule</option><option value="period_1773758331475">March 20th Payroll</option></select>
+      <div class="gen-date" id="genDate">Generated: March 17, 2026</div>
+    </div>
+  </div>
+
+  <!-- KPI -->
+  <div class="kpi-bar">
+    <div class="kpi"><div class="kpi-label">Employees</div><div class="kpi-val o" id="kpiCount">11</div><div class="kpi-sub">this cut-off</div></div>
+    <div class="kpi"><div class="kpi-label">Total Hours</div><div class="kpi-val w" id="kpiHours">698</div><div class="kpi-sub">billable hours</div></div>
+    <div class="kpi"><div class="kpi-label">Total Compensation</div><div class="kpi-val g" id="kpiTotal">₱247.8K</div><div class="kpi-sub">all paid employees</div></div>
+    <div class="kpi"><div class="kpi-label">Pending / Blank</div><div class="kpi-val r" id="kpiPending">0</div><div class="kpi-sub">compensation missing</div></div>
+  </div>
+
+  <!-- Tab Bar -->
+  <div class="tab-bar no-print">
+    <button class="tab-btn active" id="tab-payroll" onclick="switchTab('payroll')">📋 Payroll Summary</button>
+    <button class="tab-btn" id="tab-billing" onclick="switchTab('billing')">📊 Monthly Billing Hours</button>
+  </div>
+
+  <!-- TAB: Payroll Summary -->
+  <div class="tab-section active" id="section-payroll">
+
+  <!-- Controls -->
+  <div class="controls no-print">
+    <button class="btn btn-orange" onclick="openAddEmployee()">＋ Add Employee</button>
+    <button class="btn btn-purple" onclick="openNewScheduleModal()">＋ New Schedule</button>
+    <button class="btn btn-blue" onclick="openImportModal()">⬆ Import Eezi CSV</button>
+    <div class="ctl-sep"></div>
+    <button class="btn btn-yellow" onclick="toggleNotes()">📝 Period Notes</button>
+    <div class="ctl-sep"></div>
+    <button class="btn btn-red" onclick="clearPeriod()">🗑 Clear Period</button>
+    <div class="ctl-sep"></div>
+    <button class="btn btn-outline" id="undoBtn" onclick="undo()" disabled="" style="opacity:0.35" title="Nothing to undo">↩ Undo</button>
+    <div class="ctl-sep"></div>
+    <button class="btn btn-green" onclick="window.print()">⎙ Print / PDF</button>
+    <button class="btn btn-green" onclick="exportHTML()" style="background:#166534" title="Download a copy of this file with all your current data saved inside">💾 Export / Save File</button>
+    <div class="ctl-sep"></div>
+    <button class="btn btn-outline" onclick="clearSavedData()" style="color:#ef4444;border-color:#ef4444;opacity:0.6" title="Wipe browser storage and restore original template data">↺ Reset to Default</button>
+  </div>
+
+  <div class="card">
+    <div class="period-bar">Pay Period: <span id="periodLabel">March 1-15, 2026</span> &nbsp;·&nbsp; Schedule: <span id="scheduleLabel">March 20th Payroll</span></div>
+
+    <!-- Period Notes -->
+    <div class="notes-panel" id="notesPanel">
+      <div class="notes-header">
+        <div class="notes-title">📝 Period Notes</div>
+        <button class="btn btn-outline" style="font-size:10px;padding:4px 10px" onclick="toggleNotes()">Close</button>
+      </div>
+      <textarea class="notes-area" id="notesArea" placeholder="General notes for this pay period — e.g. late submissions, reminders, pending info..." oninput="saveNote()"></textarea>
+      <div class="notes-saved" id="notesSaved">✓ Auto-saved</div>
+    </div>
+
+    <!-- Print-only period notes -->
+    <div class="notes-print" id="notesPrint" style="display: none;">
+      <div class="notes-print-title">📝 Period Notes</div>
+      <div id="notesPrintText"></div>
+    </div>
+
+    <!-- Employee editor -->
+    <div class="editor" id="empPanel">
+      <div class="editor-title" id="empEditorTitle">＋ Add Employee</div>
+      <div class="editor-error-banner" id="editorErrorBanner">⚠ Please fill in all required fields before saving.</div>
+      <div class="editor-grid">
+        <div class="field"><label>Employee ID <span style="color:#ef4444">*</span></label><input id="f_id" placeholder="KuyaVA05"><div class="field-error-msg" id="err_id">Required</div></div>
+        <div class="field"><label>Full Name <span style="color:#ef4444">*</span></label><input id="f_name" placeholder="Surname, First Name"><div class="field-error-msg" id="err_name">Required</div></div>
+        <div class="field"><label>Type <span style="color:#ef4444">*</span></label><select id="f_type" onchange="onTypeChange()"><option value="PT">PT – Part Time</option><option value="FT">FT – Full Time</option></select></div>
+        <div class="field" id="dailyHrsField"><label>Daily Hours <span style="color:var(--muted);font-weight:400">(PT only)</span> <span style="color:#ef4444">*</span></label><input id="f_daily" type="number" min="1" max="7" placeholder="e.g. 4" oninput="autoCalcHrs()"><div class="field-error-msg" id="err_daily">Required for PT employees</div></div>
+        <div class="field"><label>Days Worked</label><input id="f_days" placeholder="10/10" oninput="autoCalcHrs()"></div>
+        <div class="field"><label>Billable Hours <span style="color:var(--orange);font-size:10px" id="hrsAutoLabel">auto</span></label><input id="f_hours" type="number" placeholder="auto-calculated" readonly="" style="background:var(--black3);color:var(--orange);cursor:not-allowed"></div>
+        <div class="field"><label>Monthly Rate (₱) <span style="color:#ef4444">*</span></label><input id="f_rate" type="number" placeholder="25000"><div class="field-error-msg" id="err_rate">Required</div></div>
+        <div class="field"><label>Compensation (₱)</label><input id="f_comp" type="number" placeholder="12500"></div>
+        <div class="field"><label>Bank Name <span style="color:#ef4444">*</span></label><input id="f_bank" placeholder="GCash / BPI / BDO..."><div class="field-error-msg" id="err_bank">Required</div></div>
+        <div class="field"><label>Account No. <span style="color:#ef4444">*</span></label><input id="f_acct" placeholder="09212564308"><div class="field-error-msg" id="err_acct">Required</div></div>
+        <div class="field"><label>Account Name <span style="color:#ef4444">*</span></label><input id="f_acctname" placeholder="Full name on account"><div class="field-error-msg" id="err_acctname">Required</div></div>
+        <div class="field"><label>Country <span style="color:#ef4444">*</span></label><input id="f_country" placeholder="Philippines"><div class="field-error-msg" id="err_country">Required</div></div>
+        <div class="field"><label>City <span style="color:#ef4444">*</span></label><input id="f_city" placeholder="San Pablo City"><div class="field-error-msg" id="err_city">Required</div></div>
+        <div class="field"><label>Recipient Address <span style="color:#ef4444">*</span></label><input id="f_address" placeholder="Street, Barangay, City..."><div class="field-error-msg" id="err_address">Required</div></div>
+        <div class="field"><label>Postal Code <span style="color:#ef4444">*</span></label><input id="f_postal" placeholder="4000"><div class="field-error-msg" id="err_postal">Required</div></div>
+        <div class="field"><label>Email <span style="color:#ef4444">*</span></label><input id="f_email" placeholder="email@example.com"><div class="field-error-msg" id="err_email">Required</div></div>
+        <div class="field"><label>Remarks</label><input id="f_remarks"></div>
+        <div class="field" style="grid-column:1/-1">
+          <label>Client Billing</label>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--white);font-weight:500">
+              <input type="checkbox" id="f_nonbillable" style="width:16px;height:16px;accent-color:var(--orange);cursor:pointer">
+              <span>Exclude from client billing <span style="color:var(--muted);font-weight:400">(e.g. internal staff, operations)</span></span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="editor-btns">
+        <button class="btn btn-orange" onclick="saveEmp()">Save Employee</button>
+        <button class="btn btn-outline" onclick="editIndex=-1;toggleEmpEditor()">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Employee</th><th>Type</th><th>Daily Hrs</th><th>Days</th><th class="r">Billable Hrs <span style="color:var(--orange);font-size:9px;font-weight:400">AUTO</span></th>
+            <th>Monthly Rate</th><th class="r">Compensation</th>
+            <th>Bank Details</th>
+            <th style="min-width:200px">Remarks</th><th style="min-width:220px">Note 🟡</th>
+            <th class="no-print" style="width:52px"></th>
+          </tr>
+        </thead>
+        <tbody id="payBody"><tr><td colspan="11" style="background:var(--black3);padding:6px 14px;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--ft-color);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">Full Time <span style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0">(6)</span></td></tr><tr>
+      <td>
+        <div class="emp-id">KuyaVA21</div>
+        <div class="emp-name" style="">Aum, Maria Kristina</div>
+      </td>
+      <td><span class="badge badge-ft">FT</span></td>
+      <td style="text-align:center"><span style="font-size:11px;background:var(--black3);border:1px solid var(--border);padding:2px 8px;border-radius:12px;color:var(--ft-color)">8 hrs</span></td>
+      <td style="color:var(--muted)">10</td>
+      <td class="r"><span style="color:var(--orange);font-weight:700">80</span><span style="font-size:9px;color:var(--muted);margin-left:3px">auto</span></td>
+      <td style="font-size:11px;color:var(--muted)">Php 50240/month</td>
+      <td class="r"><span class="comp-val">₱ 25,120.00</span></td>
+      <td><div class="bank-cell" onmouseenter="positionTooltip(event,0)">
+    <div class="bank-label">🏦 <span>BPI - Bank of Philippine Islands</span></div>
+    <div class="bank-tooltip" id="btt_0" style="left: 1099px; top: 470px;">
+      <div class="bank-tooltip-title">🏦 BPI - Bank of Philippine Islands</div>
+      <div class="bank-tooltip-row"><span class="bank-tooltip-key">Account No.</span><span class="bank-tooltip-val">2519243841</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Account Name</span><span class="bank-tooltip-val">MARIA KRISTINA V. AUM</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Country</span><span class="bank-tooltip-val">Philippines</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">City</span><span class="bank-tooltip-val">Surigao City</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Address</span><span class="bank-tooltip-val">359 OO497 Burgos Gonzales St., Surigao City, Surigao del Norte, Philippines 8400</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Postal Code</span><span class="bank-tooltip-val">8400</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Email</span><span class="bank-tooltip-val">pamelamaypaz@gmail.com</span></div>
+    </div>
+  </div></td>
+      <td></td>
+      <td class="va-note-cell"><span class="va-note-add no-print" onclick="openVANote(0)">＋ Add Note</span></td>
+      <td class="no-print" style="text-align:center;white-space:nowrap">
+        <button onclick="openSplitModal(0)" style="font-size:10px;padding:2px 5px;border-radius:4px;cursor:pointer;background:none;border:1px solid #222;color:#444" title="Add split hours">⚡</button>
+        <button onclick="editRow(0)" style="background:none;border:none;cursor:pointer;color:#444;font-size:12px;padding:2px 5px;border:1px solid #222;border-radius:4px" title="Edit employee">✎</button>
+        <button onclick="delRow(0)" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:12px;padding:2px 5px;border:1px solid #2d0a0a;border-radius:4px" title="Delete">✕</button>
+      </td></tr><tr style="background: rgb(26, 20, 0);">
+      <td>
+        <div class="emp-id">HR Manager</div>
+        <div class="emp-name" style="color:var(--note-yellow);opacity:0.65">Langi, Gerald <span style="font-size:9px;background:#0f0f0f;border:1px solid #333;color:#666;padding:1px 5px;border-radius:8px;font-weight:600;letter-spacing:.3px;vertical-align:middle">non-billable</span></div>
+      </td>
+      <td><span class="badge badge-ft">FT</span></td>
+      <td style="text-align:center"><span style="font-size:11px;background:var(--black3);border:1px solid var(--border);padding:2px 8px;border-radius:12px;color:var(--ft-color)">8 hrs</span></td>
+      <td style="color:var(--muted)">10</td>
+      <td class="r"><span style="color:var(--orange);font-weight:700">80</span><span style="font-size:9px;color:var(--muted);margin-left:3px">auto</span></td>
+      <td style="font-size:11px;color:var(--muted)">Php 80000/month</td>
+      <td class="r"><span class="comp-val">₱ 46,500.00</span></td>
+      <td><div class="bank-cell" onmouseenter="positionTooltip(event,1)">
+    <div class="bank-label">🏦 <span>PNB</span></div>
+    <div class="bank-tooltip" id="btt_1">
+      <div class="bank-tooltip-title">🏦 PNB</div>
+      <div class="bank-tooltip-row"><span class="bank-tooltip-key">Account No.</span><span class="bank-tooltip-val">308710051537</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Account Name</span><span class="bank-tooltip-val">Gerald R. Langi</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Country</span><span class="bank-tooltip-val">Philippines</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">City</span><span class="bank-tooltip-val">Dumaguete City</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Address</span><span class="bank-tooltip-val">Brgy. Bantayan</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Postal Code</span><span class="bank-tooltip-val">4600</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Email</span><span class="bank-tooltip-val">hr@kuyasolutions.com</span></div>
+    </div>
+  </div></td>
+      <td></td>
+      <td class="va-note-cell"><div class="va-note-text" onclick="openVANote(1)" style="cursor:pointer" title="Click to edit note">🟡 Positive Adjustment:
+
+VA/Client Retention Bonus: Php 6,500.00</div></td>
+      <td class="no-print" style="text-align:center;white-space:nowrap">
+        <button onclick="openSplitModal(1)" style="font-size:10px;padding:2px 5px;border-radius:4px;cursor:pointer;background:none;border:1px solid #222;color:#444" title="Add split hours">⚡</button>
+        <button onclick="editRow(1)" style="background:none;border:none;cursor:pointer;color:#444;font-size:12px;padding:2px 5px;border:1px solid #222;border-radius:4px" title="Edit employee">✎</button>
+        <button onclick="delRow(1)" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:12px;padding:2px 5px;border:1px solid #2d0a0a;border-radius:4px" title="Delete">✕</button>
+      </td></tr><tr style="background: rgb(26, 20, 0);">
+      <td>
+        <div class="emp-id">KuyaVA25</div>
+        <div class="emp-name" style="color:var(--note-yellow)">Maglines, Rona</div>
+      </td>
+      <td><span class="badge badge-ft">FT</span></td>
+      <td style="text-align:center"><span style="font-size:11px;background:var(--black3);border:1px solid var(--border);padding:2px 8px;border-radius:12px;color:var(--ft-color)">8 hrs</span></td>
+      <td style="color:var(--muted)">10</td>
+      <td class="r"><span style="color:var(--orange);font-weight:700">80</span><span style="font-size:9px;color:var(--muted);margin-left:3px">auto</span></td>
+      <td style="font-size:11px;color:var(--muted)">Php 70000/month</td>
+      <td class="r"><span class="comp-val">₱ 26,250.00</span></td>
+      <td><div class="bank-cell" onmouseenter="positionTooltip(event,2)">
+    <div class="bank-label">🏦 <span>BPI - Bank of Philippine Islands</span></div>
+    <div class="bank-tooltip" id="btt_2" style="left: 1018px; top: 599px;">
+      <div class="bank-tooltip-title">🏦 BPI - Bank of Philippine Islands</div>
+      <div class="bank-tooltip-row"><span class="bank-tooltip-key">Account No.</span><span class="bank-tooltip-val">09524772185</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Account Name</span><span class="bank-tooltip-val">RONA MAGLINES</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Country</span><span class="bank-tooltip-val">Philippines</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">City</span><span class="bank-tooltip-val">Davao City</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Address</span><span class="bank-tooltip-val">Door 6, San Francisco St., Buhangin, Davao City, Philippines 8000</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Postal Code</span><span class="bank-tooltip-val">8000</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Email</span><span class="bank-tooltip-val">maglinesrona@gmail.com</span></div>
+    </div>
+  </div></td>
+      <td></td>
+      <td class="va-note-cell"><div class="va-note-text" onclick="openVANote(2)" style="cursor:pointer" title="Click to edit note">🟡 Negative Adjustment:
+
+Salary Holding Policy - New Contract (1/4) = Php 8,750.00</div></td>
+      <td class="no-print" style="text-align:center;white-space:nowrap">
+        <button onclick="openSplitModal(2)" style="font-size:10px;padding:2px 5px;border-radius:4px;cursor:pointer;background:none;border:1px solid #222;color:#444" title="Add split hours">⚡</button>
+        <button onclick="editRow(2)" style="background:none;border:none;cursor:pointer;color:#444;font-size:12px;padding:2px 5px;border:1px solid #222;border-radius:4px" title="Edit employee">✎</button>
+        <button onclick="delRow(2)" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:12px;padding:2px 5px;border:1px solid #2d0a0a;border-radius:4px" title="Delete">✕</button>
+      </td></tr><tr>
+      <td>
+        <div class="emp-id">KuyaVA13</div>
+        <div class="emp-name" style="">Pancho, Flordelyne</div>
+      </td>
+      <td><span class="badge badge-ft">FT</span></td>
+      <td style="text-align:center"><span style="font-size:11px;background:var(--black3);border:1px solid var(--border);padding:2px 8px;border-radius:12px;color:var(--ft-color)">8 hrs</span></td>
+      <td style="color:var(--muted)">10</td>
+      <td class="r"><span style="color:var(--orange);font-weight:700">80</span><span style="font-size:9px;color:var(--muted);margin-left:3px">auto</span></td>
+      <td style="font-size:11px;color:var(--muted)">Php 49000/month</td>
+      <td class="r"><span class="comp-val">₱ 24,500.00</span></td>
+      <td><div class="bank-cell" onmouseenter="positionTooltip(event,3)">
+    <div class="bank-label">🏦 <span>BPI - Bank of Philippine Islands</span></div>
+    <div class="bank-tooltip" id="btt_3" style="left: 1174px; top: 658px;">
+      <div class="bank-tooltip-title">🏦 BPI - Bank of Philippine Islands</div>
+      <div class="bank-tooltip-row"><span class="bank-tooltip-key">Account No.</span><span class="bank-tooltip-val">4039910464</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Account Name</span><span class="bank-tooltip-val">Flordelyne May Pancho</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Country</span><span class="bank-tooltip-val">Philippines</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">City</span><span class="bank-tooltip-val">Davao City</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Address</span><span class="bank-tooltip-val">Blk 3 Lt 4, Lemon Street, Southpointe Homes, Catalunan Grande, Davao City, 8000</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Postal Code</span><span class="bank-tooltip-val">8000</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Email</span><span class="bank-tooltip-val">pflordelyne@gmail.com</span></div>
+    </div>
+  </div></td>
+      <td></td>
+      <td class="va-note-cell"><span class="va-note-add no-print" onclick="openVANote(3)">＋ Add Note</span></td>
+      <td class="no-print" style="text-align:center;white-space:nowrap">
+        <button onclick="openSplitModal(3)" style="font-size:10px;padding:2px 5px;border-radius:4px;cursor:pointer;background:none;border:1px solid #222;color:#444" title="Add split hours">⚡</button>
+        <button onclick="editRow(3)" style="background:none;border:none;cursor:pointer;color:#444;font-size:12px;padding:2px 5px;border:1px solid #222;border-radius:4px" title="Edit employee">✎</button>
+        <button onclick="delRow(3)" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:12px;padding:2px 5px;border:1px solid #2d0a0a;border-radius:4px" title="Delete">✕</button>
+      </td></tr><tr>
+      <td>
+        <div class="emp-id">KuyaVA04</div>
+        <div class="emp-name" style=";opacity:0.65">Rondina, Mel Adrian <span style="font-size:9px;background:#0f0f0f;border:1px solid #333;color:#666;padding:1px 5px;border-radius:8px;font-weight:600;letter-spacing:.3px;vertical-align:middle">non-billable</span></div>
+      </td>
+      <td><span class="badge badge-ft">FT</span></td>
+      <td style="text-align:center"><span style="font-size:11px;background:var(--black3);border:1px solid var(--border);padding:2px 8px;border-radius:12px;color:var(--ft-color)">8 hrs</span></td>
+      <td style="color:var(--muted)">10</td>
+      <td class="r"><span style="color:var(--orange);font-weight:700">80</span><span style="font-size:9px;color:var(--muted);margin-left:3px">auto</span></td>
+      <td style="font-size:11px;color:var(--muted)">Php 35000/month</td>
+      <td class="r"><span class="comp-val">₱ 17,500.00</span></td>
+      <td><div class="bank-cell" onmouseenter="positionTooltip(event,4)">
+    <div class="bank-label">🏦 <span>Land Bank</span></div>
+    <div class="bank-tooltip" id="btt_4" style="left: 1036px; top: 493px;">
+      <div class="bank-tooltip-title">🏦 Land Bank</div>
+      <div class="bank-tooltip-row"><span class="bank-tooltip-key">Account No.</span><span class="bank-tooltip-val">4476 0129 67</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Account Name</span><span class="bank-tooltip-val">Mel Adrian G. Rondina</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Country</span><span class="bank-tooltip-val">Philippines</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">City</span><span class="bank-tooltip-val">N/A</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Address</span><span class="bank-tooltip-val">N/A</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Postal Code</span><span class="bank-tooltip-val">N/A</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Email</span><span class="bank-tooltip-val">N/A</span></div>
+    </div>
+  </div></td>
+      <td></td>
+      <td class="va-note-cell"><span class="va-note-add no-print" onclick="openVANote(4)">＋ Add Note</span></td>
+      <td class="no-print" style="text-align:center;white-space:nowrap">
+        <button onclick="openSplitModal(4)" style="font-size:10px;padding:2px 5px;border-radius:4px;cursor:pointer;background:none;border:1px solid #222;color:#444" title="Add split hours">⚡</button>
+        <button onclick="editRow(4)" style="background:none;border:none;cursor:pointer;color:#444;font-size:12px;padding:2px 5px;border:1px solid #222;border-radius:4px" title="Edit employee">✎</button>
+        <button onclick="delRow(4)" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:12px;padding:2px 5px;border:1px solid #2d0a0a;border-radius:4px" title="Delete">✕</button>
+      </td></tr><tr>
+      <td>
+        <div class="emp-id">KuyaVA26</div>
+        <div class="emp-name" style="">Velarde, Jinefer</div>
+      </td>
+      <td><span class="badge badge-ft">FT</span></td>
+      <td style="text-align:center"><span style="font-size:11px;background:var(--black3);border:1px solid var(--border);padding:2px 8px;border-radius:12px;color:var(--ft-color)">8 hrs</span></td>
+      <td style="color:var(--muted)">10</td>
+      <td class="r"><span style="color:var(--orange);font-weight:700">80</span><span style="font-size:9px;color:var(--muted);margin-left:3px">auto</span></td>
+      <td style="font-size:11px;color:var(--muted)">Php 70000/month</td>
+      <td class="r"><span class="comp-val">₱ 35,000.00</span></td>
+      <td><div class="bank-cell" onmouseenter="positionTooltip(event,5)">
+    <div class="bank-label">🏦 <span>UnionBank</span></div>
+    <div class="bank-tooltip" id="btt_5" style="left: 1002px; top: 763px;">
+      <div class="bank-tooltip-title">🏦 UnionBank</div>
+      <div class="bank-tooltip-row"><span class="bank-tooltip-key">Account No.</span><span class="bank-tooltip-val">109384345268</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Account Name</span><span class="bank-tooltip-val">Jinefer Velardo</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Country</span><span class="bank-tooltip-val">Philippines</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">City</span><span class="bank-tooltip-val">San Pedro City</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Address</span><span class="bank-tooltip-val">#5 Narra Ave Brgy Narra San Pedro Laguna, Philippines</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Postal Code</span><span class="bank-tooltip-val">4000</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Email</span><span class="bank-tooltip-val">velardojinefer@gmail.com</span></div>
+    </div>
+  </div></td>
+      <td></td>
+      <td class="va-note-cell"><span class="va-note-add no-print" onclick="openVANote(5)">＋ Add Note</span></td>
+      <td class="no-print" style="text-align:center;white-space:nowrap">
+        <button onclick="openSplitModal(5)" style="font-size:10px;padding:2px 5px;border-radius:4px;cursor:pointer;background:none;border:1px solid #222;color:#444" title="Add split hours">⚡</button>
+        <button onclick="editRow(5)" style="background:none;border:none;cursor:pointer;color:#444;font-size:12px;padding:2px 5px;border:1px solid #222;border-radius:4px" title="Edit employee">✎</button>
+        <button onclick="delRow(5)" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:12px;padding:2px 5px;border:1px solid #2d0a0a;border-radius:4px" title="Delete">✕</button>
+      </td></tr><tr><td colspan="11" style="background:var(--black3);padding:6px 14px;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--pt-color);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">Part Time <span style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0">(5)</span></td></tr><tr style="background: rgb(26, 20, 0);">
+      <td>
+        <div class="emp-id">Odoo Spec</div>
+        <div class="emp-name" style="color:var(--note-yellow)">Baliño, Evelyn</div>
+      </td>
+      <td><span class="badge badge-pt">PT</span></td>
+      <td style="text-align:center"><span style="font-size:11px;background:var(--black3);border:1px solid var(--border);padding:2px 8px;border-radius:12px;color:var(--pt-color)">4 hrs</span></td>
+      <td style="color:var(--muted)">9.5</td>
+      <td class="r"><span style="color:var(--orange);font-weight:700">38</span><span style="font-size:9px;color:var(--muted);margin-left:3px">auto</span></td>
+      <td style="font-size:11px;color:var(--muted)">Php 35000/month</td>
+      <td class="r"><span class="comp-val">₱ 16,625.00</span></td>
+      <td><div class="bank-cell" onmouseenter="positionTooltip(event,6)">
+    <div class="bank-label">🏦 <span>UnionBank</span></div>
+    <div class="bank-tooltip" id="btt_6" style="left: 1005px; top: 636px;">
+      <div class="bank-tooltip-title">🏦 UnionBank</div>
+      <div class="bank-tooltip-row"><span class="bank-tooltip-key">Account No.</span><span class="bank-tooltip-val">1093 5673 1926</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Account Name</span><span class="bank-tooltip-val">Evelyn Balino/Evelyn Baliño</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Country</span><span class="bank-tooltip-val">Philippines</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">City</span><span class="bank-tooltip-val">Bacoor City</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Address</span><span class="bank-tooltip-val">B6 L8 Yakal St Casimiro Westville Homes Ligas 3 Bacoor Cavite, Philippines 4102</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Postal Code</span><span class="bank-tooltip-val">4102</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Email</span><span class="bank-tooltip-val">balinoeve@gmail.com</span></div>
+    </div>
+  </div></td>
+      <td></td>
+      <td class="va-note-cell"><div class="va-note-text" onclick="openVANote(6)" style="cursor:pointer" title="Click to edit note">🟡 Negative Adjustment:
+
+Half Day = March 6, 2026</div></td>
+      <td class="no-print" style="text-align:center;white-space:nowrap">
+        <button onclick="openSplitModal(6)" style="font-size:10px;padding:2px 5px;border-radius:4px;cursor:pointer;background:none;border:1px solid #222;color:#444" title="Add split hours">⚡</button>
+        <button onclick="editRow(6)" style="background:none;border:none;cursor:pointer;color:#444;font-size:12px;padding:2px 5px;border:1px solid #222;border-radius:4px" title="Edit employee">✎</button>
+        <button onclick="delRow(6)" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:12px;padding:2px 5px;border:1px solid #2d0a0a;border-radius:4px" title="Delete">✕</button>
+      </td></tr><tr>
+      <td>
+        <div class="emp-id">KuyaVA02</div>
+        <div class="emp-name" style="">Dugang, John Kevin</div>
+      </td>
+      <td><span class="badge badge-pt">PT</span></td>
+      <td style="text-align:center"><span style="font-size:11px;background:var(--black3);border:1px solid var(--border);padding:2px 8px;border-radius:12px;color:var(--pt-color)">4 hrs</span></td>
+      <td style="color:var(--muted)">10</td>
+      <td class="r"><span style="color:var(--orange);font-weight:700">40</span><span style="font-size:9px;color:var(--muted);margin-left:3px">auto</span></td>
+      <td style="font-size:11px;color:var(--muted)">Php 34310/month</td>
+      <td class="r"><span class="comp-val">₱ 17,155.00</span></td>
+      <td><div class="bank-cell" onmouseenter="positionTooltip(event,7)">
+    <div class="bank-label">🏦 <span>BPI</span></div>
+    <div class="bank-tooltip" id="btt_7">
+      <div class="bank-tooltip-title">🏦 BPI</div>
+      <div class="bank-tooltip-row"><span class="bank-tooltip-key">Account No.</span><span class="bank-tooltip-val">0209034196</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Account Name</span><span class="bank-tooltip-val">John Kevin Dugang</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Country</span><span class="bank-tooltip-val">Philippines</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">City</span><span class="bank-tooltip-val">Cebu City</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Address</span><span class="bank-tooltip-val">San Carlos</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Postal Code</span><span class="bank-tooltip-val">6000</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Email</span><span class="bank-tooltip-val">johnkevindugang@gmail.com</span></div>
+    </div>
+  </div></td>
+      <td></td>
+      <td class="va-note-cell"><span class="va-note-add no-print" onclick="openVANote(7)">＋ Add Note</span></td>
+      <td class="no-print" style="text-align:center;white-space:nowrap">
+        <button onclick="openSplitModal(7)" style="font-size:10px;padding:2px 5px;border-radius:4px;cursor:pointer;background:none;border:1px solid #222;color:#444" title="Add split hours">⚡</button>
+        <button onclick="editRow(7)" style="background:none;border:none;cursor:pointer;color:#444;font-size:12px;padding:2px 5px;border:1px solid #222;border-radius:4px" title="Edit employee">✎</button>
+        <button onclick="delRow(7)" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:12px;padding:2px 5px;border:1px solid #2d0a0a;border-radius:4px" title="Delete">✕</button>
+      </td></tr><tr>
+      <td>
+        <div class="emp-id">KuyaVA19</div>
+        <div class="emp-name" style="">Esmino, Nicole</div>
+      </td>
+      <td><span class="badge badge-pt">PT</span></td>
+      <td style="text-align:center"><span style="font-size:11px;background:var(--black3);border:1px solid var(--border);padding:2px 8px;border-radius:12px;color:var(--pt-color)">4 hrs</span></td>
+      <td style="color:var(--muted)">10</td>
+      <td class="r"><span style="color:var(--orange);font-weight:700">40</span><span style="font-size:9px;color:var(--muted);margin-left:3px">auto</span></td>
+      <td style="font-size:11px;color:var(--muted)">Php 22500/month</td>
+      <td class="r"><span class="comp-val">₱ 11,250.00</span></td>
+      <td><div class="bank-cell" onmouseenter="positionTooltip(event,8)">
+    <div class="bank-label">🏦 <span>BDO - Banco De Oro</span></div>
+    <div class="bank-tooltip" id="btt_8">
+      <div class="bank-tooltip-title">🏦 BDO - Banco De Oro</div>
+      <div class="bank-tooltip-row"><span class="bank-tooltip-key">Account No.</span><span class="bank-tooltip-val">4050516309</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Account Name</span><span class="bank-tooltip-val">NICOLE CHILL ESMINO</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Country</span><span class="bank-tooltip-val">Philippines</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">City</span><span class="bank-tooltip-val">Quezon City</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Address</span><span class="bank-tooltip-val">Unit A 149 Barangay Lawa, City of Meycauayan, Bulacan, Philippines 3020</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Postal Code</span><span class="bank-tooltip-val">1105</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Email</span><span class="bank-tooltip-val">nicolechill.esmino@gmail.com</span></div>
+    </div>
+  </div></td>
+      <td></td>
+      <td class="va-note-cell"><span class="va-note-add no-print" onclick="openVANote(8)">＋ Add Note</span></td>
+      <td class="no-print" style="text-align:center;white-space:nowrap">
+        <button onclick="openSplitModal(8)" style="font-size:10px;padding:2px 5px;border-radius:4px;cursor:pointer;background:none;border:1px solid #222;color:#444" title="Add split hours">⚡</button>
+        <button onclick="editRow(8)" style="background:none;border:none;cursor:pointer;color:#444;font-size:12px;padding:2px 5px;border:1px solid #222;border-radius:4px" title="Edit employee">✎</button>
+        <button onclick="delRow(8)" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:12px;padding:2px 5px;border:1px solid #2d0a0a;border-radius:4px" title="Delete">✕</button>
+      </td></tr><tr>
+      <td>
+        <div class="emp-id">KuyaVA05</div>
+        <div class="emp-name" style="">Fabiliar, Marc</div>
+      </td>
+      <td><span class="badge badge-pt">PT</span></td>
+      <td style="text-align:center"><span style="font-size:11px;background:var(--black3);border:1px solid var(--border);padding:2px 8px;border-radius:12px;color:var(--pt-color)">4 hrs</span></td>
+      <td style="color:var(--muted)">10</td>
+      <td class="r"><span style="color:var(--orange);font-weight:700">40</span><span style="font-size:9px;color:var(--muted);margin-left:3px">auto</span></td>
+      <td style="font-size:11px;color:var(--muted)">Php 24810/month</td>
+      <td class="r"><span class="comp-val">₱ 12,405.00</span></td>
+      <td><div class="bank-cell" onmouseenter="positionTooltip(event,9)">
+    <div class="bank-label">🏦 <span>BPI</span></div>
+    <div class="bank-tooltip" id="btt_9">
+      <div class="bank-tooltip-title">🏦 BPI</div>
+      <div class="bank-tooltip-row"><span class="bank-tooltip-key">Account No.</span><span class="bank-tooltip-val">0646648868</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Account Name</span><span class="bank-tooltip-val">Marc Gersonm Fabillar</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Country</span><span class="bank-tooltip-val">Philippines</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">City</span><span class="bank-tooltip-val">Dumaguete</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Address</span><span class="bank-tooltip-val">Dumaguete</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Postal Code</span><span class="bank-tooltip-val">6200</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Email</span><span class="bank-tooltip-val">marcfabillar@gmail.com</span></div>
+    </div>
+  </div></td>
+      <td></td>
+      <td class="va-note-cell"><span class="va-note-add no-print" onclick="openVANote(9)">＋ Add Note</span></td>
+      <td class="no-print" style="text-align:center;white-space:nowrap">
+        <button onclick="openSplitModal(9)" style="font-size:10px;padding:2px 5px;border-radius:4px;cursor:pointer;background:none;border:1px solid #222;color:#444" title="Add split hours">⚡</button>
+        <button onclick="editRow(9)" style="background:none;border:none;cursor:pointer;color:#444;font-size:12px;padding:2px 5px;border:1px solid #222;border-radius:4px" title="Edit employee">✎</button>
+        <button onclick="delRow(9)" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:12px;padding:2px 5px;border:1px solid #2d0a0a;border-radius:4px" title="Delete">✕</button>
+      </td></tr><tr style="background: rgb(26, 20, 0);">
+      <td>
+        <div class="emp-id">KuyaVA24</div>
+        <div class="emp-name" style="color:var(--note-yellow)">Medina, Kohzinni</div>
+      </td>
+      <td><span class="badge badge-pt">PT</span></td>
+      <td style="text-align:center"><span style="font-size:11px;background:var(--black3);border:1px solid var(--border);padding:2px 8px;border-radius:12px;color:var(--pt-color)">6 hrs</span></td>
+      <td style="color:var(--muted)">10</td>
+      <td class="r"><span style="color:var(--orange);font-weight:700">60</span><span style="font-size:9px;color:var(--muted);margin-left:3px">auto</span></td>
+      <td style="font-size:11px;color:var(--muted)">Php 31500/month</td>
+      <td class="r"><span class="comp-val">₱ 15,511.36</span></td>
+      <td><div class="bank-cell" onmouseenter="positionTooltip(event,10)">
+    <div class="bank-label">🏦 <span>GCash</span></div>
+    <div class="bank-tooltip" id="btt_10">
+      <div class="bank-tooltip-title">🏦 GCash</div>
+      <div class="bank-tooltip-row"><span class="bank-tooltip-key">Account No.</span><span class="bank-tooltip-val">09212564308</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Account Name</span><span class="bank-tooltip-val">Kohzzini Airah C. Medina</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Country</span><span class="bank-tooltip-val">Philippines</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">City</span><span class="bank-tooltip-val">San Pablo City</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Address</span><span class="bank-tooltip-val">0446 Azores Street., Brgy. Bagong Bayan, San Pablo City, Laguna, 4000</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Postal Code</span><span class="bank-tooltip-val">4000</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Email</span><span class="bank-tooltip-val">01kacmedina@gmail.com</span></div>
+    </div>
+  </div></td>
+      <td></td>
+      <td class="va-note-cell"><div class="va-note-text" onclick="openVANote(10)" style="cursor:pointer" title="Click to edit note">🟡 Negative Adjustment:
+
+Payroll Discrepancy (March 5th Payroll) = Php 238.64</div></td>
+      <td class="no-print" style="text-align:center;white-space:nowrap">
+        <button onclick="openSplitModal(10)" style="font-size:10px;padding:2px 5px;border-radius:4px;cursor:pointer;background:none;border:1px solid #222;color:#444" title="Add split hours">⚡</button>
+        <button onclick="editRow(10)" style="background:none;border:none;cursor:pointer;color:#444;font-size:12px;padding:2px 5px;border:1px solid #222;border-radius:4px" title="Edit employee">✎</button>
+        <button onclick="delRow(10)" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:12px;padding:2px 5px;border:1px solid #2d0a0a;border-radius:4px" title="Delete">✕</button>
+      </td></tr></tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4" style="color:var(--orange);font-family:'Syne',sans-serif;letter-spacing:1px">TOTALS</td>
+            <td class="r" id="totHrs" style="color:var(--white)">698</td><td></td>
+            <td class="tot-net" id="totComp">₱ 247,816.36</td>
+            <td colspan="3"></td><td class="no-print"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+  </div><!-- end section-payroll -->
+
+  <!-- TAB: Monthly Billing Hours -->
+  <div class="tab-section" id="section-billing">
+    <div class="billing-controls no-print">
+      <span style="font-size:12px;color:var(--muted);font-weight:600">Billing Month:</span>
+      <select class="billing-month-select" id="billingMonthSelect" onchange="renderBilling()"><option value="January">January 2026</option><option value="February">February 2026</option><option value="March">March 2026</option></select>
+      <button class="btn btn-green" onclick="window.print()" style="margin-left:auto">⎙ Print / PDF</button>
+    </div>
+    <div class="billing-card">
+      <div class="billing-header">
+        <div class="billing-header-title" id="billingTitle">Monthly Billable Hours Report</div>
+        <div class="billing-header-meta" id="billingMeta"></div>
+      </div>
+      <div class="billing-kpi-bar">
+        <div class="billing-kpi"><div class="kpi-label">Billable Employees</div><div class="kpi-val o" id="bKpiCount">—</div><div class="kpi-sub">excluded from total</div></div>
+        <div class="billing-kpi"><div class="kpi-label">Total Billable Hours</div><div class="kpi-val g" id="bKpiHours">—</div><div class="kpi-sub">both cut-offs combined</div></div>
+        <div class="billing-kpi"><div class="kpi-label">Cut-offs Included</div><div class="kpi-val w" id="bKpiCutoffs">—</div><div class="kpi-sub">pay schedules merged</div></div>
+      </div>
+      <div id="billingBody"></div>
+    </div>
+  </div><!-- end section-billing -->
+
+</div><!-- end page -->
+
+<!-- Eezi CSV Import Modal -->
+<div class="modal-overlay" id="importModal">
+  <div class="modal" style="max-width:540px">
+    <div class="modal-title">⬆ Import Eezi CSV</div>
+    <div class="modal-sub">Upload your Eezi payroll export. Net Pay → Compensation. Absent, Late/UT/OB, Bonuses, ADJ (+), ADJ (−), Total Adjustments → Notes (non-zero values only). Employees are matched by ID.</div>
+    <div style="margin:16px 0">
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.5px;margin-bottom:8px;text-transform:uppercase">Select CSV File</label>
+      <input type="file" id="csvFileInput" accept=".csv" style="display:none" onchange="handleCSVUpload(event)">
+      <div id="csvDropZone" onclick="document.getElementById('csvFileInput').click()" style="border:2px dashed var(--border);border-radius:12px;padding:32px;text-align:center;cursor:pointer;transition:border-color .2s;background:var(--black3)" ondragover="event.preventDefault();this.style.borderColor='var(--orange)'" ondragleave="this.style.borderColor='var(--border)'" ondrop="event.preventDefault();this.style.borderColor='var(--border)';handleCSVDrop(event)">
+        <div style="font-size:28px;margin-bottom:8px">📄</div>
+        <div style="font-size:13px;color:var(--white);font-weight:600">Click to browse or drag &amp; drop</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">Eezi CSV export file (.csv)</div>
+      </div>
+    </div>
+    <div id="importPreview" style="display:none">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">Preview — Rows to Import</div>
+      <div id="importPreviewTable" style="max-height:260px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;font-size:12px"></div>
+      <div id="importSummary" style="margin-top:10px;font-size:12px;color:var(--muted)"></div>
+    </div>
+    <div class="modal-actions" style="margin-top:16px">
+      <button class="btn btn-blue" id="importConfirmBtn" style="display:none" onclick="confirmImport()">✓ Apply Import</button>
+      <button class="btn btn-outline" onclick="closeImportModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Split Hours Modal -->
+<div class="modal-overlay" id="splitModal">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-title">⚡ Split Hours</div>
+    <div class="modal-sub" id="splitModalSub">Employee switched employment type mid cut-off. Enter days worked under each type — billable hours are auto-calculated.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0">
+      <div style="background:var(--black3);border:1px solid var(--ft-color);border-radius:10px;padding:16px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.6px;color:var(--ft-color);margin-bottom:10px">FULL TIME — 8 hrs/day</div>
+        <div class="modal-field">
+          <label>Days as FT</label>
+          <input id="sp_ft_days" type="number" min="0" step="0.5" placeholder="e.g. 8" oninput="calcSplitPreview()">
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:var(--muted)">= <span id="sp_ft_hrs" style="color:var(--ft-color);font-weight:700">0</span> hrs</div>
+      </div>
+      <div style="background:var(--black3);border:1px solid var(--pt-color);border-radius:10px;padding:16px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.6px;color:var(--pt-color);margin-bottom:10px">PART TIME</div>
+        <div class="modal-field">
+          <label>Daily Hours (PT) <span style="color:var(--muted);font-weight:400;font-size:10px">— edit if different this cut-off</span></label>
+          <input id="sp_pt_daily" type="number" min="1" max="7" step="0.5" placeholder="e.g. 4" oninput="calcSplitPreview()" style="margin-bottom:8px">
+        </div>
+        <div class="modal-field">
+          <label>Days as PT</label>
+          <input id="sp_pt_days" type="number" min="0" step="0.5" placeholder="e.g. 7" oninput="calcSplitPreview()">
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:var(--muted)">= <span id="sp_pt_hrs" style="color:var(--pt-color);font-weight:700">0</span> hrs</div>
+      </div>
+    </div>
+    <div style="background:var(--black3);border:1px solid var(--border);border-radius:8px;padding:12px 16px;font-size:12px;display:flex;justify-content:space-between;align-items:center">
+      <span style="color:var(--muted)">Total Billable Hours</span>
+      <span id="sp_total" style="color:var(--orange);font-weight:700;font-size:16px">0 hrs</span>
+    </div>
+    <div style="margin-top:10px;display:flex;justify-content:flex-end">
+      <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);cursor:pointer">
+        <input type="checkbox" id="sp_clear" style="accent-color:var(--orange)"> Remove split (revert to single type)
+      </label>
+    </div>
+    <div class="modal-actions" style="margin-top:16px">
+      <button class="btn btn-orange" onclick="saveSplit()">Save Split</button>
+      <button class="btn btn-outline" onclick="closeSplitModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- VA Note Editor Modal -->
+<div class="va-note-editor" id="vaNoteEditor">
+  <div class="va-note-box">
+    <h3>📝 VA Note</h3>
+    <p id="vaNoteSubtitle">Add a note for this employee — it will appear highlighted in yellow for manager review.</p>
+    <textarea id="vaNoteText" placeholder="e.g. Pending bank details, adjustment needed, bonus approved..."></textarea>
+    <div class="va-note-actions">
+      <button class="btn btn-yellow" onclick="saveVANote()">Save Note</button>
+      <button class="btn btn-red" onclick="clearVANote()">Clear Note</button>
+      <button class="btn btn-outline" onclick="closeVANote()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- New Schedule Modal -->
+<div class="modal-overlay" id="scheduleModal">
+  <div class="modal">
+    <div class="modal-title">＋ New Pay Schedule</div>
+    <div class="modal-sub">Employee names and bank details are copied from the selected source. Compensation, days, and hours will be cleared so you enter fresh data.</div>
+    <div class="modal-field"><label>Schedule Name</label><input id="m_name" placeholder="e.g. March 20th Payroll"></div>
+    <div class="modal-field"><label>Pay Period Dates</label><input id="m_dates" placeholder="e.g. March 16–31, 2026"></div>
+    <div class="modal-field"><label>Copy Employees From</label><select id="m_source"><option value="jan5">January 5th Pay Schedule</option><option value="jan20">January 20th Pay Schedule</option><option value="feb5">February 5th Pay Schedule</option><option value="feb20">February 20th Pay Schedule</option><option value="mar5">March 5th Pay Schedule</option><option value="period_1773758331475">March 20th Payroll</option></select></div>
+    <div class="modal-note">✅ Compensation will be cleared automatically. Days worked and billable hours will also reset so you can input fresh data from Eezi.</div>
+    <div class="modal-actions">
+      <button class="btn btn-purple" onclick="createSchedule()">Create Schedule</button>
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Helpers ──────────────────────────────────────────────────────
+const fmt2  = n => Number(n).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtK2 = n => { if(n>=1e6) return '₱'+(n/1e6).toFixed(2)+'M'; if(n>=1000) return '₱'+(n/1000).toFixed(1)+'K'; return '₱'+fmt2(n); };
+
+// ── Period Data ──────────────────────────────────────────────────
+const PERIODS = {
+  "jan5": {
+    "label": "January 1–16, 2026",
+    "schedule": "January 5th Pay Schedule",
+    "note": "",
+    "employees": [
+      {
+        "id": "KuyaVA05",
+        "name": "Fabiliar, Marc",
+        "type": "PT",
+        "days": "12/12",
+        "hrs": 48,
+        "rate": "Php 24,810.00/month",
+        "comp": 12405,
+        "bank": "BPI",
+        "acct": "0646648868",
+        "acctname": "Marc Gersonm Fabillar",
+        "country": "Philippines",
+        "city": "Dumaguete",
+        "address": "",
+        "postal": "6200",
+        "email": "marcfabillar@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "HR Manager",
+        "name": "Langi, Gerald",
+        "type": "FT",
+        "days": "12/12",
+        "hrs": 96,
+        "rate": "Php 80,000.00/month",
+        "comp": 40000,
+        "bank": "PNB",
+        "acct": "308710051537",
+        "acctname": "Gerald R. Langi",
+        "country": "",
+        "city": "",
+        "address": "",
+        "postal": "",
+        "email": "",
+        "remarks": "",
+        "dailyHrs": 8,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA02",
+        "name": "Dugang, John Kevin",
+        "type": "PT",
+        "days": "12/12",
+        "hrs": 48,
+        "rate": "Php 34,310.00/month",
+        "comp": 17155,
+        "bank": "BPI",
+        "acct": "0209034196",
+        "acctname": "John Kevin Dugang",
+        "country": "Philippines",
+        "city": "Cebu City",
+        "address": "",
+        "postal": "6000",
+        "email": "johnkevindugang@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA04",
+        "name": "Rondina, Mel Adrian",
+        "type": "FT",
+        "days": "12/12",
+        "hrs": 96,
+        "rate": "Php 35,000.00/month",
+        "comp": 17500,
+        "bank": "Land Bank",
+        "acct": "4476 0129 67",
+        "acctname": "Mel Adrian G. Rondina",
+        "country": "",
+        "city": "",
+        "address": "",
+        "postal": "",
+        "email": "",
+        "remarks": "",
+        "dailyHrs": 8,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaIntern",
+        "name": "Macaraeg, John Christopher",
+        "type": "FT",
+        "days": "12/12",
+        "hrs": 96,
+        "rate": "Php 7,000.00/month",
+        "comp": 3500,
+        "bank": "UnionBank",
+        "acct": "109340437616",
+        "acctname": "John Christopher Macaraeg",
+        "country": "",
+        "city": "",
+        "address": "",
+        "postal": "",
+        "email": "",
+        "remarks": "",
+        "dailyHrs": 8,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA13",
+        "name": "Pancho, Flordelyne",
+        "type": "FT",
+        "days": "12/12",
+        "hrs": 96,
+        "rate": "Php 49,000.00/month",
+        "comp": 24500,
+        "bank": "BPI - Bank of Philippine Islands",
+        "acct": "4039910464",
+        "acctname": "Flordelyne May Pancho",
+        "country": "Philippines",
+        "city": "Davao City",
+        "address": "Blk 3 Lt 4, Lemon Street, Southpointe Homes, Catalunan Grande, Davao City, 8000",
+        "postal": "8000",
+        "email": "pflordelyne@gmail.com",
+        "remarks": "",
+        "dailyHrs": 8,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA16",
+        "name": "Fajardo, Juvainne Jaychelle",
+        "type": "PT",
+        "days": "12/12",
+        "hrs": 48,
+        "rate": "Php 20,000.00/month",
+        "comp": 10000,
+        "bank": "GCash",
+        "acct": "9934635183",
+        "acctname": "Juvainne Jaychelle Fajardo",
+        "country": "",
+        "city": "",
+        "address": "",
+        "postal": "",
+        "email": "",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA18",
+        "name": "Teniso, Rozzel",
+        "type": "PT",
+        "days": "12/12",
+        "hrs": 48,
+        "rate": "Php 23,000.00/month",
+        "comp": null,
+        "bank": "Metrobank",
+        "acct": "2143214973201",
+        "acctname": "ROZZEL TENISO",
+        "country": "",
+        "city": "",
+        "address": "",
+        "postal": "",
+        "email": "",
+        "remarks": "⚠ No comp entered",
+        "dailyHrs": 4,
+        "vanote": "Compensation not yet entered"
+      },
+      {
+        "id": "KuyaVA19",
+        "name": "Esmino, Nicole",
+        "type": "PT",
+        "days": "12/12",
+        "hrs": 48,
+        "rate": "Php 22,500.00/month",
+        "comp": 11250,
+        "bank": "BDO - Banco De Oro",
+        "acct": "4050516309",
+        "acctname": "NICOLE CHILL ESMINO",
+        "country": "Philippines",
+        "city": "Quezon City",
+        "address": "Unit A 149 Barangay Lawa, City of Meycauayan, Bulacan, Philippines 3020",
+        "postal": "1105",
+        "email": "nicolechill.esmino@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA20",
+        "name": "PISO, PAMELA MAY",
+        "type": "FT",
+        "days": "12/12",
+        "hrs": 96,
+        "rate": "Php 58,000.00/month",
+        "comp": null,
+        "bank": "BPI",
+        "acct": "4179535365",
+        "acctname": "PAMELA MAY PISO",
+        "country": "",
+        "city": "",
+        "address": "",
+        "postal": "",
+        "email": "",
+        "remarks": "⚠ No comp entered",
+        "dailyHrs": 8,
+        "vanote": "Compensation not yet entered"
+      },
+      {
+        "id": "KuyaVA21",
+        "name": "Aum, Maria Kristina",
+        "type": "PT",
+        "days": "12/12",
+        "hrs": 48,
+        "rate": "Php 20,500.00/month",
+        "comp": 12437.5,
+        "bank": "BPI - Bank of Philippine Islands",
+        "acct": "2519243841",
+        "acctname": "MARIA KRISTINA V. AUM",
+        "country": "Philippines",
+        "city": "Surigao City",
+        "address": "359 OO497 Burgos Gonzales St., Surigao City, Surigao del Norte, Philippines 8400",
+        "postal": "8400",
+        "email": "pamelamaypaz@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA24",
+        "name": "Medina, Kohzinni",
+        "type": "PT",
+        "days": "12/12",
+        "hrs": 48,
+        "rate": "Php 21,000.00/month",
+        "comp": 5250,
+        "bank": "GCash",
+        "acct": "09212564308",
+        "acctname": "Kohzzini Airah C. Medina",
+        "country": "Philippines",
+        "city": "San Pablo City",
+        "address": "0446 Azores Street., Brgy. Bagong Bayan, San Pablo City, Laguna, 4000",
+        "postal": "4000",
+        "email": "01kacmedina@gmail.com",
+        "remarks": "",
+        "dailyHrs": 6,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA26",
+        "name": "Velarde, Jinefer",
+        "type": "PT",
+        "days": "12/12",
+        "hrs": 48,
+        "rate": "Php 35,000.00/month",
+        "comp": 8750,
+        "bank": "UnionBank",
+        "acct": "109384345268",
+        "acctname": "Jinefer Velardo",
+        "country": "Philippines",
+        "city": "San Pedro City",
+        "address": "#5 Narra Ave Brgy Narra San Pedro Laguna, Philippines",
+        "postal": "4000",
+        "email": "velardojinefer@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA25",
+        "name": "Maglines, Rona",
+        "type": "PT",
+        "days": "12/12",
+        "hrs": 48,
+        "rate": "Php 35,000.00/month",
+        "comp": 8750,
+        "bank": "BPI - Bank of Philippine Islands",
+        "acct": "09524772185",
+        "acctname": "RONA MAGLINES",
+        "country": "Philippines",
+        "city": "Davao City",
+        "address": "Door 6, San Francisco St., Buhangin, Davao City, Philippines 8000",
+        "postal": "8000",
+        "email": "maglinesrona@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "Odoo Spec",
+        "name": "Baliño, Evelyn",
+        "type": "PT",
+        "days": "13/13",
+        "hrs": 52,
+        "rate": "Php 35,000.00/month",
+        "comp": 10340.9,
+        "bank": "UnionBank",
+        "acct": "1093 5673 1926",
+        "acctname": "Evelyn Balino/Evelyn Baliño",
+        "country": "Philippines",
+        "city": "Bacoor City",
+        "address": "B6 L8 Yakal St Casimiro Westville Homes Ligas 3 Bacoor Cavite, Philippines 4102",
+        "postal": "4102",
+        "email": "balinoeve@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      }
+    ]
+  },
+  "jan20": {
+    "label": "January 17–31, 2026",
+    "schedule": "January 20th Pay Schedule",
+    "note": "",
+    "employees": [
+      {
+        "id": "KuyaVA05",
+        "name": "Fabiliar, Marc",
+        "type": "PT",
+        "days": "11/11",
+        "hrs": 44,
+        "rate": "Php 24,810.00/month",
+        "comp": 12405,
+        "bank": "BPI",
+        "acct": "0646648868",
+        "acctname": "Marc Gersonm Fabillar",
+        "country": "Philippines",
+        "city": "Dumaguete",
+        "address": "",
+        "postal": "6200",
+        "email": "marcfabillar@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "HR Manager",
+        "name": "Langi, Gerald",
+        "type": "FT",
+        "days": "11/11",
+        "hrs": 88,
+        "rate": "Php 80,000.00/month",
+        "comp": 40000,
+        "bank": "PNB",
+        "acct": "308710051537",
+        "acctname": "Gerald R. Langi",
+        "country": "",
+        "city": "",
+        "address": "",
+        "postal": "",
+        "email": "",
+        "remarks": "",
+        "dailyHrs": 8,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA02",
+        "name": "Dugang, John Kevin",
+        "type": "PT",
+        "days": "11/11",
+        "hrs": 44,
+        "rate": "Php 34,310.00/month",
+        "comp": 17155,
+        "bank": "BPI",
+        "acct": "0209034196",
+        "acctname": "John Kevin Dugang",
+        "country": "Philippines",
+        "city": "Cebu City",
+        "address": "",
+        "postal": "6000",
+        "email": "johnkevindugang@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA04",
+        "name": "Rondina, Mel Adrian",
+        "type": "FT",
+        "days": "11/11",
+        "hrs": 88,
+        "rate": "Php 35,000.00/month",
+        "comp": 17500,
+        "bank": "Land Bank",
+        "acct": "4476 0129 67",
+        "acctname": "Mel Adrian G. Rondina",
+        "country": "",
+        "city": "",
+        "address": "",
+        "postal": "",
+        "email": "",
+        "remarks": "",
+        "dailyHrs": 8,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA13",
+        "name": "Pancho, Flordelyne",
+        "type": "FT",
+        "days": "11/11",
+        "hrs": 88,
+        "rate": "Php 49,000.00/month",
+        "comp": 24500,
+        "bank": "BPI - Bank of Philippine Islands",
+        "acct": "4039910464",
+        "acctname": "Flordelyne May Pancho",
+        "country": "Philippines",
+        "city": "Davao City",
+        "address": "Blk 3 Lt 4, Lemon Street, Southpointe Homes, Catalunan Grande, Davao City, 8000",
+        "postal": "8000",
+        "email": "pflordelyne@gmail.com",
+        "remarks": "",
+        "dailyHrs": 8,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA16",
+        "name": "Fajardo, Juvainne Jaychelle",
+        "type": "PT",
+        "days": "11/11",
+        "hrs": 44,
+        "rate": "Php 20,000.00/month",
+        "comp": 10000,
+        "bank": "GCash",
+        "acct": "9934635183",
+        "acctname": "Juvainne Jaychelle Fajardo",
+        "country": "",
+        "city": "",
+        "address": "",
+        "postal": "",
+        "email": "",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA18",
+        "name": "Teniso, Rozzel",
+        "type": "PT",
+        "days": "11/11",
+        "hrs": null,
+        "rate": "Php 23,000.00/month",
+        "comp": null,
+        "bank": "Metrobank",
+        "acct": "2143214973201",
+        "acctname": "ROZZEL TENISO",
+        "country": "",
+        "city": "",
+        "address": "",
+        "postal": "",
+        "email": "",
+        "remarks": "⚠ No comp entered",
+        "dailyHrs": 4,
+        "vanote": "Compensation not yet entered"
+      },
+      {
+        "id": "KuyaVA19",
+        "name": "Esmino, Nicole",
+        "type": "PT",
+        "days": "11/11",
+        "hrs": 44,
+        "rate": "Php 22,500.00/month",
+        "comp": 11250,
+        "bank": "BDO - Banco De Oro",
+        "acct": "4050516309",
+        "acctname": "NICOLE CHILL ESMINO",
+        "country": "Philippines",
+        "city": "Quezon City",
+        "address": "Unit A 149 Barangay Lawa, City of Meycauayan, Bulacan, Philippines 3020",
+        "postal": "1105",
+        "email": "nicolechill.esmino@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA20",
+        "name": "PISO, PAMELA MAY",
+        "type": "PT",
+        "days": "11/11",
+        "hrs": 44,
+        "rate": "Php 58,000.00/month",
+        "comp": null,
+        "bank": "BPI",
+        "acct": "4179535365",
+        "acctname": "PAMELA MAY PISO",
+        "country": "",
+        "city": "",
+        "address": "",
+        "postal": "",
+        "email": "",
+        "remarks": "⚠ No comp entered",
+        "dailyHrs": 8,
+        "vanote": "Compensation not yet entered"
+      },
+      {
+        "id": "KuyaVA21",
+        "name": "Aum, Maria Kristina",
+        "type": "FT",
+        "days": "11/11",
+        "hrs": 44,
+        "rate": "Php 50,240.00/month",
+        "comp": 12560,
+        "bank": "BPI - Bank of Philippine Islands",
+        "acct": "2519243841",
+        "acctname": "MARIA KRISTINA V. AUM",
+        "country": "Philippines",
+        "city": "Surigao City",
+        "address": "359 OO497 Burgos Gonzales St., Surigao City, Surigao del Norte, Philippines 8400",
+        "postal": "8400",
+        "email": "pamelamaypaz@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA24",
+        "name": "Medina, Kohzinni",
+        "type": "PT",
+        "days": "11/11",
+        "hrs": 44,
+        "rate": "Php 21,000.00/month",
+        "comp": 5250,
+        "bank": "GCash",
+        "acct": "09212564308",
+        "acctname": "Kohzzini Airah C. Medina",
+        "country": "Philippines",
+        "city": "San Pablo City",
+        "address": "0446 Azores Street., Brgy. Bagong Bayan, San Pablo City, Laguna, 4000",
+        "postal": "4000",
+        "email": "01kacmedina@gmail.com",
+        "remarks": "",
+        "dailyHrs": 6,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA26",
+        "name": "Velarde, Jinefer",
+        "type": "FT",
+        "days": "11/11",
+        "hrs": 88,
+        "rate": "Php 35,000.00/month",
+        "comp": 15113.64,
+        "bank": "UnionBank",
+        "acct": "109384345268",
+        "acctname": "Jinefer Velardo",
+        "country": "Philippines",
+        "city": "San Pedro City",
+        "address": "#5 Narra Ave Brgy Narra San Pedro Laguna, Philippines",
+        "postal": "4000",
+        "email": "velardojinefer@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA25",
+        "name": "Maglines, Rona",
+        "type": "PT",
+        "days": "11/11",
+        "hrs": 44,
+        "rate": "Php 35,000.00/month",
+        "comp": 8750,
+        "bank": "BPI - Bank of Philippine Islands",
+        "acct": "09524772185",
+        "acctname": "RONA MAGLINES",
+        "country": "Philippines",
+        "city": "Davao City",
+        "address": "Door 6, San Francisco St., Buhangin, Davao City, Philippines 8000",
+        "postal": "8000",
+        "email": "maglinesrona@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "Odoo Spec",
+        "name": "Baliño, Evelyn",
+        "type": "PT",
+        "days": "8/11",
+        "hrs": 44,
+        "rate": "Php 35,000.00/month",
+        "comp": 3977.27,
+        "bank": "UnionBank",
+        "acct": "1093 5673 1926",
+        "acctname": "Evelyn Balino/Evelyn Baliño",
+        "country": "Philippines",
+        "city": "Bacoor City",
+        "address": "B6 L8 Yakal St Casimiro Westville Homes Ligas 3 Bacoor Cavite, Philippines 4102",
+        "postal": "4102",
+        "email": "balinoeve@gmail.com",
+        "remarks": "3 absences",
+        "dailyHrs": 4,
+        "vanote": "3 absences deducted this cut-off"
+      }
+    ]
+  },
+  "feb5": {
+    "label": "January 1–31, 2026",
+    "schedule": "February 5th Pay Schedule",
+    "note": "",
+    "employees": [
+      {
+        "id": "KuyaVA05",
+        "name": "Fabiliar, Marc",
+        "type": "PT",
+        "days": "12/12",
+        "hrs": 44,
+        "rate": "Php 24,810.00/month",
+        "comp": 12405,
+        "bank": "BPI",
+        "acct": "0646648868",
+        "acctname": "Marc Gersonm Fabillar",
+        "country": "Philippines",
+        "city": "Dumaguete",
+        "address": "",
+        "postal": "6200",
+        "email": "marcfabillar@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "HR Manager",
+        "name": "Langi, Gerald",
+        "type": "FT",
+        "days": "11/11",
+        "hrs": 88,
+        "rate": "Php 80,000.00/month",
+        "comp": 40000,
+        "bank": "PNB",
+        "acct": "308710051537",
+        "acctname": "Gerald R. Langi",
+        "country": "",
+        "city": "",
+        "address": "",
+        "postal": "",
+        "email": "",
+        "remarks": "",
+        "dailyHrs": 8,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA02",
+        "name": "Dugang, John Kevin",
+        "type": "PT",
+        "days": "11/11",
+        "hrs": 44,
+        "rate": "Php 34,310.00/month",
+        "comp": 17155,
+        "bank": "BPI",
+        "acct": "0209034196",
+        "acctname": "John Kevin Dugang",
+        "country": "Philippines",
+        "city": "Cebu City",
+        "address": "",
+        "postal": "6000",
+        "email": "johnkevindugang@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA04",
+        "name": "Rondina, Mel Adrian",
+        "type": "FT",
+        "days": "11/11",
+        "hrs": 88,
+        "rate": "Php 35,000.00/month",
+        "comp": 17500,
+        "bank": "Land Bank",
+        "acct": "4476 0129 67",
+        "acctname": "Mel Adrian G. Rondina",
+        "country": "",
+        "city": "",
+        "address": "",
+        "postal": "",
+        "email": "",
+        "remarks": "",
+        "dailyHrs": 8,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA13",
+        "name": "Pancho, Flordelyne",
+        "type": "FT",
+        "days": "10/11",
+        "hrs": 88,
+        "rate": "Php 49,000.00/month",
+        "comp": 22272.73,
+        "bank": "BPI - Bank of Philippine Islands",
+        "acct": "4039910464",
+        "acctname": "Flordelyne May Pancho",
+        "country": "Philippines",
+        "city": "Davao City",
+        "address": "Blk 3 Lt 4, Lemon Street, Southpointe Homes, Catalunan Grande, Davao City, 8000",
+        "postal": "8000",
+        "email": "pflordelyne@gmail.com",
+        "remarks": "1 absence",
+        "dailyHrs": 8,
+        "vanote": "1 absence recorded — comp adjusted"
+      },
+      {
+        "id": "KuyaVA16",
+        "name": "Fajardo, Juvainne Jaychelle",
+        "type": "PT",
+        "days": "11/11",
+        "hrs": 44,
+        "rate": "Php 20,000.00/month",
+        "comp": 10000,
+        "bank": "GCash",
+        "acct": "9934635183",
+        "acctname": "Juvainne Jaychelle Fajardo",
+        "country": "",
+        "city": "",
+        "address": "",
+        "postal": "",
+        "email": "",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA18",
+        "name": "Teniso, Rozzel",
+        "type": "PT",
+        "days": "11/11",
+        "hrs": null,
+        "rate": "Php 23,000.00/month",
+        "comp": null,
+        "bank": "Metrobank",
+        "acct": "2143214973201",
+        "acctname": "ROZZEL TENISO",
+        "country": "",
+        "city": "",
+        "address": "",
+        "postal": "",
+        "email": "",
+        "remarks": "⚠ No comp entered",
+        "dailyHrs": 4,
+        "vanote": "Compensation not yet entered"
+      },
+      {
+        "id": "KuyaVA19",
+        "name": "Esmino, Nicole",
+        "type": "PT",
+        "days": "11/11",
+        "hrs": 44,
+        "rate": "Php 22,500.00/month",
+        "comp": 11250,
+        "bank": "BDO - Banco De Oro",
+        "acct": "4050516309",
+        "acctname": "NICOLE CHILL ESMINO",
+        "country": "Philippines",
+        "city": "Quezon City",
+        "address": "Unit A 149 Barangay Lawa, City of Meycauayan, Bulacan, Philippines 3020",
+        "postal": "1105",
+        "email": "nicolechill.esmino@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA20",
+        "name": "PISO, PAMELA MAY",
+        "type": "FT",
+        "days": "11/11",
+        "hrs": null,
+        "rate": "Php 58,000.00/month",
+        "comp": null,
+        "bank": "BPI",
+        "acct": "4179535365",
+        "acctname": "PAMELA MAY PISO",
+        "country": "",
+        "city": "",
+        "address": "",
+        "postal": "",
+        "email": "",
+        "remarks": "⚠ No comp entered",
+        "dailyHrs": 8,
+        "vanote": "Compensation not yet entered"
+      },
+      {
+        "id": "KuyaVA21",
+        "name": "Aum, Maria Kristina",
+        "type": "FT",
+        "days": "11/11",
+        "hrs": 88,
+        "rate": "Php 50,240.00/month",
+        "comp": 12560,
+        "bank": "BPI - Bank of Philippine Islands",
+        "acct": "2519243841",
+        "acctname": "MARIA KRISTINA V. AUM",
+        "country": "Philippines",
+        "city": "Surigao City",
+        "address": "359 OO497 Burgos Gonzales St., Surigao City, Surigao del Norte, Philippines 8400",
+        "postal": "8400",
+        "email": "pamelamaypaz@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA24",
+        "name": "Medina, Kohzinni",
+        "type": "PT",
+        "days": "11/11",
+        "hrs": 44,
+        "rate": "Php 21,000.00/month",
+        "comp": 8113.64,
+        "bank": "GCash",
+        "acct": "09212564308",
+        "acctname": "Kohzzini Airah C. Medina",
+        "country": "Philippines",
+        "city": "San Pablo City",
+        "address": "0446 Azores Street., Brgy. Bagong Bayan, San Pablo City, Laguna, 4000",
+        "postal": "4000",
+        "email": "01kacmedina@gmail.com",
+        "remarks": "",
+        "dailyHrs": 6,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA26",
+        "name": "Velarde, Jinefer",
+        "type": "FT",
+        "days": "11/11",
+        "hrs": 88,
+        "rate": "Php 35,000.00/month",
+        "comp": 17500,
+        "bank": "UnionBank",
+        "acct": "109384345268",
+        "acctname": "Jinefer Velardo",
+        "country": "Philippines",
+        "city": "San Pedro City",
+        "address": "#5 Narra Ave Brgy Narra San Pedro Laguna, Philippines",
+        "postal": "4000",
+        "email": "velardojinefer@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA25",
+        "name": "Maglines, Rona",
+        "type": "PT",
+        "days": "11/11",
+        "hrs": 44,
+        "rate": "Php 35,000.00/month",
+        "comp": 8750,
+        "bank": "BPI - Bank of Philippine Islands",
+        "acct": "09524772185",
+        "acctname": "RONA MAGLINES",
+        "country": "Philippines",
+        "city": "Davao City",
+        "address": "Door 6, San Francisco St., Buhangin, Davao City, Philippines 8000",
+        "postal": "8000",
+        "email": "maglinesrona@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "Odoo Spec",
+        "name": "Baliño, Evelyn",
+        "type": "PT",
+        "days": "11/11",
+        "hrs": 44,
+        "rate": "Php 35,000.00/month",
+        "comp": 13125,
+        "bank": "UnionBank",
+        "acct": "1093 5673 1926",
+        "acctname": "Evelyn Balino/Evelyn Baliño",
+        "country": "Philippines",
+        "city": "Bacoor City",
+        "address": "B6 L8 Yakal St Casimiro Westville Homes Ligas 3 Bacoor Cavite, Philippines 4102",
+        "postal": "4102",
+        "email": "balinoeve@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      }
+    ]
+  },
+  "feb20": {
+    "label": "February 1–15, 2026",
+    "schedule": "February 20th Pay Schedule",
+    "note": "",
+    "employees": [
+      {
+        "id": "KuyaVA05",
+        "name": "Fabiliar, Marc",
+        "type": "PT",
+        "days": "10",
+        "hrs": 40,
+        "rate": "Php 24,810.00/month",
+        "comp": 12405,
+        "bank": "BPI",
+        "acct": "0646648868",
+        "acctname": "Marc Gersonm Fabillar",
+        "country": "Philippines",
+        "city": "Dumaguete",
+        "address": "",
+        "postal": "6200",
+        "email": "marcfabillar@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "HR Manager",
+        "name": "Langi, Gerald",
+        "type": "FT",
+        "days": "10",
+        "hrs": 80,
+        "rate": "Php 80,000.00/month",
+        "comp": 40000,
+        "bank": "PNB",
+        "acct": "308710051537",
+        "acctname": "Gerald R. Langi",
+        "country": "",
+        "city": "",
+        "address": "",
+        "postal": "",
+        "email": "",
+        "remarks": "",
+        "dailyHrs": 8,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA02",
+        "name": "Dugang, John Kevin",
+        "type": "PT",
+        "days": "10",
+        "hrs": 40,
+        "rate": "Php 34,310.00/month",
+        "comp": 17155,
+        "bank": "BPI",
+        "acct": "0209034196",
+        "acctname": "John Kevin Dugang",
+        "country": "Philippines",
+        "city": "Cebu City",
+        "address": "",
+        "postal": "6000",
+        "email": "johnkevindugang@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA04",
+        "name": "Rondina, Mel Adrian",
+        "type": "FT",
+        "days": "10",
+        "hrs": 80,
+        "rate": "Php 35,000.00/month",
+        "comp": 17500,
+        "bank": "Land Bank",
+        "acct": "4476 0129 67",
+        "acctname": "Mel Adrian G. Rondina",
+        "country": "",
+        "city": "",
+        "address": "",
+        "postal": "",
+        "email": "",
+        "remarks": "",
+        "dailyHrs": 8,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA13",
+        "name": "Pancho, Flordelyne",
+        "type": "FT",
+        "days": "10",
+        "hrs": 80,
+        "rate": "Php 49,000.00/month",
+        "comp": 24500,
+        "bank": "BPI - Bank of Philippine Islands",
+        "acct": "4039910464",
+        "acctname": "Flordelyne May Pancho",
+        "country": "Philippines",
+        "city": "Davao City",
+        "address": "Blk 3 Lt 4, Lemon Street, Southpointe Homes, Catalunan Grande, Davao City, 8000",
+        "postal": "8000",
+        "email": "pflordelyne@gmail.com",
+        "remarks": "",
+        "dailyHrs": 8,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA16",
+        "name": "Fajardo, Juvainne Jaychelle",
+        "type": "PT",
+        "days": "10",
+        "hrs": 40,
+        "rate": "Php 20,000.00/month",
+        "comp": 10000,
+        "bank": "GCash",
+        "acct": "9934635183",
+        "acctname": "Juvainne Jaychelle Fajardo",
+        "country": "",
+        "city": "",
+        "address": "",
+        "postal": "",
+        "email": "",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA18",
+        "name": "Teniso, Rozzel",
+        "type": "PT",
+        "days": "10",
+        "hrs": null,
+        "rate": "Php 23,000.00/month",
+        "comp": null,
+        "bank": "Metrobank",
+        "acct": "2143214973201",
+        "acctname": "ROZZEL TENISO",
+        "country": "",
+        "city": "",
+        "address": "",
+        "postal": "",
+        "email": "",
+        "remarks": "⚠ No comp entered",
+        "dailyHrs": 4,
+        "vanote": "Compensation not yet entered"
+      },
+      {
+        "id": "KuyaVA19",
+        "name": "Esmino, Nicole",
+        "type": "PT",
+        "days": "10",
+        "hrs": 40,
+        "rate": "Php 22,500.00/month",
+        "comp": 11250,
+        "bank": "BDO - Banco De Oro",
+        "acct": "4050516309",
+        "acctname": "NICOLE CHILL ESMINO",
+        "country": "Philippines",
+        "city": "Quezon City",
+        "address": "Unit A 149 Barangay Lawa, City of Meycauayan, Bulacan, Philippines 3020",
+        "postal": "1105",
+        "email": "nicolechill.esmino@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA20",
+        "name": "PISO, PAMELA MAY",
+        "type": "FT",
+        "days": "10",
+        "hrs": null,
+        "rate": "Php 58,000.00/month",
+        "comp": null,
+        "bank": "BPI",
+        "acct": "4179535365",
+        "acctname": "PAMELA MAY PISO",
+        "country": "",
+        "city": "",
+        "address": "",
+        "postal": "",
+        "email": "",
+        "remarks": "⚠ No comp entered",
+        "dailyHrs": 8,
+        "vanote": "Compensation not yet entered"
+      },
+      {
+        "id": "KuyaVA21",
+        "name": "Aum, Maria Kristina",
+        "type": "FT",
+        "days": "10",
+        "hrs": 80,
+        "rate": "Php 50,240.00/month",
+        "comp": 12560,
+        "bank": "BPI - Bank of Philippine Islands",
+        "acct": "2519243841",
+        "acctname": "MARIA KRISTINA V. AUM",
+        "country": "Philippines",
+        "city": "Surigao City",
+        "address": "359 OO497 Burgos Gonzales St., Surigao City, Surigao del Norte, Philippines 8400",
+        "postal": "8400",
+        "email": "pamelamaypaz@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA24",
+        "name": "Medina, Kohzinni",
+        "type": "PT",
+        "days": "10",
+        "hrs": 60,
+        "rate": "Php 31,500.00/month",
+        "comp": 7875,
+        "bank": "GCash",
+        "acct": "09212564308",
+        "acctname": "Kohzzini Airah C. Medina",
+        "country": "Philippines",
+        "city": "San Pablo City",
+        "address": "0446 Azores Street., Brgy. Bagong Bayan, San Pablo City, Laguna, 4000",
+        "postal": "4000",
+        "email": "01kacmedina@gmail.com",
+        "remarks": "",
+        "dailyHrs": 6,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA26",
+        "name": "Velarde, Jinefer",
+        "type": "FT",
+        "days": "10",
+        "hrs": 80,
+        "rate": "Php 70,000.00/month",
+        "comp": 17500,
+        "bank": "UnionBank",
+        "acct": "109384345268",
+        "acctname": "Jinefer Velardo",
+        "country": "Philippines",
+        "city": "San Pedro City",
+        "address": "#5 Narra Ave Brgy Narra San Pedro Laguna, Philippines",
+        "postal": "4000",
+        "email": "velardojinefer@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA25",
+        "name": "Maglines, Rona",
+        "type": "PT",
+        "days": "10",
+        "hrs": 40,
+        "rate": "Php 35,000.00/month",
+        "comp": 8750,
+        "bank": "BPI - Bank of Philippine Islands",
+        "acct": "09524772185",
+        "acctname": "RONA MAGLINES",
+        "country": "Philippines",
+        "city": "Davao City",
+        "address": "Door 6, San Francisco St., Buhangin, Davao City, Philippines 8000",
+        "postal": "8000",
+        "email": "maglinesrona@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "Odoo Spec",
+        "name": "Baliño, Evelyn",
+        "type": "PT",
+        "days": "10",
+        "hrs": 40,
+        "rate": "Php 35,000.00/month",
+        "comp": 4375,
+        "bank": "UnionBank",
+        "acct": "1093 5673 1926",
+        "acctname": "Evelyn Balino/Evelyn Baliño",
+        "country": "Philippines",
+        "city": "Bacoor City",
+        "address": "B6 L8 Yakal St Casimiro Westville Homes Ligas 3 Bacoor Cavite, Philippines 4102",
+        "postal": "4102",
+        "email": "balinoeve@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      }
+    ]
+  },
+  "mar5": {
+    "label": "March 16–28, 2026",
+    "schedule": "March 5th Pay Schedule",
+    "note": "",
+    "employees": [
+      {
+        "id": "KuyaVA05",
+        "name": "Fabiliar, Marc",
+        "type": "PT",
+        "days": "10",
+        "hrs": 40,
+        "rate": "Php 24,810.00/month",
+        "comp": 12405,
+        "bank": "BPI",
+        "acct": "0646648868",
+        "acctname": "Marc Gersonm Fabillar",
+        "country": "Philippines",
+        "city": "Dumaguete",
+        "address": "",
+        "postal": "6200",
+        "email": "marcfabillar@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "HR Manager",
+        "name": "Langi, Gerald",
+        "type": "FT",
+        "days": "10",
+        "hrs": 80,
+        "rate": "Php 80,000.00/month",
+        "comp": 46500,
+        "bank": "PNB",
+        "acct": "308710051537",
+        "acctname": "Gerald R. Langi",
+        "country": "",
+        "city": "",
+        "address": "",
+        "postal": "",
+        "email": "",
+        "remarks": "",
+        "dailyHrs": 8,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA02",
+        "name": "Dugang, John Kevin",
+        "type": "PT",
+        "days": "10",
+        "hrs": 40,
+        "rate": "Php 34,310.00/month",
+        "comp": 17155,
+        "bank": "BPI",
+        "acct": "0209034196",
+        "acctname": "John Kevin Dugang",
+        "country": "Philippines",
+        "city": "Cebu City",
+        "address": "",
+        "postal": "6000",
+        "email": "johnkevindugang@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA04",
+        "name": "Rondina, Mel Adrian",
+        "type": "FT",
+        "days": "10",
+        "hrs": 80,
+        "rate": "Php 35,000.00/month",
+        "comp": 17500,
+        "bank": "Land Bank",
+        "acct": "4476 0129 67",
+        "acctname": "Mel Adrian G. Rondina",
+        "country": "",
+        "city": "",
+        "address": "",
+        "postal": "",
+        "email": "",
+        "remarks": "",
+        "dailyHrs": 8,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA13",
+        "name": "Pancho, Flordelyne",
+        "type": "FT",
+        "days": "10",
+        "hrs": 80,
+        "rate": "Php 49,000.00/month",
+        "comp": 24500,
+        "bank": "BPI - Bank of Philippine Islands",
+        "acct": "4039910464",
+        "acctname": "Flordelyne May Pancho",
+        "country": "Philippines",
+        "city": "Davao City",
+        "address": "Blk 3 Lt 4, Lemon Street, Southpointe Homes, Catalunan Grande, Davao City, 8000",
+        "postal": "8000",
+        "email": "pflordelyne@gmail.com",
+        "remarks": "",
+        "dailyHrs": 8,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA16",
+        "name": "Fajardo, Juvainne Jaychelle",
+        "type": "PT",
+        "days": "10",
+        "hrs": 40,
+        "rate": "Php 20,000.00/month",
+        "comp": 10000,
+        "bank": "GCash",
+        "acct": "9934635183",
+        "acctname": "Juvainne Jaychelle Fajardo",
+        "country": "",
+        "city": "",
+        "address": "",
+        "postal": "",
+        "email": "",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA18",
+        "name": "Teniso, Rozzel",
+        "type": "PT",
+        "days": "10",
+        "hrs": null,
+        "rate": "Php 23,000.00/month",
+        "comp": null,
+        "bank": "Metrobank",
+        "acct": "2143214973201",
+        "acctname": "ROZZEL TENISO",
+        "country": "",
+        "city": "",
+        "address": "",
+        "postal": "",
+        "email": "",
+        "remarks": "⚠ No comp entered",
+        "dailyHrs": 4,
+        "vanote": "Compensation not yet entered"
+      },
+      {
+        "id": "KuyaVA19",
+        "name": "Esmino, Nicole",
+        "type": "PT",
+        "days": "10",
+        "hrs": 40,
+        "rate": "Php 22,500.00/month",
+        "comp": 11250,
+        "bank": "BDO - Banco De Oro",
+        "acct": "4050516309",
+        "acctname": "NICOLE CHILL ESMINO",
+        "country": "Philippines",
+        "city": "Quezon City",
+        "address": "Unit A 149 Barangay Lawa, City of Meycauayan, Bulacan, Philippines 3020",
+        "postal": "1105",
+        "email": "nicolechill.esmino@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA20",
+        "name": "PISO, PAMELA MAY",
+        "type": "FT",
+        "days": "10",
+        "hrs": null,
+        "rate": "Php 58,000.00/month",
+        "comp": null,
+        "bank": "BPI",
+        "acct": "4179535365",
+        "acctname": "PAMELA MAY PISO",
+        "country": "",
+        "city": "",
+        "address": "",
+        "postal": "",
+        "email": "",
+        "remarks": "⚠ No comp entered",
+        "dailyHrs": 8,
+        "vanote": "Compensation not yet entered"
+      },
+      {
+        "id": "KuyaVA21",
+        "name": "Aum, Maria Kristina",
+        "type": "FT",
+        "days": "10",
+        "hrs": 80,
+        "rate": "Php 50,240.00/month",
+        "comp": 22810,
+        "bank": "BPI - Bank of Philippine Islands",
+        "acct": "2519243841",
+        "acctname": "MARIA KRISTINA V. AUM",
+        "country": "Philippines",
+        "city": "Surigao City",
+        "address": "359 OO497 Burgos Gonzales St., Surigao City, Surigao del Norte, Philippines 8400",
+        "postal": "8400",
+        "email": "pamelamaypaz@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA24",
+        "name": "Medina, Kohzinni",
+        "type": "PT",
+        "days": "10",
+        "hrs": 60,
+        "rate": "Php 31,500.00/month",
+        "comp": 7875,
+        "bank": "GCash",
+        "acct": "09212564308",
+        "acctname": "Kohzzini Airah C. Medina",
+        "country": "Philippines",
+        "city": "San Pablo City",
+        "address": "0446 Azores Street., Brgy. Bagong Bayan, San Pablo City, Laguna, 4000",
+        "postal": "4000",
+        "email": "01kacmedina@gmail.com",
+        "remarks": "",
+        "dailyHrs": 6,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA26",
+        "name": "Velarde, Jinefer",
+        "type": "FT",
+        "days": "10",
+        "hrs": 80,
+        "rate": "Php 70,000.00/month",
+        "comp": 17500,
+        "bank": "UnionBank",
+        "acct": "109384345268",
+        "acctname": "Jinefer Velardo",
+        "country": "Philippines",
+        "city": "San Pedro City",
+        "address": "#5 Narra Ave Brgy Narra San Pedro Laguna, Philippines",
+        "postal": "4000",
+        "email": "velardojinefer@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA25",
+        "name": "Maglines, Rona",
+        "type": "PT",
+        "days": "10",
+        "hrs": 60,
+        "rate": "Php 35,000.00/month",
+        "comp": 26250,
+        "bank": "BPI - Bank of Philippine Islands",
+        "acct": "09524772185",
+        "acctname": "RONA MAGLINES",
+        "country": "Philippines",
+        "city": "Davao City",
+        "address": "Door 6, San Francisco St., Buhangin, Davao City, Philippines 8000",
+        "postal": "8000",
+        "email": "maglinesrona@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      },
+      {
+        "id": "Odoo Spec",
+        "name": "Baliño, Evelyn",
+        "type": "PT",
+        "days": "10",
+        "hrs": 40,
+        "rate": "Php 35,000.00/month",
+        "comp": 17500,
+        "bank": "UnionBank",
+        "acct": "1093 5673 1926",
+        "acctname": "Evelyn Balino/Evelyn Baliño",
+        "country": "Philippines",
+        "city": "Bacoor City",
+        "address": "B6 L8 Yakal St Casimiro Westville Homes Ligas 3 Bacoor Cavite, Philippines 4102",
+        "postal": "4102",
+        "email": "balinoeve@gmail.com",
+        "remarks": "",
+        "dailyHrs": 4,
+        "vanote": ""
+      }
+    ]
+  },
+  "period_1773758331475": {
+    "label": "March 1-15, 2026",
+    "schedule": "March 20th Payroll",
+    "note": "",
+    "employees": [
+      {
+        "id": "KuyaVA21",
+        "name": "Aum, Maria Kristina",
+        "type": "FT",
+        "dailyHrs": 8,
+        "days": "10",
+        "hrs": 80,
+        "rate": "Php 50240/month",
+        "comp": 25120,
+        "bank": "BPI - Bank of Philippine Islands",
+        "acct": "2519243841",
+        "acctname": "MARIA KRISTINA V. AUM",
+        "country": "Philippines",
+        "city": "Surigao City",
+        "address": "359 OO497 Burgos Gonzales St., Surigao City, Surigao del Norte, Philippines 8400",
+        "postal": "8400",
+        "email": "pamelamaypaz@gmail.com",
+        "remarks": "",
+        "nonbillable": false,
+        "vanote": ""
+      },
+      {
+        "id": "HR Manager",
+        "name": "Langi, Gerald",
+        "type": "FT",
+        "dailyHrs": 8,
+        "days": "10",
+        "hrs": 80,
+        "rate": "Php 80000/month",
+        "comp": 46500,
+        "bank": "PNB",
+        "acct": "308710051537",
+        "acctname": "Gerald R. Langi",
+        "country": "Philippines",
+        "city": "Dumaguete City",
+        "address": "Brgy. Bantayan",
+        "postal": "4600",
+        "email": "hr@kuyasolutions.com",
+        "remarks": "",
+        "nonbillable": true,
+        "vanote": "Positive Adjustment:\n\nVA/Client Retention Bonus: Php 6,500.00"
+      },
+      {
+        "id": "KuyaVA25",
+        "name": "Maglines, Rona",
+        "type": "FT",
+        "dailyHrs": 8,
+        "days": "10",
+        "hrs": 80,
+        "rate": "Php 70000/month",
+        "comp": 26250,
+        "bank": "BPI - Bank of Philippine Islands",
+        "acct": "09524772185",
+        "acctname": "RONA MAGLINES",
+        "country": "Philippines",
+        "city": "Davao City",
+        "address": "Door 6, San Francisco St., Buhangin, Davao City, Philippines 8000",
+        "postal": "8000",
+        "email": "maglinesrona@gmail.com",
+        "remarks": "",
+        "nonbillable": false,
+        "vanote": "Negative Adjustment:\n\nSalary Holding Policy - New Contract (1/4) = Php 8,750.00"
+      },
+      {
+        "id": "KuyaVA13",
+        "name": "Pancho, Flordelyne",
+        "type": "FT",
+        "dailyHrs": 8,
+        "days": "10",
+        "hrs": 80,
+        "rate": "Php 49000/month",
+        "comp": 24500,
+        "bank": "BPI - Bank of Philippine Islands",
+        "acct": "4039910464",
+        "acctname": "Flordelyne May Pancho",
+        "country": "Philippines",
+        "city": "Davao City",
+        "address": "Blk 3 Lt 4, Lemon Street, Southpointe Homes, Catalunan Grande, Davao City, 8000",
+        "postal": "8000",
+        "email": "pflordelyne@gmail.com",
+        "remarks": "",
+        "nonbillable": false,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA04",
+        "name": "Rondina, Mel Adrian",
+        "type": "FT",
+        "dailyHrs": 8,
+        "days": "10",
+        "hrs": 80,
+        "rate": "Php 35000/month",
+        "comp": 17500,
+        "bank": "Land Bank",
+        "acct": "4476 0129 67",
+        "acctname": "Mel Adrian G. Rondina",
+        "country": "Philippines",
+        "city": "N/A",
+        "address": "N/A",
+        "postal": "N/A",
+        "email": "N/A",
+        "remarks": "",
+        "nonbillable": true,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA26",
+        "name": "Velarde, Jinefer",
+        "type": "FT",
+        "dailyHrs": 8,
+        "days": "10",
+        "hrs": 80,
+        "rate": "Php 70000/month",
+        "comp": 35000,
+        "bank": "UnionBank",
+        "acct": "109384345268",
+        "acctname": "Jinefer Velardo",
+        "country": "Philippines",
+        "city": "San Pedro City",
+        "address": "#5 Narra Ave Brgy Narra San Pedro Laguna, Philippines",
+        "postal": "4000",
+        "email": "velardojinefer@gmail.com",
+        "remarks": "",
+        "nonbillable": false,
+        "vanote": ""
+      },
+      {
+        "id": "Odoo Spec",
+        "name": "Baliño, Evelyn",
+        "type": "PT",
+        "dailyHrs": 4,
+        "days": "9.5",
+        "hrs": 38,
+        "rate": "Php 35000/month",
+        "comp": 16625,
+        "bank": "UnionBank",
+        "acct": "1093 5673 1926",
+        "acctname": "Evelyn Balino/Evelyn Baliño",
+        "country": "Philippines",
+        "city": "Bacoor City",
+        "address": "B6 L8 Yakal St Casimiro Westville Homes Ligas 3 Bacoor Cavite, Philippines 4102",
+        "postal": "4102",
+        "email": "balinoeve@gmail.com",
+        "remarks": "",
+        "nonbillable": false,
+        "vanote": "Negative Adjustment:\n\nHalf Day = March 6, 2026"
+      },
+      {
+        "id": "KuyaVA02",
+        "name": "Dugang, John Kevin",
+        "type": "PT",
+        "dailyHrs": 4,
+        "days": "10",
+        "hrs": 40,
+        "rate": "Php 34310/month",
+        "comp": 17155,
+        "bank": "BPI",
+        "acct": "0209034196",
+        "acctname": "John Kevin Dugang",
+        "country": "Philippines",
+        "city": "Cebu City",
+        "address": "San Carlos",
+        "postal": "6000",
+        "email": "johnkevindugang@gmail.com",
+        "remarks": "",
+        "nonbillable": false,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA19",
+        "name": "Esmino, Nicole",
+        "type": "PT",
+        "dailyHrs": 4,
+        "days": "10",
+        "hrs": 40,
+        "rate": "Php 22500/month",
+        "comp": 11250,
+        "bank": "BDO - Banco De Oro",
+        "acct": "4050516309",
+        "acctname": "NICOLE CHILL ESMINO",
+        "country": "Philippines",
+        "city": "Quezon City",
+        "address": "Unit A 149 Barangay Lawa, City of Meycauayan, Bulacan, Philippines 3020",
+        "postal": "1105",
+        "email": "nicolechill.esmino@gmail.com",
+        "remarks": "",
+        "nonbillable": false,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA05",
+        "name": "Fabiliar, Marc",
+        "type": "PT",
+        "dailyHrs": 4,
+        "days": "10",
+        "hrs": 40,
+        "rate": "Php 24810/month",
+        "comp": 12405,
+        "bank": "BPI",
+        "acct": "0646648868",
+        "acctname": "Marc Gersonm Fabillar",
+        "country": "Philippines",
+        "city": "Dumaguete",
+        "address": "Dumaguete",
+        "postal": "6200",
+        "email": "marcfabillar@gmail.com",
+        "remarks": "",
+        "nonbillable": false,
+        "vanote": ""
+      },
+      {
+        "id": "KuyaVA24",
+        "name": "Medina, Kohzinni",
+        "type": "PT",
+        "dailyHrs": 6,
+        "days": "10",
+        "hrs": 60,
+        "rate": "Php 31500/month",
+        "comp": 15511.36,
+        "bank": "GCash",
+        "acct": "09212564308",
+        "acctname": "Kohzzini Airah C. Medina",
+        "country": "Philippines",
+        "city": "San Pablo City",
+        "address": "0446 Azores Street., Brgy. Bagong Bayan, San Pablo City, Laguna, 4000",
+        "postal": "4000",
+        "email": "01kacmedina@gmail.com",
+        "remarks": "",
+        "nonbillable": false,
+        "vanote": "Negative Adjustment:\n\nPayroll Discrepancy (March 5th Payroll) = Php 238.64"
+      }
+    ]
+  }
+};
+let periodOrder = ["jan5","jan20","feb5","feb20","mar5","period_1773758331475"];
+let currentPeriod = 'jan5';
+let editIndex = -1;
+let vaNoteIndex = -1;
+
+// ── Undo history ──────────────────────────────────────────────────
+const UNDO_LIMIT = 30;
+let undoStack = [];
+
+function snapshot(label) {
+  undoStack.push({
+    label,
+    periodOrder: [...periodOrder],
+    currentPeriod,
+    periods: JSON.parse(JSON.stringify(PERIODS))
+  });
+  if (undoStack.length > UNDO_LIMIT) undoStack.shift();
+  updateUndoBtn();
+}
+
+function undo() {
+  if (!undoStack.length) return;
+  const prev = undoStack.pop();
+  // Restore state
+  periodOrder = prev.periodOrder;
+  currentPeriod = prev.currentPeriod;
+  Object.keys(PERIODS).forEach(k => delete PERIODS[k]);
+  Object.assign(PERIODS, prev.periods);
+  rebuildDropdown();
+  document.getElementById('periodSelect').value = currentPeriod;
+  persistData();
+  render();
+  updateUndoBtn();
+  showUndoToast(prev.label);
+}
+
+function updateUndoBtn() {
+  const btn = document.getElementById('undoBtn');
+  if (!btn) return;
+  if (undoStack.length > 0) {
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    btn.title = 'Undo: ' + undoStack[undoStack.length - 1].label;
+  } else {
+    btn.disabled = true;
+    btn.style.opacity = '0.35';
+    btn.title = 'Nothing to undo';
+  }
+}
+
+function showUndoToast(label) {
+  let t = document.getElementById('undoToast');
+  if (!t) return;
+  t.textContent = '↩ Undid: ' + label;
+  t.style.opacity = '1'; t.style.transform = 'translateY(0)';
+  clearTimeout(showUndoToast._t);
+  showUndoToast._t = setTimeout(() => {
+    t.style.opacity = '0'; t.style.transform = 'translateY(10px)';
+  }, 2500);
+}
+
+function showStorageBadge(hadData) {
+  const badge = document.getElementById('storageBadge');
+  if (!badge) return;
+  if (hadData) {
+    badge.textContent = '💾 Data loaded from browser storage';
+    badge.style.background = '#0a1f0a';
+    badge.style.color = '#4ade80';
+    badge.style.borderColor = '#1a3a1a';
+  } else {
+    badge.textContent = '💾 Auto-save active — changes saved instantly';
+    badge.style.background = '#0a1218';
+    badge.style.color = '#60a5fa';
+    badge.style.borderColor = '#1a2a3a';
+  }
+  badge.style.display = 'flex';
+  setTimeout(() => { badge.style.opacity = '0'; }, 4000);
+  setTimeout(() => { badge.style.display = 'none'; }, 4400);
+}
+
+// ── Dropdown ─────────────────────────────────────────────────────
+function rebuildDropdown() {
+  const sel = document.getElementById('periodSelect');
+  sel.innerHTML = '';
+  periodOrder.forEach(k => {
+    const o = document.createElement('option');
+    o.value = k; o.textContent = PERIODS[k].schedule;
+    if (k === currentPeriod) o.selected = true;
+    sel.appendChild(o);
+  });
+  const ms = document.getElementById('m_source');
+  ms.innerHTML = '';
+  periodOrder.forEach(k => {
+    const o = document.createElement('option');
+    o.value = k; o.textContent = PERIODS[k].schedule;
+    ms.appendChild(o);
+  });
+  ms.value = periodOrder[periodOrder.length - 1];
+}
+
+// ── Billable Hours Auto-Calc ──────────────────────────────────────
+function onTypeChange() {
+  const type = document.getElementById('f_type').value;
+  const df = document.getElementById('dailyHrsField');
+  const di = document.getElementById('f_daily');
+  if (type === 'FT') {
+    df.style.opacity = '0.4';
+    df.style.pointerEvents = 'none';
+    di.value = '';
+    di.placeholder = '8 (fixed)';
+  } else {
+    df.style.opacity = '1';
+    df.style.pointerEvents = 'auto';
+    di.placeholder = 'e.g. 4';
+  }
+  autoCalcHrs();
+}
+
+function autoCalcHrs() {
+  const type = document.getElementById('f_type').value;
+  const daysRaw = document.getElementById('f_days').value.trim();
+  const dailyRaw = document.getElementById('f_daily').value;
+  // parse days: accept "10/10" or "10"
+  const daysWorked = parseFloat(daysRaw.split('/')[0]) || 0;
+  const dailyHrs = type === 'FT' ? 8 : (parseFloat(dailyRaw) || 0);
+  const hrsInput = document.getElementById('f_hours');
+  const label = document.getElementById('hrsAutoLabel');
+  if (daysWorked > 0 && dailyHrs > 0) {
+    hrsInput.value = daysWorked * dailyHrs;
+    label.textContent = 'auto ✓';
+    label.style.color = 'var(--green)';
+  } else {
+    hrsInput.value = '';
+    label.textContent = 'auto';
+    label.style.color = 'var(--orange)';
+  }
+}
+
+// ── Bank hover card builder ───────────────────────────────────────
+function bankCard(e, i) {
+  const hasDetails = e.bank && e.bank !== '—';
+  const rows = [
+    ['Account No.', e.acct],
+    ['Account Name', e.acctname],
+    ['Country', e.country],
+    ['City', e.city],
+    ['Address', e.address],
+    ['Postal Code', e.postal],
+    ['Email', e.email],
+  ].filter(r => r[1] && r[1] !== '—' && r[1] !== '');
+
+  const tooltipRows = rows.map(r =>
+    `<div class="bank-tooltip-row"><span class="bank-tooltip-key">${r[0]}</span><span class="bank-tooltip-val">${r[1]}</span></div>`
+  ).join('');
+
+  return `<div class="bank-cell" onmouseenter="positionTooltip(event,${i})">
+    <div class="bank-label">🏦 <span>${hasDetails ? e.bank : '—'}</span></div>
+    <div class="bank-tooltip" id="btt_${i}">
+      <div class="bank-tooltip-title">🏦 ${e.bank || '—'}</div>
+      ${tooltipRows || '<span style="font-size:11px;color:var(--muted);font-style:italic">No details saved yet</span>'}
+    </div>
+  </div>`;
+}
+
+function positionTooltip(evt, i) {
+  const tt = document.getElementById('btt_' + i);
+  if (!tt) return;
+  const x = evt.clientX, y = evt.clientY;
+  const ttW = 280, ttH = 200;
+  const vw = window.innerWidth, vh = window.innerHeight;
+  tt.style.left = (x + ttW + 16 > vw ? x - ttW - 8 : x + 12) + 'px';
+  tt.style.top  = (y + ttH > vh ? y - ttH + 10 : y + 10) + 'px';
+}
+
+
+function render() {
+  const p = PERIODS[currentPeriod];
+  document.getElementById('periodLabel').textContent   = p.label;
+  document.getElementById('scheduleLabel').textContent = p.schedule;
+  document.getElementById('notesArea').value = p.note || '';
+  const noteText = (p.note || '').trim();
+  document.getElementById('notesPrintText').textContent = noteText;
+  document.getElementById('notesPrint').style.display = noteText ? 'block' : 'none';
+
+  let totHrs = 0, totComp = 0, pending = 0;
+  const tbody = document.getElementById('payBody');
+  tbody.innerHTML = '';
+
+  const ftEmps = p.employees.filter(e => e.type === 'FT');
+  const ptEmps = p.employees.filter(e => e.type === 'PT');
+
+  function addSectionDivider(label, count, color) {
+    const divRow = document.createElement('tr');
+    divRow.innerHTML = `<td colspan="11" style="background:var(--black3);padding:6px 14px;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:${color};border-top:1px solid var(--border);border-bottom:1px solid var(--border)">${label} <span style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0">(${count})</span></td>`;
+    tbody.appendChild(divRow);
+  }
+
+  function renderGroup(group) {
+    group.forEach((e, gi) => {
+      const i = p.employees.indexOf(e);
+      const hasSplit = e.split && (e.split.ftDays > 0 || e.split.ptDays > 0);
+      const ftHrs  = hasSplit ? (e.split.ftDays * 8) : 0;
+      const ptDailyHrs = e.split ? (e.split.ptDailyHrs || e.dailyHrs || 4) : (e.dailyHrs || 4);
+      const ptHrs  = hasSplit ? (e.split.ptDays * ptDailyHrs) : 0;
+      const dw = parseFloat((e.days || '0').split('/')[0]) || 0;
+      const dh = e.type === 'FT' ? 8 : (e.dailyHrs || 4);
+      const calcHrs = hasSplit ? (ftHrs + ptHrs) : (dw > 0 ? dw * dh : (e.hrs || 0));
+      if (calcHrs) totHrs += calcHrs;
+      if (e.comp != null) totComp += e.comp; else pending++;
+
+    const hasNote = e.vanote && e.vanote.trim() !== '';
+    const tr = document.createElement('tr');
+    if (hasNote) tr.style.background = '#1a1400';
+
+    const noteCell = hasNote
+      ? `<div class="va-note-text" onclick="openVANote(${i})" style="cursor:pointer" title="Click to edit note">🟡 ${e.vanote}</div>`
+      : `<span class="va-note-add no-print" onclick="openVANote(${i})">＋ Add Note</span>`;
+
+    const hrsCell = hasSplit
+      ? `<div style="font-size:10px;line-height:1.6">
+           <div><span style="color:var(--ft-color);font-weight:700">${ftHrs}</span> <span style="color:var(--muted);font-size:9px">FT (${e.split.ftDays}d)</span></div>
+           <div><span style="color:var(--pt-color);font-weight:700">${ptHrs}</span> <span style="color:var(--muted);font-size:9px">PT (${e.split.ptDays}d × ${ptDailyHrs}h)</span></div>
+           <div style="border-top:1px solid var(--border);margin-top:2px;padding-top:2px"><span style="color:var(--orange);font-weight:700">${calcHrs}</span> <span style="font-size:9px;color:var(--muted)">total</span></div>
+         </div>`
+      : (calcHrs > 0 ? `<span style="color:var(--orange);font-weight:700">${calcHrs}</span><span style="font-size:9px;color:var(--muted);margin-left:3px">auto</span>` : '<span class="comp-null">—</span>');
+
+    const splitBtnStyle = hasSplit
+      ? 'background:#1a1008;border:1px solid var(--pt-color);color:var(--pt-color)'
+      : 'background:none;border:1px solid #222;color:#444';
+
+    tr.innerHTML = `
+      <td>
+        <div class="emp-id">${e.id}</div>
+        <div class="emp-name" style="${hasNote ? 'color:var(--note-yellow)' : ''}${e.nonbillable ? ';opacity:0.65' : ''}">${e.name}${e.nonbillable ? ' <span style="font-size:9px;background:#0f0f0f;border:1px solid #333;color:#666;padding:1px 5px;border-radius:8px;font-weight:600;letter-spacing:.3px;vertical-align:middle">non-billable</span>' : ''}</div>
+      </td>
+      <td><span class="badge badge-${e.type.toLowerCase()}">${e.type}</span></td>
+      <td style="text-align:center"><span style="font-size:11px;background:var(--black3);border:1px solid var(--border);padding:2px 8px;border-radius:12px;color:${e.type==='FT'?'var(--ft-color)':'var(--pt-color)'}">${e.type==='FT'?'8 hrs':((e.dailyHrs||'?')+' hrs')}</span></td>
+      <td style="color:var(--muted)">${e.days}</td>
+      <td class="r">${hrsCell}</td>
+      <td style="font-size:11px;color:var(--muted)">${e.rate}</td>
+      <td class="r">${e.comp != null ? '<span class="comp-val">₱ ' + fmt2(e.comp) + '</span>' : '<span class="net-null">Not entered</span>'}</td>
+      <td>${bankCard(e, i)}</td>
+      <td>${e.remarks ? '<span class="remark">' + e.remarks.replace(/\n/g,'<br>') + '</span>' : ''}</td>
+      <td class="va-note-cell">${noteCell}</td>
+      <td class="no-print" style="text-align:center;white-space:nowrap">
+        <button onclick="openSplitModal(${i})" style="font-size:10px;padding:2px 5px;border-radius:4px;cursor:pointer;${splitBtnStyle}" title="${hasSplit ? 'Edit split hours' : 'Add split hours'}">⚡</button>
+        <button onclick="editRow(${i})" style="background:none;border:none;cursor:pointer;color:#444;font-size:12px;padding:2px 5px;border:1px solid #222;border-radius:4px" title="Edit employee">✎</button>
+        <button onclick="delRow(${i})"  style="background:none;border:none;cursor:pointer;color:var(--red);font-size:12px;padding:2px 5px;border:1px solid #2d0a0a;border-radius:4px" title="Delete">✕</button>
+      </td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  if (ftEmps.length) { addSectionDivider('Full Time', ftEmps.length, 'var(--ft-color)'); renderGroup(ftEmps); }
+  if (ptEmps.length) { addSectionDivider('Part Time', ptEmps.length, 'var(--pt-color)'); renderGroup(ptEmps); }
+
+  document.getElementById('totHrs').textContent  = totHrs;
+  document.getElementById('totComp').textContent = '₱ ' + fmt2(totComp);
+  document.getElementById('kpiCount').textContent   = p.employees.length;
+  document.getElementById('kpiHours').textContent   = totHrs;
+  document.getElementById('kpiTotal').textContent   = fmtK2(totComp);
+  document.getElementById('kpiPending').textContent = pending;
+}
+
+// ── VA Note modal ─────────────────────────────────────────────────
+function openVANote(i) {
+  vaNoteIndex = i;
+  const e = PERIODS[currentPeriod].employees[i];
+  document.getElementById('vaNoteSubtitle').textContent = 'Note for: ' + e.name + ' (' + e.id + ')';
+  document.getElementById('vaNoteText').value = e.vanote || '';
+  document.getElementById('vaNoteEditor').classList.add('open');
+}
+function saveVANote() {
+  snapshot('VA note — ' + PERIODS[currentPeriod].employees[vaNoteIndex].name);
+  PERIODS[currentPeriod].employees[vaNoteIndex].vanote = document.getElementById('vaNoteText').value.trim();
+  document.getElementById('vaNoteEditor').classList.remove('open');
+  persistData();
+  render();
+}
+function clearVANote() {
+  snapshot('Clear note — ' + PERIODS[currentPeriod].employees[vaNoteIndex].name);
+  PERIODS[currentPeriod].employees[vaNoteIndex].vanote = '';
+  document.getElementById('vaNoteEditor').classList.remove('open');
+  persistData();
+  render();
+}
+function closeVANote() { document.getElementById('vaNoteEditor').classList.remove('open'); }
+document.getElementById('vaNoteEditor').addEventListener('click', function(e){ if(e.target===this) closeVANote(); });
+
+// ── Period Notes ──────────────────────────────────────────────────
+function toggleNotes() { document.getElementById('notesPanel').classList.toggle('open'); }
+function saveNote() {
+  snapshot('Period note edit');
+  PERIODS[currentPeriod].note = document.getElementById('notesArea').value;
+  const s = document.getElementById('notesSaved');
+  s.style.display = 'block';
+  clearTimeout(saveNote._t);
+  saveNote._t = setTimeout(() => s.style.display = 'none', 1500);
+  const t = PERIODS[currentPeriod].note.trim();
+  document.getElementById('notesPrintText').textContent = t;
+  document.getElementById('notesPrint').style.display = t ? 'block' : 'none';
+  persistData();
+}
+
+// ── Employee editor ───────────────────────────────────────────────
+function clearEditorForm() {
+  const fields = ['f_id','f_name','f_days','f_hours','f_rate','f_comp',
+    'f_bank','f_acct','f_acctname','f_country','f_city',
+    'f_address','f_postal','f_email','f_remarks','f_daily'];
+  fields.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('f_type').value = 'PT';
+  document.getElementById('f_nonbillable').checked = false;
+  onTypeChange();
+}
+
+function clearEditorErrors() {
+  ['f_id','f_name','f_rate','f_bank','f_acct','f_acctname','f_country','f_city','f_address','f_postal','f_email','f_daily'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('field-error');
+  });
+  ['err_id','err_name','err_rate','err_bank','err_acct','err_acctname','err_country','err_city','err_address','err_postal','err_email','err_daily'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('show');
+  });
+  document.getElementById('editorErrorBanner').classList.remove('show');
+}
+
+function openAddEmployee() {
+  editIndex = -1;
+  clearEditorErrors();
+  clearEditorForm();
+  document.getElementById('empEditorTitle').textContent = '＋ Add Employee';
+  document.getElementById('empPanel').classList.add('open');
+  document.getElementById('empPanel').scrollIntoView({behavior:'smooth'});
+}
+
+function toggleEmpEditor() {
+  const panel = document.getElementById('empPanel');
+  panel.classList.toggle('open');
+}
+
+function editRow(i) {
+  clearEditorErrors();
+  const e = PERIODS[currentPeriod].employees[i]; editIndex = i;
+  document.getElementById('empEditorTitle').textContent = 'Edit: ' + e.name;
+  document.getElementById('f_id').value       = e.id;
+  document.getElementById('f_name').value     = e.name;
+  document.getElementById('f_type').value     = e.type;
+  onTypeChange();
+  document.getElementById('f_daily').value    = e.type === 'FT' ? '' : (e.dailyHrs || 4);
+  document.getElementById('f_days').value     = e.days;
+  autoCalcHrs();
+  document.getElementById('f_rate').value     = parseFloat(e.rate.replace(/[^0-9.]/g,'')) || '';
+  document.getElementById('f_comp').value     = e.comp ?? '';
+  document.getElementById('f_bank').value     = e.bank;
+  document.getElementById('f_acct').value     = e.acct;
+  document.getElementById('f_acctname').value = e.acctname;
+  document.getElementById('f_country').value  = e.country  || '';
+  document.getElementById('f_city').value     = e.city     || '';
+  document.getElementById('f_address').value  = e.address  || '';
+  document.getElementById('f_postal').value   = e.postal   || '';
+  document.getElementById('f_email').value    = e.email    || '';
+  document.getElementById('f_remarks').value  = e.remarks;
+  document.getElementById('f_nonbillable').checked = !!e.nonbillable;
+  document.getElementById('empPanel').classList.add('open');
+  document.getElementById('empPanel').scrollIntoView({behavior:'smooth'});
+}
+function saveEmp() {
+  // ── Validation ────────────────────────────────────────────────
+  const required = [
+    {id:'f_id',      err:'err_id'},
+    {id:'f_name',    err:'err_name'},
+    {id:'f_rate',    err:'err_rate'},
+    {id:'f_bank',    err:'err_bank'},
+    {id:'f_acct',    err:'err_acct'},
+    {id:'f_acctname',err:'err_acctname'},
+    {id:'f_country', err:'err_country'},
+    {id:'f_city',    err:'err_city'},
+    {id:'f_address', err:'err_address'},
+    {id:'f_postal',  err:'err_postal'},
+    {id:'f_email',   err:'err_email'},
+  ];
+  const type = document.getElementById('f_type').value;
+  if (type === 'PT') required.push({id:'f_daily', err:'err_daily'});
+
+  // Clear previous errors
+  required.forEach(r => {
+    document.getElementById(r.id).classList.remove('field-error');
+    const em = document.getElementById(r.err);
+    if (em) em.classList.remove('show');
+  });
+  document.getElementById('editorErrorBanner').classList.remove('show');
+
+  let valid = true;
+  required.forEach(r => {
+    const el = document.getElementById(r.id);
+    if (!el.value.trim()) {
+      el.classList.add('field-error');
+      const em = document.getElementById(r.err);
+      if (em) em.classList.add('show');
+      valid = false;
+    }
+  });
+
+  if (!valid) {
+    document.getElementById('editorErrorBanner').classList.add('show');
+    document.getElementById('empPanel').scrollTop = 0;
+    return;
+  }
+
+  // ── Save ──────────────────────────────────────────────────────
+  const empName = document.getElementById('f_name').value;
+  snapshot(editIndex >= 0 ? 'Edit — ' + empName : 'Add — ' + empName);
+  const cv = document.getElementById('f_comp').value;
+  const arr = PERIODS[currentPeriod].employees;
+  const existing = editIndex >= 0 ? arr[editIndex] : {};
+  const dailyHrs = type === 'FT' ? 8 : (parseFloat(document.getElementById('f_daily').value) || 4);
+  const emp = {
+    id:       document.getElementById('f_id').value.trim(),
+    name:     document.getElementById('f_name').value.trim(),
+    type:     type,
+    dailyHrs: dailyHrs,
+    days:     document.getElementById('f_days').value || '—',
+    hrs:      parseFloat(document.getElementById('f_hours').value) || null,
+    rate:     'Php ' + (document.getElementById('f_rate').value || '0') + '/month',
+    comp:     cv !== '' ? parseFloat(cv) : null,
+    bank:     document.getElementById('f_bank').value.trim()     || '—',
+    acct:     document.getElementById('f_acct').value.trim()     || '—',
+    acctname: document.getElementById('f_acctname').value.trim() || '—',
+    country:  document.getElementById('f_country').value.trim()  || '',
+    city:     document.getElementById('f_city').value.trim()     || '',
+    address:  document.getElementById('f_address').value.trim()  || '',
+    postal:   document.getElementById('f_postal').value.trim()   || '',
+    email:    document.getElementById('f_email').value.trim()    || '',
+    remarks:  document.getElementById('f_remarks').value,
+    nonbillable: document.getElementById('f_nonbillable').checked,
+    vanote:   existing.vanote || ''
+  };
+
+  if (editIndex >= 0) arr[editIndex] = emp; else arr.push(emp);
+
+  // ── Sort: FT first, then PT, each group alphabetically by name ─
+  arr.sort((a, b) => {
+    if (a.type !== b.type) return a.type === 'FT' ? -1 : 1;
+    return a.name.localeCompare(b.name);
+  });
+
+  editIndex = -1;
+  document.getElementById('empPanel').classList.remove('open');
+  persistData();
+  render();
+}
+function delRow(i) {
+  const arr = PERIODS[currentPeriod].employees;
+  if (confirm('Remove ' + arr[i].name + '?')) {
+    snapshot('Delete — ' + arr[i].name);
+    arr.splice(i,1); persistData(); render(); }
+}
+function clearPeriod() {
+  if (confirm('Clear all employees for this period?')) {
+    snapshot('Clear period — ' + PERIODS[currentPeriod].schedule);
+    PERIODS[currentPeriod].employees = []; persistData(); render(); }
+}
+
+// ── Switch period ─────────────────────────────────────────────────
+function switchPeriod(k) {
+  currentPeriod = k; editIndex = -1;
+  document.getElementById('empPanel').classList.remove('open');
+  document.getElementById('notesPanel').classList.remove('open');
+  persistData();
+  render();
+}
+
+// ── New Schedule Modal ────────────────────────────────────────────
+function openNewScheduleModal() {
+  rebuildDropdown();
+  document.getElementById('m_name').value  = '';
+  document.getElementById('m_dates').value = '';
+  document.getElementById('scheduleModal').classList.add('open');
+}
+function closeModal() { document.getElementById('scheduleModal').classList.remove('open'); }
+function createSchedule() {
+  const name  = document.getElementById('m_name').value.trim();
+  const dates = document.getElementById('m_dates').value.trim();
+  const src   = document.getElementById('m_source').value;
+  if (!name)  { alert('Please enter a schedule name.'); return; }
+  if (!dates) { alert('Please enter the pay period dates.'); return; }
+  snapshot('New schedule — ' + name);
+  const key = 'period_' + Date.now();
+  PERIODS[key] = {
+    label: dates, schedule: name, note: '',
+    employees: PERIODS[src].employees.map(e => ({
+      ...e, days:'—', hrs:null, comp:null, remarks:'', vanote:''
+      // dailyHrs preserved from source
+    }))
+  };
+  periodOrder.push(key);
+  currentPeriod = key;
+  rebuildDropdown();
+  rebuildBillingDropdown();
+  document.getElementById('periodSelect').value = key;
+  closeModal();
+  persistData();
+  render();
+}
+document.getElementById('scheduleModal').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
+
+// ── Tab switcher ──────────────────────────────────────────────────
+function switchTab(tab) {
+  ['payroll','billing'].forEach(t => {
+    document.getElementById('section-' + t).classList.toggle('active', t === tab);
+    document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+  });
+  if (tab === 'billing') renderBilling();
+}
+
+// ── Monthly Billing ───────────────────────────────────────────────
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function extractMonth(scheduleStr) {
+  // Match first month name found in the schedule string
+  for (const m of MONTHS) {
+    if (scheduleStr.includes(m)) return m;
+  }
+  return null;
+}
+
+function getCalcHrs(e) {
+  if (e.split && (e.split.ftDays > 0 || e.split.ptDays > 0)) {
+    const ptDh = e.split.ptDailyHrs || e.dailyHrs || 4;
+    return (e.split.ftDays * 8) + (e.split.ptDays * ptDh);
+  }
+  const dw = parseFloat((e.days || '0').split('/')[0]) || 0;
+  const dh = e.type === 'FT' ? 8 : (e.dailyHrs || 4);
+  return dw > 0 ? dw * dh : (e.hrs || 0);
+}
+
+function buildBillingMonths() {
+  // Group periods by detected month
+  const months = {};
+  periodOrder.forEach(k => {
+    const p = PERIODS[k];
+    const m = extractMonth(p.schedule);
+    if (!m) return;
+    if (!months[m]) months[m] = [];
+    months[m].push(k);
+  });
+  return months;
+}
+
+function rebuildBillingDropdown() {
+  const months = buildBillingMonths();
+  const sel = document.getElementById('billingMonthSelect');
+  const prev = sel.value;
+  sel.innerHTML = '';
+  if (!Object.keys(months).length) {
+    const o = document.createElement('option');
+    o.textContent = 'No months detected yet';
+    sel.appendChild(o);
+    return;
+  }
+  Object.keys(months).forEach(m => {
+    const o = document.createElement('option');
+    o.value = m;
+    o.textContent = m + ' ' + new Date().getFullYear();
+    sel.appendChild(o);
+  });
+  if (prev && months[prev]) sel.value = prev;
+}
+
+function renderBilling() {
+  rebuildBillingDropdown();
+  const sel = document.getElementById('billingMonthSelect');
+  const month = sel.value;
+  if (!month) return;
+
+  const months = buildBillingMonths();
+  const keys = months[month] || [];
+
+  const empMap = {};
+  keys.forEach((k, ci) => {
+    const p = PERIODS[k];
+    p.employees.forEach(e => {
+      const uid = e.id || e.name;
+      const hrs = getCalcHrs(e);
+      if (!empMap[uid]) {
+        empMap[uid] = {
+          id: e.id, name: e.name, type: e.type,
+          dailyHrs: e.type === 'FT' ? 8 : (e.dailyHrs || 4),
+          hrs: [0, 0], nonbillable: !!e.nonbillable
+        };
+      }
+      empMap[uid].hrs[ci] = hrs;
+      if (e.nonbillable) empMap[uid].nonbillable = true;
+      // Carry split data indexed by cut-off position
+      if (e.split && (e.split.ftDays > 0 || e.split.ptDays > 0)) {
+        if (!empMap[uid].splits) empMap[uid].splits = [null, null];
+        empMap[uid].splits[ci] = e.split;
+      }
+    });
+  });
+
+  const allEmps  = Object.values(empMap);
+  const billable = allEmps.filter(e => !e.nonbillable);
+  const internal = allEmps.filter(e => e.nonbillable);
+  const scheduleNames = keys.map(k => PERIODS[k].schedule);
+  const cutoff1 = scheduleNames[0] || '1st Cut-off';
+  const cutoff2 = scheduleNames[1] || '2nd Cut-off';
+  const billableTotal = billable.reduce((s,e) => s + e.hrs[0] + e.hrs[1], 0);
+  const internalTotal = internal.reduce((s,e) => s + e.hrs[0] + e.hrs[1], 0);
+
+  document.getElementById('billingTitle').textContent = month + ' ' + new Date().getFullYear() + ' - Monthly Billable Hours';
+  document.getElementById('billingMeta').textContent  = 'For client billing - generated ' + new Date().toLocaleDateString('en-PH',{year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('bKpiCount').textContent   = billable.length;
+  document.getElementById('bKpiHours').textContent   = billableTotal;
+  document.getElementById('bKpiCutoffs').textContent = keys.length;
+
+  if (!allEmps.length) {
+    document.getElementById('billingBody').innerHTML =
+      '<div class="billing-empty"><span>No data</span>No employees found for ' + month + '.</div>';
+    return;
+  }
+
+  const colHead = '<tr><th>Employee</th><th>Type</th><th>Daily Hrs</th>' +
+    '<th class="r">' + cutoff1 + '</th>' +
+    '<th class="r">' + cutoff2 + '</th>' +
+    '<th class="r" style="color:var(--orange)">Total Hrs</th></tr>';
+
+  function buildRows(emps, dim) {
+    return emps.map(function(e) {
+      var total    = e.hrs[0] + e.hrs[1];
+      var hrColor  = dim ? '#555' : 'var(--orange)';
+      var rowStyle = dim ? 'opacity:0.6' : '';
+      var dlyColor = e.type==='FT' ? 'var(--ft-color)' : 'var(--pt-color)';
+
+      // Check if either cut-off has a split
+      var hasSplit0 = e.splits && e.splits[0];
+      var hasSplit1 = e.splits && e.splits[1];
+      var hasSplit  = hasSplit0 || hasSplit1;
+
+      if (!hasSplit) {
+        // Normal single row
+        return '<tr style="' + rowStyle + '">' +
+          '<td><div class="emp-id">' + e.id + '</div>' +
+          '<div class="emp-name">' + e.name + '</div></td>' +
+          '<td><span class="badge badge-' + e.type.toLowerCase() + '">' + e.type + '</span></td>' +
+          '<td style="text-align:center"><span style="font-size:11px;background:var(--black3);border:1px solid var(--border);padding:2px 8px;border-radius:12px;color:' + dlyColor + '">' + e.dailyHrs + ' hrs</span></td>' +
+          '<td class="r" style="color:var(--muted)">' + (e.hrs[0] ? e.hrs[0] : '-') + '</td>' +
+          '<td class="r" style="color:var(--muted)">' + (e.hrs[1] ? e.hrs[1] : '-') + '</td>' +
+          '<td class="r"><span style="font-weight:700;color:' + hrColor + ';font-size:13px">' + total + '</span></td></tr>';
+      }
+
+      // Split employee — show name row + FT sub-row + PT sub-row
+      function splitCells(si) {
+        var sp = e.splits[si];
+        if (!sp) {
+          var plain = e.hrs[si];
+          return '<td class="r" style="color:var(--muted)">' + (plain || '-') + '</td>';
+        }
+        var ptDh = sp.ptDailyHrs || e.dailyHrs || 4;
+        var ftH = sp.ftDays * 8;
+        var ptH = sp.ptDays * ptDh;
+        return '<td class="r">' +
+          '<div style="font-size:10px;line-height:1.7">' +
+          '<div><span style="color:var(--ft-color);font-weight:600">' + ftH + '</span> <span style="color:#444;font-size:9px">FT ' + sp.ftDays + 'd</span></div>' +
+          '<div><span style="color:var(--pt-color);font-weight:600">' + ptH + '</span> <span style="color:#444;font-size:9px">PT ' + sp.ptDays + 'd×' + ptDh + 'h</span></div>' +
+          '</div></td>';
+      }
+
+      return '<tr style="' + rowStyle + '">' +
+        '<td><div class="emp-id">' + e.id + '</div>' +
+        '<div class="emp-name">' + e.name + ' <span style="font-size:9px;background:#1a1008;border:1px solid var(--pt-color);color:var(--pt-color);padding:1px 5px;border-radius:4px;vertical-align:middle">split</span></div></td>' +
+        '<td><span style="font-size:9px;color:var(--muted)">mixed</span></td>' +
+        '<td style="text-align:center"><span style="font-size:11px;color:var(--muted)">—</span></td>' +
+        splitCells(0) + splitCells(1) +
+        '<td class="r"><span style="font-weight:700;color:' + hrColor + ';font-size:13px">' + total + '</span></td></tr>';
+    }).join('');
+  }
+
+  var html = '<div class="tbl-wrap"><table>';
+
+  // BILLABLE section
+  html += '<thead>' +
+    '<tr><th colspan="6" style="background:#0a1f0a;color:#4ade80;font-size:11px;letter-spacing:.7px;padding:10px 16px;border-bottom:1px solid #1a3a1a">' +
+    'BILLABLE - Hours included in client invoice</th></tr>' +
+    colHead + '</thead>' +
+    '<tbody>' + (billable.length ? buildRows(billable, false) :
+      '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px;font-size:12px">No billable employees this month.</td></tr>') +
+    '</tbody>' +
+    '<tfoot><tr>' +
+    '<td colspan="3" style="color:var(--orange);font-family:\'Syne\',sans-serif;letter-spacing:1px;font-weight:700">BILLABLE TOTAL</td>' +
+    '<td class="r" style="color:var(--white);font-weight:700">' + billable.reduce(function(s,e){return s+e.hrs[0];},0) + '</td>' +
+    '<td class="r" style="color:var(--white);font-weight:700">' + billable.reduce(function(s,e){return s+e.hrs[1];},0) + '</td>' +
+    '<td class="r tot-net" style="font-size:16px">' + billableTotal + '</td>' +
+    '</tr></tfoot>';
+
+  // NON-BILLABLE section
+  if (internal.length) {
+    html += '<thead>' +
+      '<tr><th colspan="6" style="background:#1a1008;color:#888;font-size:11px;letter-spacing:.7px;padding:10px 16px;border-top:2px solid var(--border);border-bottom:1px solid var(--border)">' +
+      'NON-BILLABLE - For reference only, excluded from invoice</th></tr>' +
+      colHead + '</thead>' +
+      '<tbody>' + buildRows(internal, true) + '</tbody>' +
+      '<tfoot><tr>' +
+      '<td colspan="3" style="color:#555;font-family:\'Syne\',sans-serif;letter-spacing:1px;font-weight:700">NON-BILLABLE TOTAL</td>' +
+      '<td class="r" style="color:#555;font-weight:700">' + internal.reduce(function(s,e){return s+e.hrs[0];},0) + '</td>' +
+      '<td class="r" style="color:#555;font-weight:700">' + internal.reduce(function(s,e){return s+e.hrs[1];},0) + '</td>' +
+      '<td class="r" style="color:#555;font-weight:700;font-size:16px">' + internalTotal + '</td>' +
+      '</tr></tfoot>';
+  }
+
+  html += '</table></div>';
+  document.getElementById('billingBody').innerHTML = html;
+}
+
+// ── Export / Save File ────────────────────────────────────────────
+function exportHTML() {
+  // Grab the full HTML of the current page
+  let html = document.documentElement.outerHTML;
+
+  // Serialize live PERIODS and periodOrder
+  const periodsJSON = JSON.stringify(PERIODS, null, 2);
+  const orderJSON   = JSON.stringify(periodOrder);
+
+  // Replace the PERIODS object in the source with the live data
+  html = html.replace(
+    /const PERIODS\s*=\s*\{[\s\S]*?\};\s*\n\s*let periodOrder/,
+    `const PERIODS = ${periodsJSON};\nlet periodOrder`
+  );
+
+  // Replace the periodOrder array
+  html = html.replace(
+    /let periodOrder\s*=\s*\[.*?\];/,
+    `let periodOrder = ${orderJSON};`
+  );
+
+  // Build filename with today's date
+  const d = new Date();
+  const dateStr = d.getFullYear() + '-' +
+    String(d.getMonth()+1).padStart(2,'0') + '-' +
+    String(d.getDate()).padStart(2,'0');
+  const filename = `KUYA_Payroll_${dateStr}.html`;
+
+  // Trigger download
+  const blob = new Blob([html], {type: 'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+
+  // Toast confirmation
+  showUndoToast('💾 Saved as ' + filename);
+}
+
+// ── Eezi CSV Import ───────────────────────────────────────────────
+let importParsed = []; // holds parsed rows ready to apply
+
+function openImportModal() {
+  importParsed = [];
+  document.getElementById('importPreview').style.display = 'none';
+  document.getElementById('importConfirmBtn').style.display = 'none';
+  document.getElementById('csvFileInput').value = '';
+  document.getElementById('csvDropZone').style.borderColor = 'var(--border)';
+  document.getElementById('importModal').classList.add('open');
+}
+function closeImportModal() {
+  document.getElementById('importModal').classList.remove('open');
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const im = document.getElementById('importModal');
+  if (im) im.addEventListener('click', e => { if (e.target === im) closeImportModal(); });
+});
+
+function handleCSVDrop(e) {
+  const file = e.dataTransfer.files[0];
+  if (file) parseCSVFile(file);
+}
+function handleCSVUpload(e) {
+  const file = e.target.files[0];
+  if (file) parseCSVFile(file);
+}
+
+function parseCSVLine(line) {
+  // Handle quoted CSV fields correctly
+  const result = [];
+  let cur = '', inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') { inQ = !inQ; }
+    else if (c === ',' && !inQ) { result.push(cur.trim()); cur = ''; }
+    else { cur += c; }
+  }
+  result.push(cur.trim());
+  return result;
+}
+
+function cleanNum(str) {
+  const n = parseFloat((str || '').replace(/[",\s]/g, ''));
+  return isNaN(n) ? 0 : n;
+}
+
+function parseCSVFile(file) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const lines = e.target.result.split(/\r?\n/).filter(l => l.trim());
+    if (lines.length < 2) { alert('CSV appears empty or invalid.'); return; }
+
+    const headers = parseCSVLine(lines[0]).map(h => h.replace(/"/g,'').trim());
+
+    // Column index map
+    const col = {};
+    const colNames = [
+      'EMPLOYEE ID','EMPLOYEE NAME','BONUSES','ABS','LATE/UT/OB',
+      'ADJ (+)','ADJ (-)','Total Adjustments','Net Pay'
+    ];
+    colNames.forEach(name => {
+      const idx = headers.findIndex(h => h.toUpperCase() === name.toUpperCase());
+      col[name] = idx;
+    });
+
+    // Validate key columns exist
+    if (col['EMPLOYEE ID'] === -1 || col['Net Pay'] === -1) {
+      alert('Could not find required columns (EMPLOYEE ID, Net Pay). Please check this is a valid Eezi export.');
+      return;
+    }
+
+    importParsed = [];
+    for (let i = 1; i < lines.length; i++) {
+      const fields = parseCSVLine(lines[i]);
+      const empId   = (fields[col['EMPLOYEE ID']] || '').replace(/"/g,'').trim();
+      const empName = (fields[col['EMPLOYEE NAME']] || '').replace(/"/g,'').trim();
+
+      // Skip TOTAL row and blank rows
+      if (!empId || empName.toUpperCase() === 'TOTAL') continue;
+
+      const netPay      = cleanNum(fields[col['Net Pay']]);
+      const absent      = cleanNum(fields[col['ABS']]);
+      const lateUT      = cleanNum(fields[col['LATE/UT/OB']]);
+      const bonuses     = cleanNum(fields[col['BONUSES']]);
+      const adjPos      = cleanNum(fields[col['ADJ (+)']]);
+      const adjNeg      = cleanNum(fields[col['ADJ (-)']]);
+      const totalAdj    = cleanNum(fields[col['Total Adjustments']]);
+
+      // Build notes string from non-zero values only
+      const noteParts = [];
+
+      // Group 1: ABS, Late/UT/OB, Bonuses
+      if (absent  !== 0) noteParts.push('• Absent: ' + absent.toLocaleString('en-PH', {minimumFractionDigits:2}));
+      if (lateUT  !== 0) noteParts.push('• Late/UT/OB: ' + lateUT.toLocaleString('en-PH', {minimumFractionDigits:2}));
+      if (bonuses !== 0) noteParts.push('• Bonuses: ' + bonuses.toLocaleString('en-PH', {minimumFractionDigits:2}));
+
+      // Group 2: Positive Adjustment
+      if (adjPos  !== 0) noteParts.push('• Positive Adj: +' + adjPos.toLocaleString('en-PH', {minimumFractionDigits:2}));
+
+      // Group 3: Negative Adjustment
+      if (adjNeg  !== 0) noteParts.push('• Negative Adj: ' + adjNeg.toLocaleString('en-PH', {minimumFractionDigits:2}));
+      if (totalAdj !== 0) noteParts.push('• Total Adj: ' + totalAdj.toLocaleString('en-PH', {minimumFractionDigits:2}));
+
+      importParsed.push({
+        empId, empName, netPay,
+        notes: noteParts.join('\n'),
+      });
+    }
+
+    renderImportPreview();
+  };
+  reader.readAsText(file);
+}
+
+function renderImportPreview() {
+  if (!importParsed.length) {
+    alert('No valid employee rows found in the CSV.');
+    return;
+  }
+
+  const employees = PERIODS[currentPeriod].employees;
+  let matched = 0, unmatched = 0;
+
+  let html = '<table style="width:100%;border-collapse:collapse">' +
+    '<thead><tr style="background:var(--black2)">' +
+    '<th style="padding:6px 10px;text-align:left;color:var(--muted);font-size:10px;letter-spacing:.5px">ID</th>' +
+    '<th style="padding:6px 10px;text-align:left;color:var(--muted);font-size:10px;letter-spacing:.5px">NAME</th>' +
+    '<th style="padding:6px 10px;text-align:right;color:var(--muted);font-size:10px;letter-spacing:.5px">NET PAY</th>' +
+    '<th style="padding:6px 10px;text-align:left;color:var(--muted);font-size:10px;letter-spacing:.5px">NOTES</th>' +
+    '<th style="padding:6px 10px;text-align:center;color:var(--muted);font-size:10px;letter-spacing:.5px">MATCH</th>' +
+    '</tr></thead><tbody>';
+
+  importParsed.forEach(row => {
+    const found = employees.find(e => e.id.toUpperCase() === row.empId.toUpperCase());
+    if (found) matched++; else unmatched++;
+    const matchCell = found
+      ? '<span style="color:#4ade80;font-weight:700">✓ Found</span>'
+      : '<span style="color:#ef4444;font-weight:700">✗ No match</span>';
+    const rowBg = found ? '' : 'background:rgba(239,68,68,.05)';
+    html += '<tr style="border-top:1px solid var(--border);' + rowBg + '">' +
+      '<td style="padding:6px 10px;color:var(--muted);font-size:11px">' + row.empId + '</td>' +
+      '<td style="padding:6px 10px;color:var(--white);font-size:11px">' + row.empName + '</td>' +
+      '<td style="padding:6px 10px;text-align:right;color:#4ade80;font-weight:600;font-size:11px">₱' + row.netPay.toLocaleString('en-PH', {minimumFractionDigits:2}) + '</td>' +
+      '<td style="padding:6px 10px;color:var(--muted);font-size:10px;max-width:180px">' + (row.notes || '<span style="color:#333">—</span>') + '</td>' +
+      '<td style="padding:6px 10px;text-align:center">' + matchCell + '</td>' +
+      '</tr>';
+  });
+
+  html += '</tbody></table>';
+  document.getElementById('importPreviewTable').innerHTML = html;
+  document.getElementById('importSummary').innerHTML =
+    '<span style="color:#4ade80">✓ ' + matched + ' employees matched</span>' +
+    (unmatched ? ' &nbsp;·&nbsp; <span style="color:#ef4444">✗ ' + unmatched + ' unmatched (will be skipped)</span>' : '') +
+    ' &nbsp;·&nbsp; <span style="color:var(--muted)">Importing into: <strong style="color:var(--orange)">' + PERIODS[currentPeriod].schedule + '</strong></span>';
+
+  document.getElementById('importPreview').style.display = 'block';
+  document.getElementById('importConfirmBtn').style.display = matched > 0 ? 'inline-flex' : 'none';
+}
+
+function confirmImport() {
+  if (!importParsed.length) return;
+  const employees = PERIODS[currentPeriod].employees;
+  snapshot('Eezi CSV import — ' + PERIODS[currentPeriod].schedule);
+
+  let applied = 0;
+  importParsed.forEach(row => {
+    const emp = employees.find(e => e.id.toUpperCase() === row.empId.toUpperCase());
+    if (!emp) return;
+    emp.comp    = row.netPay;
+    emp.remarks = row.notes;
+    applied++;
+  });
+
+  persistData();
+  closeImportModal();
+  render();
+  showUndoToast('✓ Imported ' + applied + ' employees from Eezi CSV');
+}
+
+// ── Split Hours Modal ─────────────────────────────────────────────
+let splitIndex = -1;
+
+function openSplitModal(i) {
+  splitIndex = i;
+  const e = PERIODS[currentPeriod].employees[i];
+  const ptDh = e.dailyHrs || 4;
+
+  document.getElementById('splitModalSub').textContent =
+    e.name + ' — enter days worked under each employment type for this cut-off.';
+  document.getElementById('sp_clear').checked = false;
+
+  // Pre-fill from existing split or profile defaults
+  const sp = e.split;
+  document.getElementById('sp_ft_days').value  = sp ? sp.ftDays  : '';
+  document.getElementById('sp_pt_days').value  = sp ? sp.ptDays  : '';
+  document.getElementById('sp_pt_daily').value = sp ? sp.ptDailyHrs : ptDh;
+  calcSplitPreview();
+  document.getElementById('splitModal').classList.add('open');
+}
+
+function closeSplitModal() {
+  document.getElementById('splitModal').classList.remove('open');
+  splitIndex = -1;
+}
+
+function calcSplitPreview() {
+  const e = splitIndex >= 0 ? PERIODS[currentPeriod].employees[splitIndex] : null;
+  const ptDh = parseFloat(document.getElementById('sp_pt_daily').value) || (e ? (e.dailyHrs || 4) : 4);
+  const ftDays = parseFloat(document.getElementById('sp_ft_days').value) || 0;
+  const ptDays = parseFloat(document.getElementById('sp_pt_days').value) || 0;
+  const ftHrs  = ftDays * 8;
+  const ptHrs  = ptDays * ptDh;
+  document.getElementById('sp_ft_hrs').textContent = ftHrs;
+  document.getElementById('sp_pt_hrs').textContent = ptHrs;
+  document.getElementById('sp_total').textContent  = (ftHrs + ptHrs) + ' hrs';
+}
+
+function saveSplit() {
+  if (splitIndex < 0) return;
+  const e = PERIODS[currentPeriod].employees[splitIndex];
+  snapshot('Split hours — ' + e.name);
+
+  if (document.getElementById('sp_clear').checked) {
+    delete e.split;
+  } else {
+    const ftDays    = parseFloat(document.getElementById('sp_ft_days').value)  || 0;
+    const ptDays    = parseFloat(document.getElementById('sp_pt_days').value)  || 0;
+    const ptDailyHrs = parseFloat(document.getElementById('sp_pt_daily').value) || e.dailyHrs || 4;
+    e.split = { ftDays, ptDays, ptDailyHrs };
+  }
+
+  persistData();
+  closeSplitModal();
+  render();
+  showUndoToast('⚡ Split hours saved for ' + e.name);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const sm = document.getElementById('splitModal');
+  if (sm) sm.addEventListener('click', e => { if (e.target === sm) closeSplitModal(); });
+});
+
+// ── localStorage Persistence ──────────────────────────────────────
+const LS_KEY = 'kuya_payroll_v1';
+
+function persistData() {
+  try {
+    const payload = {
+      periodOrder,
+      currentPeriod,
+      periods: PERIODS
+    };
+    localStorage.setItem(LS_KEY, JSON.stringify(payload));
+  } catch(e) {
+    console.warn('Could not save to localStorage:', e);
+  }
+}
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return false;
+    const saved = JSON.parse(raw);
+    if (!saved || !saved.periods) return false;
+
+    // Restore into live variables
+    periodOrder = saved.periodOrder || periodOrder;
+    currentPeriod = saved.currentPeriod || currentPeriod;
+    // Merge saved periods into PERIODS (keeps default structure if keys missing)
+    Object.keys(saved.periods).forEach(k => { PERIODS[k] = saved.periods[k]; });
+    // Remove any keys not in saved (e.g. deleted periods)
+    Object.keys(PERIODS).forEach(k => { if (!saved.periods[k]) delete PERIODS[k]; });
+    return true;
+  } catch(e) {
+    console.warn('Could not load from localStorage:', e);
+    return false;
+  }
+}
+
+function clearSavedData() {
+  if (!confirm('This will wipe ALL saved data from this browser and restore the original template. Are you sure?')) return;
+  localStorage.removeItem(LS_KEY);
+  location.reload();
+}
+
+// ── Init ──────────────────────────────────────────────────────────
+const hadSavedData = loadData();
+document.getElementById('genDate').textContent = 'Generated: ' + new Date().toLocaleDateString('en-PH',{year:'numeric',month:'long',day:'numeric'});
+rebuildDropdown();
+rebuildBillingDropdown();
+document.getElementById('periodSelect').value = currentPeriod;
+render();
+updateUndoBtn();
+showStorageBadge(hadSavedData);
+</script>
+
+<!-- Storage status badge -->
+<div id="storageBadge" style="display:none;position:fixed;bottom:70px;left:50%;transform:translateX(-50%);font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:600;padding:8px 18px;border-radius:30px;border:1px solid;box-shadow:0 4px 20px rgba(0,0,0,.5);opacity:1;transition:opacity .4s;pointer-events:none;z-index:9999;white-space:nowrap;align-items:center;gap:6px"></div>
+
+<!-- Undo toast -->
+<div id="undoToast" style="position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(10px);background:#0f0f0f;border:1px solid #f5931e;color:#f5931e;font-family:Plus Jakarta Sans,sans-serif;font-size:12px;font-weight:600;padding:10px 20px;border-radius:30px;box-shadow:0 4px 24px rgba(0,0,0,.7);opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;z-index:9999;white-space:nowrap"></div>
+
+
+</body></html>
