@@ -2916,6 +2916,8 @@ function switchPeriod(k) {
   currentPeriod = k; editIndex = -1;
   document.getElementById('empPanel').classList.remove('open');
   document.getElementById('notesPanel').classList.remove('open');
+  const sel = document.getElementById('periodSelect');
+  if (sel) sel.value = k;
   persistData();
   render();
 }
@@ -3535,13 +3537,16 @@ function clearSavedData() {
   location.reload();
 }
 
-// ── Init ────────────────
-
-// Init
+// ── Init ─────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  if (!loadData()) { render(); }
-  else { render(); }
+  const hadData = loadData();
+  rebuildDropdown();
   rebuildBillingDropdown();
+  const sel = document.getElementById('periodSelect');
+  if (sel) sel.value = currentPeriod;
+  render();
+  showStorageBadge(hadData);
+  updateUndoBtn();
 });
 </script>
 </body>
