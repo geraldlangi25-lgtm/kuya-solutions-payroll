@@ -251,7 +251,8 @@
   <!-- Controls -->
   <div class="controls no-print">
     <button class="btn btn-orange" onclick="openAddEmployee()">＋ Add Employee</button>
-    <button class="btn btn-purple" onclick="openNewScheduleModal()">＋ New Schedule</button>
+<button class="btn btn-purple" onclick="openNewScheduleModal()">＋ New Schedule</button>
+<button class="btn btn-red" onclick="deleteCurrentSchedule()" style="background:#7f1d1d;color:#fca5a5;border:1px solid #991b1b">🗑 Delete Schedule</button>
     <button class="btn btn-blue" onclick="openImportModal()">⬆ Import Eezi CSV</button>
     <div class="ctl-sep"></div>
     <button class="btn btn-yellow" onclick="toggleNotes()">📝 Period Notes</button>
@@ -2955,6 +2956,27 @@ function createSchedule() {
   render();
 }
 document.getElementById('scheduleModal').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
+
+// ── Delete Schedule ───────────────────────────────────────────────
+function deleteCurrentSchedule() {
+  if (periodOrder.length <= 1) {
+    alert('You must have at least one pay schedule. Add a new one before deleting this one.');
+    return;
+  }
+  const name = PERIODS[currentPeriod].schedule;
+  if (!confirm('Delete "' + name + '"? This cannot be undone.')) return;
+  snapshot('Delete schedule — ' + name);
+  const idx = periodOrder.indexOf(currentPeriod);
+  periodOrder.splice(idx, 1);
+  delete PERIODS[currentPeriod];
+  // Switch to nearest remaining period
+  currentPeriod = periodOrder[Math.min(idx, periodOrder.length - 1)];
+  rebuildDropdown();
+  rebuildBillingDropdown();
+  document.getElementById('periodSelect').value = currentPeriod;
+  persistData();
+  render();
+}
 
 // ── Tab switcher ──────────────────────────────────────────────────
 function switchTab(tab) {
