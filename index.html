@@ -16,7 +16,7 @@
   }
   *{margin:0;padding:0;box-sizing:border-box}
   body{background:var(--black);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;color:var(--white);min-height:100vh;padding:32px 20px}
-  .page{max-width:1200px;margin:0 auto}
+  .page{max-width:1400px;margin:0 auto}
 
   /* Banner */
   .banner{background:var(--black2);border:1px solid var(--border);border-bottom:none;border-radius:16px 16px 0 0;padding:24px 32px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
@@ -254,6 +254,7 @@
   <div class="controls no-print">
     <button class="btn btn-orange" onclick="openAddEmployee()">＋ Add Employee</button>
     <button class="btn btn-purple" onclick="openNewScheduleModal()">＋ New Schedule</button>
+    <button class="btn btn-outline" onclick="openEditScheduleModal()" style="color:#a5b4fc;border-color:#4338ca" title="Edit current schedule name and dates">✎ Edit Schedule</button>
     <button class="btn btn-blue" onclick="openImportModal()">⬆ Import Eezi CSV</button>
     <div class="ctl-sep"></div>
     <button class="btn btn-yellow" onclick="toggleNotes()">📝 Period Notes</button>
@@ -1079,6 +1080,33 @@ function createSchedule() {
 }
 document.getElementById('scheduleModal').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
 
+// ── Edit Schedule ─────────────────────────────────────────────────
+function openEditScheduleModal() {
+  const p = PERIODS[currentPeriod];
+  document.getElementById('es_name').value  = p.schedule || '';
+  document.getElementById('es_dates').value = p.label    || '';
+  document.getElementById('editScheduleModal').classList.add('open');
+}
+function closeEditScheduleModal() {
+  document.getElementById('editScheduleModal').classList.remove('open');
+}
+function saveEditSchedule() {
+  const name  = document.getElementById('es_name').value.trim();
+  const dates = document.getElementById('es_dates').value.trim();
+  if (!name)  { alert('Schedule name cannot be empty.'); return; }
+  if (!dates) { alert('Pay period dates cannot be empty.'); return; }
+  snapshot('Edit schedule — ' + PERIODS[currentPeriod].schedule);
+  PERIODS[currentPeriod].schedule = name;
+  PERIODS[currentPeriod].label    = dates;
+  closeEditScheduleModal();
+  rebuildDropdown();
+  rebuildBillingDropdown();
+  document.getElementById('periodSelect').value = currentPeriod;
+  persistData();
+  render();
+  showUndoToast('✓ Schedule updated');
+}
+
 // ── Tab switcher ──────────────────────────────────────────────────
 function switchTab(tab) {
   ['payroll','billing'].forEach(t => {
@@ -1091,12 +1119,26 @@ function switchTab(tab) {
 // ── Monthly Billing ───────────────────────────────────────────────
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-function extractMonth(scheduleStr) {
-  // Match first month name found in the schedule string
-  for (const m of MONTHS) {
-    if (scheduleStr.includes(m)) return m;
-  }
+function extractMonth(str) {
+  if (!str) return null;
+  for (const m of MONTHS) { if (str.includes(m)) return m; }
   return null;
+}
+
+function buildBillingMonths() {
+  // Group periods by the month in their pay period LABEL (dates), not schedule name
+  // e.g. label "March 16–31, 2026" → March
+  // e.g. label "March 1-15, 2026"  → March
+  // This correctly groups "April 5th Pay Schedule" whose label says "March 16–31" → March
+  const months = {};
+  periodOrder.forEach(k => {
+    const p = PERIODS[k];
+    const m = extractMonth(p.label) || extractMonth(p.schedule);
+    if (!m) return;
+    if (!months[m]) months[m] = [];
+    months[m].push(k);
+  });
+  return months;
 }
 
 function getCalcHrs(e) {
@@ -1109,18 +1151,7 @@ function getCalcHrs(e) {
   return dw > 0 ? dw * dh : (e.hrs || 0);
 }
 
-function buildBillingMonths() {
-  // Group periods by detected month
-  const months = {};
-  periodOrder.forEach(k => {
-    const p = PERIODS[k];
-    const m = extractMonth(p.schedule);
-    if (!m) return;
-    if (!months[m]) months[m] = [];
-    months[m].push(k);
-  });
-  return months;
-}
+
 
 function rebuildBillingDropdown() {
   const months = buildBillingMonths();
@@ -1564,6 +1595,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (sm) sm.addEventListener('click', e => { if (e.target === sm) closeSplitModal(); });
   const cm = document.getElementById('cloudSetupModal');
   if (cm) cm.addEventListener('click', e => { if (e.target === cm) closeCloudSetup(); });
+  const em = document.getElementById('editScheduleModal');
+  if (em) em.addEventListener('click', e => { if (e.target === em) closeEditScheduleModal(); });
 });
 
 // ── Cloud Sync (JSONBin.io) + localStorage fallback ───────────────
@@ -1815,6 +1848,27 @@ showStorageBadge(hadLocal || hasCloud);
 
 <!-- Undo toast -->
 <div id="undoToast" style="position:fixed;bottom:36px;left:50%;transform:translateX(-50%) translateY(10px);background:#0f0f0f;border:1px solid #f5931e;color:#f5931e;font-family:Plus Jakarta Sans,sans-serif;font-size:12px;font-weight:600;padding:10px 20px;border-radius:30px;box-shadow:0 4px 24px rgba(0,0,0,.7);opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;z-index:9999;white-space:nowrap"></div>
+
+<!-- Edit Schedule Modal -->
+<div class="modal-overlay" id="editScheduleModal">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-title">✎ Edit Pay Schedule</div>
+    <div class="modal-sub">Update the name and pay period dates for the currently selected schedule. This also fixes which billing month it appears under.</div>
+    <div class="modal-field">
+      <label>Schedule Name <span style="color:#ef4444">*</span></label>
+      <input id="es_name" placeholder="e.g. March 20th Pay Schedule">
+    </div>
+    <div class="modal-field">
+      <label>Pay Period Dates <span style="color:#ef4444">*</span></label>
+      <input id="es_dates" placeholder="e.g. March 16–31, 2026">
+    </div>
+    <div class="modal-note">💡 The billing month is detected from the <strong>Pay Period Dates</strong> — make sure the dates contain the correct month name (e.g. "March 16–31, 2026").</div>
+    <div class="modal-actions" style="margin-top:18px">
+      <button class="btn btn-orange" onclick="saveEditSchedule()">✓ Save Changes</button>
+      <button class="btn btn-outline" onclick="closeEditScheduleModal()">Cancel</button>
+    </div>
+  </div>
+</div>
 
 <!-- Cloud Setup Modal -->
 <div class="modal-overlay" id="cloudSetupModal">
