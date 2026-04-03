@@ -1,8 +1,10 @@
-<html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KUYA Solutions – Payroll Summary</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&amp;family=Syne:wght@700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
   :root {
     --black:#050505; --black2:#0f0f0f; --black3:#161616; --black4:#1e1e1e;
@@ -13,8 +15,8 @@
     --pt-color:#fb923c; --pt-bg:#1c0f00; --ft-color:#38bdf8; --ft-bg:#001a2e;
   }
   *{margin:0;padding:0;box-sizing:border-box}
-  body{background:var(--black);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;color:var(--white);min-height:100vh;padding:32px 40px}
-  .page{max-width:1600px;margin:0 auto}
+  body{background:var(--black);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;color:var(--white);min-height:100vh;padding:32px 20px}
+  .page{max-width:1200px;margin:0 auto}
 
   /* Banner */
   .banner{background:var(--black2);border:1px solid var(--border);border-bottom:none;border-radius:16px 16px 0 0;padding:24px 32px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
@@ -226,17 +228,17 @@
     </div>
     <div class="banner-right">
       <div class="period-label">Pay Schedule</div>
-      <select class="period-pick" id="periodSelect" onchange="switchPeriod(this.value)"><option value="jan5">January 5th Pay Schedule</option><option value="jan20">January 20th Pay Schedule</option><option value="feb5">February 5th Pay Schedule</option><option value="feb20">February 20th Pay Schedule</option><option value="mar5">March 5th Pay Schedule</option><option value="period_1773758331475">March 20th Payroll</option></select>
-      <div class="gen-date" id="genDate">Generated: March 17, 2026</div>
+      <select class="period-pick" id="periodSelect" onchange="switchPeriod(this.value)"></select>
+      <div class="gen-date" id="genDate"></div>
     </div>
   </div>
 
   <!-- KPI -->
   <div class="kpi-bar">
-    <div class="kpi"><div class="kpi-label">Employees</div><div class="kpi-val o" id="kpiCount">11</div><div class="kpi-sub">this cut-off</div></div>
-    <div class="kpi"><div class="kpi-label">Total Hours</div><div class="kpi-val w" id="kpiHours">698</div><div class="kpi-sub">billable hours</div></div>
-    <div class="kpi"><div class="kpi-label">Total Compensation</div><div class="kpi-val g" id="kpiTotal">₱247.8K</div><div class="kpi-sub">all paid employees</div></div>
-    <div class="kpi"><div class="kpi-label">Pending / Blank</div><div class="kpi-val r" id="kpiPending">0</div><div class="kpi-sub">compensation missing</div></div>
+    <div class="kpi"><div class="kpi-label">Employees</div><div class="kpi-val o" id="kpiCount">—</div><div class="kpi-sub">this cut-off</div></div>
+    <div class="kpi"><div class="kpi-label">Total Hours</div><div class="kpi-val w" id="kpiHours">—</div><div class="kpi-sub">billable hours</div></div>
+    <div class="kpi"><div class="kpi-label">Total Compensation</div><div class="kpi-val g" id="kpiTotal">—</div><div class="kpi-sub">all paid employees</div></div>
+    <div class="kpi"><div class="kpi-label">Pending / Blank</div><div class="kpi-val r" id="kpiPending">—</div><div class="kpi-sub">compensation missing</div></div>
   </div>
 
   <!-- Tab Bar -->
@@ -251,24 +253,25 @@
   <!-- Controls -->
   <div class="controls no-print">
     <button class="btn btn-orange" onclick="openAddEmployee()">＋ Add Employee</button>
-<button class="btn btn-purple" onclick="openNewScheduleModal()">＋ New Schedule</button>
-<button class="btn btn-red" onclick="deleteCurrentSchedule()" style="background:#7f1d1d;color:#fca5a5;border:1px solid #991b1b">🗑 Delete Schedule</button>
+    <button class="btn btn-purple" onclick="openNewScheduleModal()">＋ New Schedule</button>
     <button class="btn btn-blue" onclick="openImportModal()">⬆ Import Eezi CSV</button>
     <div class="ctl-sep"></div>
     <button class="btn btn-yellow" onclick="toggleNotes()">📝 Period Notes</button>
     <div class="ctl-sep"></div>
     <button class="btn btn-red" onclick="clearPeriod()">🗑 Clear Period</button>
     <div class="ctl-sep"></div>
-    <button class="btn btn-outline" id="undoBtn" onclick="undo()" disabled="" style="opacity:0.35" title="Nothing to undo">↩ Undo</button>
+    <button class="btn btn-outline" id="undoBtn" onclick="undo()" disabled style="opacity:0.35" title="Nothing to undo">↩ Undo</button>
     <div class="ctl-sep"></div>
     <button class="btn btn-green" onclick="window.print()">⎙ Print / PDF</button>
     <button class="btn btn-green" onclick="exportHTML()" style="background:#166534" title="Download a copy of this file with all your current data saved inside">💾 Export / Save File</button>
+    <div class="ctl-sep"></div>
+    <button class="btn" onclick="openCloudSetup()" style="background:#1e1b4b;color:#a5b4fc;border:1px solid #4338ca" title="Connect cloud sync so your whole team sees live changes">☁ Cloud Sync</button>
     <div class="ctl-sep"></div>
     <button class="btn btn-outline" onclick="clearSavedData()" style="color:#ef4444;border-color:#ef4444;opacity:0.6" title="Wipe browser storage and restore original template data">↺ Reset to Default</button>
   </div>
 
   <div class="card">
-    <div class="period-bar">Pay Period: <span id="periodLabel">March 1-15, 2026</span> &nbsp;·&nbsp; Schedule: <span id="scheduleLabel">March 20th Payroll</span></div>
+    <div class="period-bar">Pay Period: <span id="periodLabel">—</span> &nbsp;·&nbsp; Schedule: <span id="scheduleLabel">—</span></div>
 
     <!-- Period Notes -->
     <div class="notes-panel" id="notesPanel">
@@ -281,7 +284,7 @@
     </div>
 
     <!-- Print-only period notes -->
-    <div class="notes-print" id="notesPrint" style="display: none;">
+    <div class="notes-print" id="notesPrint">
       <div class="notes-print-title">📝 Period Notes</div>
       <div id="notesPrintText"></div>
     </div>
@@ -296,7 +299,7 @@
         <div class="field"><label>Type <span style="color:#ef4444">*</span></label><select id="f_type" onchange="onTypeChange()"><option value="PT">PT – Part Time</option><option value="FT">FT – Full Time</option></select></div>
         <div class="field" id="dailyHrsField"><label>Daily Hours <span style="color:var(--muted);font-weight:400">(PT only)</span> <span style="color:#ef4444">*</span></label><input id="f_daily" type="number" min="1" max="7" placeholder="e.g. 4" oninput="autoCalcHrs()"><div class="field-error-msg" id="err_daily">Required for PT employees</div></div>
         <div class="field"><label>Days Worked</label><input id="f_days" placeholder="10/10" oninput="autoCalcHrs()"></div>
-        <div class="field"><label>Billable Hours <span style="color:var(--orange);font-size:10px" id="hrsAutoLabel">auto</span></label><input id="f_hours" type="number" placeholder="auto-calculated" readonly="" style="background:var(--black3);color:var(--orange);cursor:not-allowed"></div>
+        <div class="field"><label>Billable Hours <span style="color:var(--orange);font-size:10px" id="hrsAutoLabel">auto</span></label><input id="f_hours" type="number" placeholder="auto-calculated" readonly style="background:var(--black3);color:var(--orange);cursor:not-allowed"></div>
         <div class="field"><label>Monthly Rate (₱) <span style="color:#ef4444">*</span></label><input id="f_rate" type="number" placeholder="25000"><div class="field-error-msg" id="err_rate">Required</div></div>
         <div class="field"><label>Compensation (₱)</label><input id="f_comp" type="number" placeholder="12500"></div>
         <div class="field"><label>Bank Name <span style="color:#ef4444">*</span></label><input id="f_bank" placeholder="GCash / BPI / BDO..."><div class="field-error-msg" id="err_bank">Required</div></div>
@@ -336,284 +339,12 @@
             <th class="no-print" style="width:52px"></th>
           </tr>
         </thead>
-        <tbody id="payBody"><tr><td colspan="11" style="background:var(--black3);padding:6px 14px;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--ft-color);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">Full Time <span style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0">(6)</span></td></tr><tr>
-      <td>
-        <div class="emp-id">KuyaVA21</div>
-        <div class="emp-name" style="">Aum, Maria Kristina</div>
-      </td>
-      <td><span class="badge badge-ft">FT</span></td>
-      <td style="text-align:center"><span style="font-size:11px;background:var(--black3);border:1px solid var(--border);padding:2px 8px;border-radius:12px;color:var(--ft-color)">8 hrs</span></td>
-      <td style="color:var(--muted)">10</td>
-      <td class="r"><span style="color:var(--orange);font-weight:700">80</span><span style="font-size:9px;color:var(--muted);margin-left:3px">auto</span></td>
-      <td style="font-size:11px;color:var(--muted)">Php 50240/month</td>
-      <td class="r"><span class="comp-val">₱ 25,120.00</span></td>
-      <td><div class="bank-cell" onmouseenter="positionTooltip(event,0)">
-    <div class="bank-label">🏦 <span>BPI - Bank of Philippine Islands</span></div>
-    <div class="bank-tooltip" id="btt_0" style="left: 1099px; top: 470px;">
-      <div class="bank-tooltip-title">🏦 BPI - Bank of Philippine Islands</div>
-      <div class="bank-tooltip-row"><span class="bank-tooltip-key">Account No.</span><span class="bank-tooltip-val">2519243841</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Account Name</span><span class="bank-tooltip-val">MARIA KRISTINA V. AUM</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Country</span><span class="bank-tooltip-val">Philippines</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">City</span><span class="bank-tooltip-val">Surigao City</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Address</span><span class="bank-tooltip-val">359 OO497 Burgos Gonzales St., Surigao City, Surigao del Norte, Philippines 8400</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Postal Code</span><span class="bank-tooltip-val">8400</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Email</span><span class="bank-tooltip-val"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1767767a727b767a766e67766d57707a767e7b3974787a">[email&#160;protected]</a></span></div>
-    </div>
-  </div></td>
-      <td></td>
-      <td class="va-note-cell"><span class="va-note-add no-print" onclick="openVANote(0)">＋ Add Note</span></td>
-      <td class="no-print" style="text-align:center;white-space:nowrap">
-        <button onclick="openSplitModal(0)" style="font-size:10px;padding:2px 5px;border-radius:4px;cursor:pointer;background:none;border:1px solid #222;color:#444" title="Add split hours">⚡</button>
-        <button onclick="editRow(0)" style="background:none;border:none;cursor:pointer;color:#444;font-size:12px;padding:2px 5px;border:1px solid #222;border-radius:4px" title="Edit employee">✎</button>
-        <button onclick="delRow(0)" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:12px;padding:2px 5px;border:1px solid #2d0a0a;border-radius:4px" title="Delete">✕</button>
-      </td></tr><tr style="background: rgb(26, 20, 0);">
-      <td>
-        <div class="emp-id">HR Manager</div>
-        <div class="emp-name" style="color:var(--note-yellow);opacity:0.65">Langi, Gerald <span style="font-size:9px;background:#0f0f0f;border:1px solid #333;color:#666;padding:1px 5px;border-radius:8px;font-weight:600;letter-spacing:.3px;vertical-align:middle">non-billable</span></div>
-      </td>
-      <td><span class="badge badge-ft">FT</span></td>
-      <td style="text-align:center"><span style="font-size:11px;background:var(--black3);border:1px solid var(--border);padding:2px 8px;border-radius:12px;color:var(--ft-color)">8 hrs</span></td>
-      <td style="color:var(--muted)">10</td>
-      <td class="r"><span style="color:var(--orange);font-weight:700">80</span><span style="font-size:9px;color:var(--muted);margin-left:3px">auto</span></td>
-      <td style="font-size:11px;color:var(--muted)">Php 80000/month</td>
-      <td class="r"><span class="comp-val">₱ 46,500.00</span></td>
-      <td><div class="bank-cell" onmouseenter="positionTooltip(event,1)">
-    <div class="bank-label">🏦 <span>PNB</span></div>
-    <div class="bank-tooltip" id="btt_1">
-      <div class="bank-tooltip-title">🏦 PNB</div>
-      <div class="bank-tooltip-row"><span class="bank-tooltip-key">Account No.</span><span class="bank-tooltip-val">308710051537</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Account Name</span><span class="bank-tooltip-val">Gerald R. Langi</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Country</span><span class="bank-tooltip-val">Philippines</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">City</span><span class="bank-tooltip-val">Dumaguete City</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Address</span><span class="bank-tooltip-val">Brgy. Bantayan</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Postal Code</span><span class="bank-tooltip-val">4600</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Email</span><span class="bank-tooltip-val"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="79110b39120c00180a16150c0d1016170a571a1614">[email&#160;protected]</a></span></div>
-    </div>
-  </div></td>
-      <td></td>
-      <td class="va-note-cell"><div class="va-note-text" onclick="openVANote(1)" style="cursor:pointer" title="Click to edit note">🟡 Positive Adjustment:
-
-VA/Client Retention Bonus: Php 6,500.00</div></td>
-      <td class="no-print" style="text-align:center;white-space:nowrap">
-        <button onclick="openSplitModal(1)" style="font-size:10px;padding:2px 5px;border-radius:4px;cursor:pointer;background:none;border:1px solid #222;color:#444" title="Add split hours">⚡</button>
-        <button onclick="editRow(1)" style="background:none;border:none;cursor:pointer;color:#444;font-size:12px;padding:2px 5px;border:1px solid #222;border-radius:4px" title="Edit employee">✎</button>
-        <button onclick="delRow(1)" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:12px;padding:2px 5px;border:1px solid #2d0a0a;border-radius:4px" title="Delete">✕</button>
-      </td></tr><tr style="background: rgb(26, 20, 0);">
-      <td>
-        <div class="emp-id">KuyaVA25</div>
-        <div class="emp-name" style="color:var(--note-yellow)">Maglines, Rona</div>
-      </td>
-      <td><span class="badge badge-ft">FT</span></td>
-      <td style="text-align:center"><span style="font-size:11px;background:var(--black3);border:1px solid var(--border);padding:2px 8px;border-radius:12px;color:var(--ft-color)">8 hrs</span></td>
-      <td style="color:var(--muted)">10</td>
-      <td class="r"><span style="color:var(--orange);font-weight:700">80</span><span style="font-size:9px;color:var(--muted);margin-left:3px">auto</span></td>
-      <td style="font-size:11px;color:var(--muted)">Php 70000/month</td>
-      <td class="r"><span class="comp-val">₱ 26,250.00</span></td>
-      <td><div class="bank-cell" onmouseenter="positionTooltip(event,2)">
-    <div class="bank-label">🏦 <span>BPI - Bank of Philippine Islands</span></div>
-    <div class="bank-tooltip" id="btt_2" style="left: 1018px; top: 599px;">
-      <div class="bank-tooltip-title">🏦 BPI - Bank of Philippine Islands</div>
-      <div class="bank-tooltip-row"><span class="bank-tooltip-key">Account No.</span><span class="bank-tooltip-val">09524772185</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Account Name</span><span class="bank-tooltip-val">RONA MAGLINES</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Country</span><span class="bank-tooltip-val">Philippines</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">City</span><span class="bank-tooltip-val">Davao City</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Address</span><span class="bank-tooltip-val">Door 6, San Francisco St., Buhangin, Davao City, Philippines 8000</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Postal Code</span><span class="bank-tooltip-val">8000</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Email</span><span class="bank-tooltip-val"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4f222e282326212a3c3d20212e0f28222e2623612c2022">[email&#160;protected]</a></span></div>
-    </div>
-  </div></td>
-      <td></td>
-      <td class="va-note-cell"><div class="va-note-text" onclick="openVANote(2)" style="cursor:pointer" title="Click to edit note">🟡 Negative Adjustment:
-
-Salary Holding Policy - New Contract (1/4) = Php 8,750.00</div></td>
-      <td class="no-print" style="text-align:center;white-space:nowrap">
-        <button onclick="openSplitModal(2)" style="font-size:10px;padding:2px 5px;border-radius:4px;cursor:pointer;background:none;border:1px solid #222;color:#444" title="Add split hours">⚡</button>
-        <button onclick="editRow(2)" style="background:none;border:none;cursor:pointer;color:#444;font-size:12px;padding:2px 5px;border:1px solid #222;border-radius:4px" title="Edit employee">✎</button>
-        <button onclick="delRow(2)" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:12px;padding:2px 5px;border:1px solid #2d0a0a;border-radius:4px" title="Delete">✕</button>
-      </td></tr><tr>
-      <td>
-        <div class="emp-id">KuyaVA13</div>
-        <div class="emp-name" style="">Pancho, Flordelyne</div>
-      </td>
-      <td><span class="badge badge-ft">FT</span></td>
-      <td style="text-align:center"><span style="font-size:11px;background:var(--black3);border:1px solid var(--border);padding:2px 8px;border-radius:12px;color:var(--ft-color)">8 hrs</span></td>
-      <td style="color:var(--muted)">10</td>
-      <td class="r"><span style="color:var(--orange);font-weight:700">80</span><span style="font-size:9px;color:var(--muted);margin-left:3px">auto</span></td>
-      <td style="font-size:11px;color:var(--muted)">Php 49000/month</td>
-      <td class="r"><span class="comp-val">₱ 24,500.00</span></td>
-      <td><div class="bank-cell" onmouseenter="positionTooltip(event,3)">
-    <div class="bank-label">🏦 <span>BPI - Bank of Philippine Islands</span></div>
-    <div class="bank-tooltip" id="btt_3" style="left: 1174px; top: 658px;">
-      <div class="bank-tooltip-title">🏦 BPI - Bank of Philippine Islands</div>
-      <div class="bank-tooltip-row"><span class="bank-tooltip-key">Account No.</span><span class="bank-tooltip-val">4039910464</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Account Name</span><span class="bank-tooltip-val">Flordelyne May Pancho</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Country</span><span class="bank-tooltip-val">Philippines</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">City</span><span class="bank-tooltip-val">Davao City</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Address</span><span class="bank-tooltip-val">Blk 3 Lt 4, Lemon Street, Southpointe Homes, Catalunan Grande, Davao City, 8000</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Postal Code</span><span class="bank-tooltip-val">8000</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Email</span><span class="bank-tooltip-val"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a4d4c2c8cbd6c0c1c8ddcac1e4c3c9c5cdc88ac7cbc9">[email&#160;protected]</a></span></div>
-    </div>
-  </div></td>
-      <td></td>
-      <td class="va-note-cell"><span class="va-note-add no-print" onclick="openVANote(3)">＋ Add Note</span></td>
-      <td class="no-print" style="text-align:center;white-space:nowrap">
-        <button onclick="openSplitModal(3)" style="font-size:10px;padding:2px 5px;border-radius:4px;cursor:pointer;background:none;border:1px solid #222;color:#444" title="Add split hours">⚡</button>
-        <button onclick="editRow(3)" style="background:none;border:none;cursor:pointer;color:#444;font-size:12px;padding:2px 5px;border:1px solid #222;border-radius:4px" title="Edit employee">✎</button>
-        <button onclick="delRow(3)" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:12px;padding:2px 5px;border:1px solid #2d0a0a;border-radius:4px" title="Delete">✕</button>
-      </td></tr><tr>
-      <td>
-        <div class="emp-id">KuyaVA04</div>
-        <div class="emp-name" style=";opacity:0.65">Rondina, Mel Adrian <span style="font-size:9px;background:#0f0f0f;border:1px solid #333;color:#666;padding:1px 5px;border-radius:8px;font-weight:600;letter-spacing:.3px;vertical-align:middle">non-billable</span></div>
-      </td>
-      <td><span class="badge badge-ft">FT</span></td>
-      <td style="text-align:center"><span style="font-size:11px;background:var(--black3);border:1px solid var(--border);padding:2px 8px;border-radius:12px;color:var(--ft-color)">8 hrs</span></td>
-      <td style="color:var(--muted)">10</td>
-      <td class="r"><span style="color:var(--orange);font-weight:700">80</span><span style="font-size:9px;color:var(--muted);margin-left:3px">auto</span></td>
-      <td style="font-size:11px;color:var(--muted)">Php 35000/month</td>
-      <td class="r"><span class="comp-val">₱ 17,500.00</span></td>
-      <td><div class="bank-cell" onmouseenter="positionTooltip(event,4)">
-    <div class="bank-label">🏦 <span>Land Bank</span></div>
-    <div class="bank-tooltip" id="btt_4" style="left: 1036px; top: 493px;">
-      <div class="bank-tooltip-title">🏦 Land Bank</div>
-      <div class="bank-tooltip-row"><span class="bank-tooltip-key">Account No.</span><span class="bank-tooltip-val">4476 0129 67</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Account Name</span><span class="bank-tooltip-val">Mel Adrian G. Rondina</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Country</span><span class="bank-tooltip-val">Philippines</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">City</span><span class="bank-tooltip-val">N/A</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Address</span><span class="bank-tooltip-val">N/A</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Postal Code</span><span class="bank-tooltip-val">N/A</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Email</span><span class="bank-tooltip-val">N/A</span></div>
-    </div>
-  </div></td>
-      <td></td>
-      <td class="va-note-cell"><span class="va-note-add no-print" onclick="openVANote(4)">＋ Add Note</span></td>
-      <td class="no-print" style="text-align:center;white-space:nowrap">
-        <button onclick="openSplitModal(4)" style="font-size:10px;padding:2px 5px;border-radius:4px;cursor:pointer;background:none;border:1px solid #222;color:#444" title="Add split hours">⚡</button>
-        <button onclick="editRow(4)" style="background:none;border:none;cursor:pointer;color:#444;font-size:12px;padding:2px 5px;border:1px solid #222;border-radius:4px" title="Edit employee">✎</button>
-        <button onclick="delRow(4)" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:12px;padding:2px 5px;border:1px solid #2d0a0a;border-radius:4px" title="Delete">✕</button>
-      </td></tr><tr>
-      <td>
-        <div class="emp-id">KuyaVA26</div>
-        <div class="emp-name" style="">Velarde, Jinefer</div>
-      </td>
-      <td><span class="badge badge-ft">FT</span></td>
-      <td style="text-align:center"><span style="font-size:11px;background:var(--black3);border:1px solid var(--border);padding:2px 8px;border-radius:12px;color:var(--ft-color)">8 hrs</span></td>
-      <td style="color:var(--muted)">10</td>
-      <td class="r"><span style="color:var(--orange);font-weight:700">80</span><span style="font-size:9px;color:var(--muted);margin-left:3px">auto</span></td>
-      <td style="font-size:11px;color:var(--muted)">Php 70000/month</td>
-      <td class="r"><span class="comp-val">₱ 35,000.00</span></td>
-      <td><div class="bank-cell" onmouseenter="positionTooltip(event,5)">
-    <div class="bank-label">🏦 <span>UnionBank</span></div>
-    <div class="bank-tooltip" id="btt_5" style="left: 1002px; top: 763px;">
-      <div class="bank-tooltip-title">🏦 UnionBank</div>
-      <div class="bank-tooltip-row"><span class="bank-tooltip-key">Account No.</span><span class="bank-tooltip-val">109384345268</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Account Name</span><span class="bank-tooltip-val">Jinefer Velardo</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Country</span><span class="bank-tooltip-val">Philippines</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">City</span><span class="bank-tooltip-val">San Pedro City</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Address</span><span class="bank-tooltip-val">#5 Narra Ave Brgy Narra San Pedro Laguna, Philippines</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Postal Code</span><span class="bank-tooltip-val">4000</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Email</span><span class="bank-tooltip-val"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a6d0c3cac7d4c2c9cccfc8c3c0c3d4e6c1cbc7cfca88c5c9cb">[email&#160;protected]</a></span></div>
-    </div>
-  </div></td>
-      <td></td>
-      <td class="va-note-cell"><span class="va-note-add no-print" onclick="openVANote(5)">＋ Add Note</span></td>
-      <td class="no-print" style="text-align:center;white-space:nowrap">
-        <button onclick="openSplitModal(5)" style="font-size:10px;padding:2px 5px;border-radius:4px;cursor:pointer;background:none;border:1px solid #222;color:#444" title="Add split hours">⚡</button>
-        <button onclick="editRow(5)" style="background:none;border:none;cursor:pointer;color:#444;font-size:12px;padding:2px 5px;border:1px solid #222;border-radius:4px" title="Edit employee">✎</button>
-        <button onclick="delRow(5)" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:12px;padding:2px 5px;border:1px solid #2d0a0a;border-radius:4px" title="Delete">✕</button>
-      </td></tr><tr><td colspan="11" style="background:var(--black3);padding:6px 14px;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--pt-color);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">Part Time <span style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0">(5)</span></td></tr><tr style="background: rgb(26, 20, 0);">
-      <td>
-        <div class="emp-id">Odoo Spec</div>
-        <div class="emp-name" style="color:var(--note-yellow)">Baliño, Evelyn</div>
-      </td>
-      <td><span class="badge badge-pt">PT</span></td>
-      <td style="text-align:center"><span style="font-size:11px;background:var(--black3);border:1px solid var(--border);padding:2px 8px;border-radius:12px;color:var(--pt-color)">4 hrs</span></td>
-      <td style="color:var(--muted)">9.5</td>
-      <td class="r"><span style="color:var(--orange);font-weight:700">38</span><span style="font-size:9px;color:var(--muted);margin-left:3px">auto</span></td>
-      <td style="font-size:11px;color:var(--muted)">Php 35000/month</td>
-      <td class="r"><span class="comp-val">₱ 16,625.00</span></td>
-      <td><div class="bank-cell" onmouseenter="positionTooltip(event,6)">
-    <div class="bank-label">🏦 <span>UnionBank</span></div>
-    <div class="bank-tooltip" id="btt_6" style="left: 1005px; top: 636px;">
-      <div class="bank-tooltip-title">🏦 UnionBank</div>
-      <div class="bank-tooltip-row"><span class="bank-tooltip-key">Account No.</span><span class="bank-tooltip-val">1093 5673 1926</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Account Name</span><span class="bank-tooltip-val">Evelyn Balino/Evelyn Baliño</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Country</span><span class="bank-tooltip-val">Philippines</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">City</span><span class="bank-tooltip-val">Bacoor City</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Address</span><span class="bank-tooltip-val">B6 L8 Yakal St Casimiro Westville Homes Ligas 3 Bacoor Cavite, Philippines 4102</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Postal Code</span><span class="bank-tooltip-val">4102</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Email</span><span class="bank-tooltip-val"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="dbb9bab7b2b5b4beadbe9bbcb6bab2b7f5b8b4b6">[email&#160;protected]</a></span></div>
-    </div>
-  </div></td>
-      <td></td>
-      <td class="va-note-cell"><div class="va-note-text" onclick="openVANote(6)" style="cursor:pointer" title="Click to edit note">🟡 Negative Adjustment:
-
-Half Day = March 6, 2026</div></td>
-      <td class="no-print" style="text-align:center;white-space:nowrap">
-        <button onclick="openSplitModal(6)" style="font-size:10px;padding:2px 5px;border-radius:4px;cursor:pointer;background:none;border:1px solid #222;color:#444" title="Add split hours">⚡</button>
-        <button onclick="editRow(6)" style="background:none;border:none;cursor:pointer;color:#444;font-size:12px;padding:2px 5px;border:1px solid #222;border-radius:4px" title="Edit employee">✎</button>
-        <button onclick="delRow(6)" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:12px;padding:2px 5px;border:1px solid #2d0a0a;border-radius:4px" title="Delete">✕</button>
-      </td></tr><tr>
-      <td>
-        <div class="emp-id">KuyaVA02</div>
-        <div class="emp-name" style="">Dugang, John Kevin</div>
-      </td>
-      <td><span class="badge badge-pt">PT</span></td>
-      <td style="text-align:center"><span style="font-size:11px;background:var(--black3);border:1px solid var(--border);padding:2px 8px;border-radius:12px;color:var(--pt-color)">4 hrs</span></td>
-      <td style="color:var(--muted)">10</td>
-      <td class="r"><span style="color:var(--orange);font-weight:700">40</span><span style="font-size:9px;color:var(--muted);margin-left:3px">auto</span></td>
-      <td style="font-size:11px;color:var(--muted)">Php 34310/month</td>
-      <td class="r"><span class="comp-val">₱ 17,155.00</span></td>
-      <td><div class="bank-cell" onmouseenter="positionTooltip(event,7)">
-    <div class="bank-label">🏦 <span>BPI</span></div>
-    <div class="bank-tooltip" id="btt_7">
-      <div class="bank-tooltip-title">🏦 BPI</div>
-      <div class="bank-tooltip-row"><span class="bank-tooltip-key">Account No.</span><span class="bank-tooltip-val">0209034196</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Account Name</span><span class="bank-tooltip-val">John Kevin Dugang</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Country</span><span class="bank-tooltip-val">Philippines</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">City</span><span class="bank-tooltip-val">Cebu City</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Address</span><span class="bank-tooltip-val">San Carlos</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Postal Code</span><span class="bank-tooltip-val">6000</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Email</span><span class="bank-tooltip-val"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="016b6e696f6a6477686f657466606f6641666c60686d2f626e6c">[email&#160;protected]</a></span></div>
-    </div>
-  </div></td>
-      <td></td>
-      <td class="va-note-cell"><span class="va-note-add no-print" onclick="openVANote(7)">＋ Add Note</span></td>
-      <td class="no-print" style="text-align:center;white-space:nowrap">
-        <button onclick="openSplitModal(7)" style="font-size:10px;padding:2px 5px;border-radius:4px;cursor:pointer;background:none;border:1px solid #222;color:#444" title="Add split hours">⚡</button>
-        <button onclick="editRow(7)" style="background:none;border:none;cursor:pointer;color:#444;font-size:12px;padding:2px 5px;border:1px solid #222;border-radius:4px" title="Edit employee">✎</button>
-        <button onclick="delRow(7)" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:12px;padding:2px 5px;border:1px solid #2d0a0a;border-radius:4px" title="Delete">✕</button>
-      </td></tr><tr>
-      <td>
-        <div class="emp-id">KuyaVA19</div>
-        <div class="emp-name" style="">Esmino, Nicole</div>
-      </td>
-      <td><span class="badge badge-pt">PT</span></td>
-      <td style="text-align:center"><span style="font-size:11px;background:var(--black3);border:1px solid var(--border);padding:2px 8px;border-radius:12px;color:var(--pt-color)">4 hrs</span></td>
-      <td style="color:var(--muted)">10</td>
-      <td class="r"><span style="color:var(--orange);font-weight:700">40</span><span style="font-size:9px;color:var(--muted);margin-left:3px">auto</span></td>
-      <td style="font-size:11px;color:var(--muted)">Php 22500/month</td>
-      <td class="r"><span class="comp-val">₱ 11,250.00</span></td>
-      <td><div class="bank-cell" onmouseenter="positionTooltip(event,8)">
-    <div class="bank-label">🏦 <span>BDO - Banco De Oro</span></div>
-    <div class="bank-tooltip" id="btt_8">
-      <div class="bank-tooltip-title">🏦 BDO - Banco De Oro</div>
-      <div class="bank-tooltip-row"><span class="bank-tooltip-key">Account No.</span><span class="bank-tooltip-val">4050516309</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Account Name</span><span class="bank-tooltip-val">NICOLE CHILL ESMINO</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Country</span><span class="bank-tooltip-val">Philippines</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">City</span><span class="bank-tooltip-val">Quezon City</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Address</span><span class="bank-tooltip-val">Unit A 149 Barangay Lawa, City of Meycauayan, Bulacan, Philippines 3020</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Postal Code</span><span class="bank-tooltip-val">1105</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Email</span><span class="bank-tooltip-val"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="bcd2d5dfd3d0d9dfd4d5d0d092d9cfd1d5d2d3fcdbd1ddd5d092dfd3d1">[email&#160;protected]</a></span></div>
-    </div>
-  </div></td>
-      <td></td>
-      <td class="va-note-cell"><span class="va-note-add no-print" onclick="openVANote(8)">＋ Add Note</span></td>
-      <td class="no-print" style="text-align:center;white-space:nowrap">
-        <button onclick="openSplitModal(8)" style="font-size:10px;padding:2px 5px;border-radius:4px;cursor:pointer;background:none;border:1px solid #222;color:#444" title="Add split hours">⚡</button>
-        <button onclick="editRow(8)" style="background:none;border:none;cursor:pointer;color:#444;font-size:12px;padding:2px 5px;border:1px solid #222;border-radius:4px" title="Edit employee">✎</button>
-        <button onclick="delRow(8)" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:12px;padding:2px 5px;border:1px solid #2d0a0a;border-radius:4px" title="Delete">✕</button>
-      </td></tr><tr>
-      <td>
-        <div class="emp-id">KuyaVA05</div>
-        <div class="emp-name" style="">Fabiliar, Marc</div>
-      </td>
-      <td><span class="badge badge-pt">PT</span></td>
-      <td style="text-align:center"><span style="font-size:11px;background:var(--black3);border:1px solid var(--border);padding:2px 8px;border-radius:12px;color:var(--pt-color)">4 hrs</span></td>
-      <td style="color:var(--muted)">10</td>
-      <td class="r"><span style="color:var(--orange);font-weight:700">40</span><span style="font-size:9px;color:var(--muted);margin-left:3px">auto</span></td>
-      <td style="font-size:11px;color:var(--muted)">Php 24810/month</td>
-      <td class="r"><span class="comp-val">₱ 12,405.00</span></td>
-      <td><div class="bank-cell" onmouseenter="positionTooltip(event,9)">
-    <div class="bank-label">🏦 <span>BPI</span></div>
-    <div class="bank-tooltip" id="btt_9">
-      <div class="bank-tooltip-title">🏦 BPI</div>
-      <div class="bank-tooltip-row"><span class="bank-tooltip-key">Account No.</span><span class="bank-tooltip-val">0646648868</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Account Name</span><span class="bank-tooltip-val">Marc Gersonm Fabillar</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Country</span><span class="bank-tooltip-val">Philippines</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">City</span><span class="bank-tooltip-val">Dumaguete</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Address</span><span class="bank-tooltip-val">Dumaguete</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Postal Code</span><span class="bank-tooltip-val">6200</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Email</span><span class="bank-tooltip-val"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="204d415243464142494c4c415260474d41494c0e434f4d">[email&#160;protected]</a></span></div>
-    </div>
-  </div></td>
-      <td></td>
-      <td class="va-note-cell"><span class="va-note-add no-print" onclick="openVANote(9)">＋ Add Note</span></td>
-      <td class="no-print" style="text-align:center;white-space:nowrap">
-        <button onclick="openSplitModal(9)" style="font-size:10px;padding:2px 5px;border-radius:4px;cursor:pointer;background:none;border:1px solid #222;color:#444" title="Add split hours">⚡</button>
-        <button onclick="editRow(9)" style="background:none;border:none;cursor:pointer;color:#444;font-size:12px;padding:2px 5px;border:1px solid #222;border-radius:4px" title="Edit employee">✎</button>
-        <button onclick="delRow(9)" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:12px;padding:2px 5px;border:1px solid #2d0a0a;border-radius:4px" title="Delete">✕</button>
-      </td></tr><tr style="background: rgb(26, 20, 0);">
-      <td>
-        <div class="emp-id">KuyaVA24</div>
-        <div class="emp-name" style="color:var(--note-yellow)">Medina, Kohzinni</div>
-      </td>
-      <td><span class="badge badge-pt">PT</span></td>
-      <td style="text-align:center"><span style="font-size:11px;background:var(--black3);border:1px solid var(--border);padding:2px 8px;border-radius:12px;color:var(--pt-color)">6 hrs</span></td>
-      <td style="color:var(--muted)">10</td>
-      <td class="r"><span style="color:var(--orange);font-weight:700">60</span><span style="font-size:9px;color:var(--muted);margin-left:3px">auto</span></td>
-      <td style="font-size:11px;color:var(--muted)">Php 31500/month</td>
-      <td class="r"><span class="comp-val">₱ 15,511.36</span></td>
-      <td><div class="bank-cell" onmouseenter="positionTooltip(event,10)">
-    <div class="bank-label">🏦 <span>GCash</span></div>
-    <div class="bank-tooltip" id="btt_10">
-      <div class="bank-tooltip-title">🏦 GCash</div>
-      <div class="bank-tooltip-row"><span class="bank-tooltip-key">Account No.</span><span class="bank-tooltip-val">09212564308</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Account Name</span><span class="bank-tooltip-val">Kohzzini Airah C. Medina</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Country</span><span class="bank-tooltip-val">Philippines</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">City</span><span class="bank-tooltip-val">San Pablo City</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Address</span><span class="bank-tooltip-val">0446 Azores Street., Brgy. Bagong Bayan, San Pablo City, Laguna, 4000</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Postal Code</span><span class="bank-tooltip-val">4000</span></div><div class="bank-tooltip-row"><span class="bank-tooltip-key">Email</span><span class="bank-tooltip-val"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3707065c56545a52535e595677505a565e5b1954585a">[email&#160;protected]</a></span></div>
-    </div>
-  </div></td>
-      <td></td>
-      <td class="va-note-cell"><div class="va-note-text" onclick="openVANote(10)" style="cursor:pointer" title="Click to edit note">🟡 Negative Adjustment:
-
-Payroll Discrepancy (March 5th Payroll) = Php 238.64</div></td>
-      <td class="no-print" style="text-align:center;white-space:nowrap">
-        <button onclick="openSplitModal(10)" style="font-size:10px;padding:2px 5px;border-radius:4px;cursor:pointer;background:none;border:1px solid #222;color:#444" title="Add split hours">⚡</button>
-        <button onclick="editRow(10)" style="background:none;border:none;cursor:pointer;color:#444;font-size:12px;padding:2px 5px;border:1px solid #222;border-radius:4px" title="Edit employee">✎</button>
-        <button onclick="delRow(10)" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:12px;padding:2px 5px;border:1px solid #2d0a0a;border-radius:4px" title="Delete">✕</button>
-      </td></tr></tbody>
+        <tbody id="payBody"></tbody>
         <tfoot>
           <tr>
             <td colspan="4" style="color:var(--orange);font-family:'Syne',sans-serif;letter-spacing:1px">TOTALS</td>
-            <td class="r" id="totHrs" style="color:var(--white)">698</td><td></td>
-            <td class="tot-net" id="totComp">₱ 247,816.36</td>
+            <td class="r" id="totHrs" style="color:var(--white)"></td><td></td>
+            <td class="tot-net" id="totComp"></td>
             <td colspan="3"></td><td class="no-print"></td>
           </tr>
         </tfoot>
@@ -626,8 +357,8 @@ Payroll Discrepancy (March 5th Payroll) = Php 238.64</div></td>
   <div class="tab-section" id="section-billing">
     <div class="billing-controls no-print">
       <span style="font-size:12px;color:var(--muted);font-weight:600">Billing Month:</span>
-      <select class="billing-month-select" id="billingMonthSelect" onchange="renderBilling()"><option value="January">January 2026</option><option value="February">February 2026</option><option value="March">March 2026</option></select>
-      <button id="billingRestoreBtn" class="btn btn-red" onclick="restoreAllBillingRows()" style="display:none">↺ Restore Removed</button> <button class="btn btn-green" onclick="window.print()" style="margin-left:auto">⎙ Print / PDF</button>
+      <select class="billing-month-select" id="billingMonthSelect" onchange="renderBilling()"></select>
+      <button class="btn btn-green" onclick="window.print()" style="margin-left:auto">⎙ Print / PDF</button>
     </div>
     <div class="billing-card">
       <div class="billing-header">
@@ -636,7 +367,7 @@ Payroll Discrepancy (March 5th Payroll) = Php 238.64</div></td>
       </div>
       <div class="billing-kpi-bar">
         <div class="billing-kpi"><div class="kpi-label">Billable Employees</div><div class="kpi-val o" id="bKpiCount">—</div><div class="kpi-sub">excluded from total</div></div>
-        <div class="billing-kpi"><div class="kpi-label">Total Billable Hours</div><div class="kpi-val g" id="bKpiHours">—</div><div class="kpi-sub">20th + following 5th</div></div>
+        <div class="billing-kpi"><div class="kpi-label">Total Billable Hours</div><div class="kpi-val g" id="bKpiHours">—</div><div class="kpi-sub">both cut-offs combined</div></div>
         <div class="billing-kpi"><div class="kpi-label">Cut-offs Included</div><div class="kpi-val w" id="bKpiCutoffs">—</div><div class="kpi-sub">pay schedules merged</div></div>
       </div>
       <div id="billingBody"></div>
@@ -653,9 +384,13 @@ Payroll Discrepancy (March 5th Payroll) = Php 238.64</div></td>
     <div style="margin:16px 0">
       <label style="display:block;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.5px;margin-bottom:8px;text-transform:uppercase">Select CSV File</label>
       <input type="file" id="csvFileInput" accept=".csv" style="display:none" onchange="handleCSVUpload(event)">
-      <div id="csvDropZone" onclick="document.getElementById('csvFileInput').click()" style="border:2px dashed var(--border);border-radius:12px;padding:32px;text-align:center;cursor:pointer;transition:border-color .2s;background:var(--black3)" ondragover="event.preventDefault();this.style.borderColor='var(--orange)'" ondragleave="this.style.borderColor='var(--border)'" ondrop="event.preventDefault();this.style.borderColor='var(--border)';handleCSVDrop(event)">
+      <div id="csvDropZone" onclick="document.getElementById('csvFileInput').click()"
+        style="border:2px dashed var(--border);border-radius:12px;padding:32px;text-align:center;cursor:pointer;transition:border-color .2s;background:var(--black3)"
+        ondragover="event.preventDefault();this.style.borderColor='var(--orange)'"
+        ondragleave="this.style.borderColor='var(--border)'"
+        ondrop="event.preventDefault();this.style.borderColor='var(--border)';handleCSVDrop(event)">
         <div style="font-size:28px;margin-bottom:8px">📄</div>
-        <div style="font-size:13px;color:var(--white);font-weight:600">Click to browse or drag &amp; drop</div>
+        <div style="font-size:13px;color:var(--white);font-weight:600">Click to browse or drag & drop</div>
         <div style="font-size:11px;color:var(--muted);margin-top:4px">Eezi CSV export file (.csv)</div>
       </div>
     </div>
@@ -735,7 +470,7 @@ Payroll Discrepancy (March 5th Payroll) = Php 238.64</div></td>
     <div class="modal-sub">Employee names and bank details are copied from the selected source. Compensation, days, and hours will be cleared so you enter fresh data.</div>
     <div class="modal-field"><label>Schedule Name</label><input id="m_name" placeholder="e.g. March 20th Payroll"></div>
     <div class="modal-field"><label>Pay Period Dates</label><input id="m_dates" placeholder="e.g. March 16–31, 2026"></div>
-    <div class="modal-field"><label>Copy Employees From</label><select id="m_source"><option value="jan5">January 5th Pay Schedule</option><option value="jan20">January 20th Pay Schedule</option><option value="feb5">February 5th Pay Schedule</option><option value="feb20">February 20th Pay Schedule</option><option value="mar5">March 5th Pay Schedule</option><option value="period_1773758331475">March 20th Payroll</option></select></div>
+    <div class="modal-field"><label>Copy Employees From</label><select id="m_source"></select></div>
     <div class="modal-note">✅ Compensation will be cleared automatically. Days worked and billable hours will also reset so you can input fresh data from Eezi.</div>
     <div class="modal-actions">
       <button class="btn btn-purple" onclick="createSchedule()">Create Schedule</button>
@@ -744,1708 +479,97 @@ Payroll Discrepancy (March 5th Payroll) = Php 238.64</div></td>
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 // ── Helpers ──────────────────────────────────────────────────────
 const fmt2  = n => Number(n).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
 const fmtK2 = n => { if(n>=1e6) return '₱'+(n/1e6).toFixed(2)+'M'; if(n>=1000) return '₱'+(n/1000).toFixed(1)+'K'; return '₱'+fmt2(n); };
 
 // ── Period Data ──────────────────────────────────────────────────
 const PERIODS = {
-  "jan5": {
-    "label": "January 1–16, 2026",
-    "schedule": "January 5th Pay Schedule",
-    "note": "",
-    "employees": [
-      {
-        "id": "KuyaVA05",
-        "name": "Fabiliar, Marc",
-        "type": "PT",
-        "days": "12/12",
-        "hrs": 48,
-        "rate": "Php 24,810.00/month",
-        "comp": 12405,
-        "bank": "BPI",
-        "acct": "0646648868",
-        "acctname": "Marc Gersonm Fabillar",
-        "country": "Philippines",
-        "city": "Dumaguete",
-        "address": "",
-        "postal": "6200",
-        "email": "marcfabillar@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "HR Manager",
-        "name": "Langi, Gerald",
-        "type": "FT",
-        "days": "12/12",
-        "hrs": 96,
-        "rate": "Php 80,000.00/month",
-        "comp": 40000,
-        "bank": "PNB",
-        "acct": "308710051537",
-        "acctname": "Gerald R. Langi",
-        "country": "",
-        "city": "",
-        "address": "",
-        "postal": "",
-        "email": "",
-        "remarks": "",
-        "dailyHrs": 8,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA02",
-        "name": "Dugang, John Kevin",
-        "type": "PT",
-        "days": "12/12",
-        "hrs": 48,
-        "rate": "Php 34,310.00/month",
-        "comp": 17155,
-        "bank": "BPI",
-        "acct": "0209034196",
-        "acctname": "John Kevin Dugang",
-        "country": "Philippines",
-        "city": "Cebu City",
-        "address": "",
-        "postal": "6000",
-        "email": "johnkevindugang@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA04",
-        "name": "Rondina, Mel Adrian",
-        "type": "FT",
-        "days": "12/12",
-        "hrs": 96,
-        "rate": "Php 35,000.00/month",
-        "comp": 17500,
-        "bank": "Land Bank",
-        "acct": "4476 0129 67",
-        "acctname": "Mel Adrian G. Rondina",
-        "country": "",
-        "city": "",
-        "address": "",
-        "postal": "",
-        "email": "",
-        "remarks": "",
-        "dailyHrs": 8,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaIntern",
-        "name": "Macaraeg, John Christopher",
-        "type": "FT",
-        "days": "12/12",
-        "hrs": 96,
-        "rate": "Php 7,000.00/month",
-        "comp": 3500,
-        "bank": "UnionBank",
-        "acct": "109340437616",
-        "acctname": "John Christopher Macaraeg",
-        "country": "",
-        "city": "",
-        "address": "",
-        "postal": "",
-        "email": "",
-        "remarks": "",
-        "dailyHrs": 8,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA13",
-        "name": "Pancho, Flordelyne",
-        "type": "FT",
-        "days": "12/12",
-        "hrs": 96,
-        "rate": "Php 49,000.00/month",
-        "comp": 24500,
-        "bank": "BPI - Bank of Philippine Islands",
-        "acct": "4039910464",
-        "acctname": "Flordelyne May Pancho",
-        "country": "Philippines",
-        "city": "Davao City",
-        "address": "Blk 3 Lt 4, Lemon Street, Southpointe Homes, Catalunan Grande, Davao City, 8000",
-        "postal": "8000",
-        "email": "pflordelyne@gmail.com",
-        "remarks": "",
-        "dailyHrs": 8,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA16",
-        "name": "Fajardo, Juvainne Jaychelle",
-        "type": "PT",
-        "days": "12/12",
-        "hrs": 48,
-        "rate": "Php 20,000.00/month",
-        "comp": 10000,
-        "bank": "GCash",
-        "acct": "9934635183",
-        "acctname": "Juvainne Jaychelle Fajardo",
-        "country": "",
-        "city": "",
-        "address": "",
-        "postal": "",
-        "email": "",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA18",
-        "name": "Teniso, Rozzel",
-        "type": "PT",
-        "days": "12/12",
-        "hrs": 48,
-        "rate": "Php 23,000.00/month",
-        "comp": null,
-        "bank": "Metrobank",
-        "acct": "2143214973201",
-        "acctname": "ROZZEL TENISO",
-        "country": "",
-        "city": "",
-        "address": "",
-        "postal": "",
-        "email": "",
-        "remarks": "⚠ No comp entered",
-        "dailyHrs": 4,
-        "vanote": "Compensation not yet entered"
-      },
-      {
-        "id": "KuyaVA19",
-        "name": "Esmino, Nicole",
-        "type": "PT",
-        "days": "12/12",
-        "hrs": 48,
-        "rate": "Php 22,500.00/month",
-        "comp": 11250,
-        "bank": "BDO - Banco De Oro",
-        "acct": "4050516309",
-        "acctname": "NICOLE CHILL ESMINO",
-        "country": "Philippines",
-        "city": "Quezon City",
-        "address": "Unit A 149 Barangay Lawa, City of Meycauayan, Bulacan, Philippines 3020",
-        "postal": "1105",
-        "email": "nicolechill.esmino@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA20",
-        "name": "PISO, PAMELA MAY",
-        "type": "FT",
-        "days": "12/12",
-        "hrs": 96,
-        "rate": "Php 58,000.00/month",
-        "comp": null,
-        "bank": "BPI",
-        "acct": "4179535365",
-        "acctname": "PAMELA MAY PISO",
-        "country": "",
-        "city": "",
-        "address": "",
-        "postal": "",
-        "email": "",
-        "remarks": "⚠ No comp entered",
-        "dailyHrs": 8,
-        "vanote": "Compensation not yet entered"
-      },
-      {
-        "id": "KuyaVA21",
-        "name": "Aum, Maria Kristina",
-        "type": "PT",
-        "days": "12/12",
-        "hrs": 48,
-        "rate": "Php 20,500.00/month",
-        "comp": 12437.5,
-        "bank": "BPI - Bank of Philippine Islands",
-        "acct": "2519243841",
-        "acctname": "MARIA KRISTINA V. AUM",
-        "country": "Philippines",
-        "city": "Surigao City",
-        "address": "359 OO497 Burgos Gonzales St., Surigao City, Surigao del Norte, Philippines 8400",
-        "postal": "8400",
-        "email": "pamelamaypaz@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA24",
-        "name": "Medina, Kohzinni",
-        "type": "PT",
-        "days": "12/12",
-        "hrs": 48,
-        "rate": "Php 21,000.00/month",
-        "comp": 5250,
-        "bank": "GCash",
-        "acct": "09212564308",
-        "acctname": "Kohzzini Airah C. Medina",
-        "country": "Philippines",
-        "city": "San Pablo City",
-        "address": "0446 Azores Street., Brgy. Bagong Bayan, San Pablo City, Laguna, 4000",
-        "postal": "4000",
-        "email": "01kacmedina@gmail.com",
-        "remarks": "",
-        "dailyHrs": 6,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA26",
-        "name": "Velarde, Jinefer",
-        "type": "PT",
-        "days": "12/12",
-        "hrs": 48,
-        "rate": "Php 35,000.00/month",
-        "comp": 8750,
-        "bank": "UnionBank",
-        "acct": "109384345268",
-        "acctname": "Jinefer Velardo",
-        "country": "Philippines",
-        "city": "San Pedro City",
-        "address": "#5 Narra Ave Brgy Narra San Pedro Laguna, Philippines",
-        "postal": "4000",
-        "email": "velardojinefer@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA25",
-        "name": "Maglines, Rona",
-        "type": "PT",
-        "days": "12/12",
-        "hrs": 48,
-        "rate": "Php 35,000.00/month",
-        "comp": 8750,
-        "bank": "BPI - Bank of Philippine Islands",
-        "acct": "09524772185",
-        "acctname": "RONA MAGLINES",
-        "country": "Philippines",
-        "city": "Davao City",
-        "address": "Door 6, San Francisco St., Buhangin, Davao City, Philippines 8000",
-        "postal": "8000",
-        "email": "maglinesrona@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "Odoo Spec",
-        "name": "Baliño, Evelyn",
-        "type": "PT",
-        "days": "13/13",
-        "hrs": 52,
-        "rate": "Php 35,000.00/month",
-        "comp": 10340.9,
-        "bank": "UnionBank",
-        "acct": "1093 5673 1926",
-        "acctname": "Evelyn Balino/Evelyn Baliño",
-        "country": "Philippines",
-        "city": "Bacoor City",
-        "address": "B6 L8 Yakal St Casimiro Westville Homes Ligas 3 Bacoor Cavite, Philippines 4102",
-        "postal": "4102",
-        "email": "balinoeve@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      }
-    ]
-  },
-  "jan20": {
-    "label": "January 17–31, 2026",
-    "schedule": "January 20th Pay Schedule",
-    "note": "",
-    "employees": [
-      {
-        "id": "KuyaVA05",
-        "name": "Fabiliar, Marc",
-        "type": "PT",
-        "days": "11/11",
-        "hrs": 44,
-        "rate": "Php 24,810.00/month",
-        "comp": 12405,
-        "bank": "BPI",
-        "acct": "0646648868",
-        "acctname": "Marc Gersonm Fabillar",
-        "country": "Philippines",
-        "city": "Dumaguete",
-        "address": "",
-        "postal": "6200",
-        "email": "marcfabillar@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "HR Manager",
-        "name": "Langi, Gerald",
-        "type": "FT",
-        "days": "11/11",
-        "hrs": 88,
-        "rate": "Php 80,000.00/month",
-        "comp": 40000,
-        "bank": "PNB",
-        "acct": "308710051537",
-        "acctname": "Gerald R. Langi",
-        "country": "",
-        "city": "",
-        "address": "",
-        "postal": "",
-        "email": "",
-        "remarks": "",
-        "dailyHrs": 8,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA02",
-        "name": "Dugang, John Kevin",
-        "type": "PT",
-        "days": "11/11",
-        "hrs": 44,
-        "rate": "Php 34,310.00/month",
-        "comp": 17155,
-        "bank": "BPI",
-        "acct": "0209034196",
-        "acctname": "John Kevin Dugang",
-        "country": "Philippines",
-        "city": "Cebu City",
-        "address": "",
-        "postal": "6000",
-        "email": "johnkevindugang@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA04",
-        "name": "Rondina, Mel Adrian",
-        "type": "FT",
-        "days": "11/11",
-        "hrs": 88,
-        "rate": "Php 35,000.00/month",
-        "comp": 17500,
-        "bank": "Land Bank",
-        "acct": "4476 0129 67",
-        "acctname": "Mel Adrian G. Rondina",
-        "country": "",
-        "city": "",
-        "address": "",
-        "postal": "",
-        "email": "",
-        "remarks": "",
-        "dailyHrs": 8,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA13",
-        "name": "Pancho, Flordelyne",
-        "type": "FT",
-        "days": "11/11",
-        "hrs": 88,
-        "rate": "Php 49,000.00/month",
-        "comp": 24500,
-        "bank": "BPI - Bank of Philippine Islands",
-        "acct": "4039910464",
-        "acctname": "Flordelyne May Pancho",
-        "country": "Philippines",
-        "city": "Davao City",
-        "address": "Blk 3 Lt 4, Lemon Street, Southpointe Homes, Catalunan Grande, Davao City, 8000",
-        "postal": "8000",
-        "email": "pflordelyne@gmail.com",
-        "remarks": "",
-        "dailyHrs": 8,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA16",
-        "name": "Fajardo, Juvainne Jaychelle",
-        "type": "PT",
-        "days": "11/11",
-        "hrs": 44,
-        "rate": "Php 20,000.00/month",
-        "comp": 10000,
-        "bank": "GCash",
-        "acct": "9934635183",
-        "acctname": "Juvainne Jaychelle Fajardo",
-        "country": "",
-        "city": "",
-        "address": "",
-        "postal": "",
-        "email": "",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA18",
-        "name": "Teniso, Rozzel",
-        "type": "PT",
-        "days": "11/11",
-        "hrs": null,
-        "rate": "Php 23,000.00/month",
-        "comp": null,
-        "bank": "Metrobank",
-        "acct": "2143214973201",
-        "acctname": "ROZZEL TENISO",
-        "country": "",
-        "city": "",
-        "address": "",
-        "postal": "",
-        "email": "",
-        "remarks": "⚠ No comp entered",
-        "dailyHrs": 4,
-        "vanote": "Compensation not yet entered"
-      },
-      {
-        "id": "KuyaVA19",
-        "name": "Esmino, Nicole",
-        "type": "PT",
-        "days": "11/11",
-        "hrs": 44,
-        "rate": "Php 22,500.00/month",
-        "comp": 11250,
-        "bank": "BDO - Banco De Oro",
-        "acct": "4050516309",
-        "acctname": "NICOLE CHILL ESMINO",
-        "country": "Philippines",
-        "city": "Quezon City",
-        "address": "Unit A 149 Barangay Lawa, City of Meycauayan, Bulacan, Philippines 3020",
-        "postal": "1105",
-        "email": "nicolechill.esmino@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA20",
-        "name": "PISO, PAMELA MAY",
-        "type": "PT",
-        "days": "11/11",
-        "hrs": 44,
-        "rate": "Php 58,000.00/month",
-        "comp": null,
-        "bank": "BPI",
-        "acct": "4179535365",
-        "acctname": "PAMELA MAY PISO",
-        "country": "",
-        "city": "",
-        "address": "",
-        "postal": "",
-        "email": "",
-        "remarks": "⚠ No comp entered",
-        "dailyHrs": 8,
-        "vanote": "Compensation not yet entered"
-      },
-      {
-        "id": "KuyaVA21",
-        "name": "Aum, Maria Kristina",
-        "type": "FT",
-        "days": "11/11",
-        "hrs": 44,
-        "rate": "Php 50,240.00/month",
-        "comp": 12560,
-        "bank": "BPI - Bank of Philippine Islands",
-        "acct": "2519243841",
-        "acctname": "MARIA KRISTINA V. AUM",
-        "country": "Philippines",
-        "city": "Surigao City",
-        "address": "359 OO497 Burgos Gonzales St., Surigao City, Surigao del Norte, Philippines 8400",
-        "postal": "8400",
-        "email": "pamelamaypaz@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA24",
-        "name": "Medina, Kohzinni",
-        "type": "PT",
-        "days": "11/11",
-        "hrs": 44,
-        "rate": "Php 21,000.00/month",
-        "comp": 5250,
-        "bank": "GCash",
-        "acct": "09212564308",
-        "acctname": "Kohzzini Airah C. Medina",
-        "country": "Philippines",
-        "city": "San Pablo City",
-        "address": "0446 Azores Street., Brgy. Bagong Bayan, San Pablo City, Laguna, 4000",
-        "postal": "4000",
-        "email": "01kacmedina@gmail.com",
-        "remarks": "",
-        "dailyHrs": 6,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA26",
-        "name": "Velarde, Jinefer",
-        "type": "FT",
-        "days": "11/11",
-        "hrs": 88,
-        "rate": "Php 35,000.00/month",
-        "comp": 15113.64,
-        "bank": "UnionBank",
-        "acct": "109384345268",
-        "acctname": "Jinefer Velardo",
-        "country": "Philippines",
-        "city": "San Pedro City",
-        "address": "#5 Narra Ave Brgy Narra San Pedro Laguna, Philippines",
-        "postal": "4000",
-        "email": "velardojinefer@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA25",
-        "name": "Maglines, Rona",
-        "type": "PT",
-        "days": "11/11",
-        "hrs": 44,
-        "rate": "Php 35,000.00/month",
-        "comp": 8750,
-        "bank": "BPI - Bank of Philippine Islands",
-        "acct": "09524772185",
-        "acctname": "RONA MAGLINES",
-        "country": "Philippines",
-        "city": "Davao City",
-        "address": "Door 6, San Francisco St., Buhangin, Davao City, Philippines 8000",
-        "postal": "8000",
-        "email": "maglinesrona@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "Odoo Spec",
-        "name": "Baliño, Evelyn",
-        "type": "PT",
-        "days": "8/11",
-        "hrs": 44,
-        "rate": "Php 35,000.00/month",
-        "comp": 3977.27,
-        "bank": "UnionBank",
-        "acct": "1093 5673 1926",
-        "acctname": "Evelyn Balino/Evelyn Baliño",
-        "country": "Philippines",
-        "city": "Bacoor City",
-        "address": "B6 L8 Yakal St Casimiro Westville Homes Ligas 3 Bacoor Cavite, Philippines 4102",
-        "postal": "4102",
-        "email": "balinoeve@gmail.com",
-        "remarks": "3 absences",
-        "dailyHrs": 4,
-        "vanote": "3 absences deducted this cut-off"
-      }
-    ]
-  },
-  "feb5": {
-    "label": "January 1–31, 2026",
-    "schedule": "February 5th Pay Schedule",
-    "note": "",
-    "employees": [
-      {
-        "id": "KuyaVA05",
-        "name": "Fabiliar, Marc",
-        "type": "PT",
-        "days": "12/12",
-        "hrs": 44,
-        "rate": "Php 24,810.00/month",
-        "comp": 12405,
-        "bank": "BPI",
-        "acct": "0646648868",
-        "acctname": "Marc Gersonm Fabillar",
-        "country": "Philippines",
-        "city": "Dumaguete",
-        "address": "",
-        "postal": "6200",
-        "email": "marcfabillar@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "HR Manager",
-        "name": "Langi, Gerald",
-        "type": "FT",
-        "days": "11/11",
-        "hrs": 88,
-        "rate": "Php 80,000.00/month",
-        "comp": 40000,
-        "bank": "PNB",
-        "acct": "308710051537",
-        "acctname": "Gerald R. Langi",
-        "country": "",
-        "city": "",
-        "address": "",
-        "postal": "",
-        "email": "",
-        "remarks": "",
-        "dailyHrs": 8,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA02",
-        "name": "Dugang, John Kevin",
-        "type": "PT",
-        "days": "11/11",
-        "hrs": 44,
-        "rate": "Php 34,310.00/month",
-        "comp": 17155,
-        "bank": "BPI",
-        "acct": "0209034196",
-        "acctname": "John Kevin Dugang",
-        "country": "Philippines",
-        "city": "Cebu City",
-        "address": "",
-        "postal": "6000",
-        "email": "johnkevindugang@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA04",
-        "name": "Rondina, Mel Adrian",
-        "type": "FT",
-        "days": "11/11",
-        "hrs": 88,
-        "rate": "Php 35,000.00/month",
-        "comp": 17500,
-        "bank": "Land Bank",
-        "acct": "4476 0129 67",
-        "acctname": "Mel Adrian G. Rondina",
-        "country": "",
-        "city": "",
-        "address": "",
-        "postal": "",
-        "email": "",
-        "remarks": "",
-        "dailyHrs": 8,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA13",
-        "name": "Pancho, Flordelyne",
-        "type": "FT",
-        "days": "10/11",
-        "hrs": 88,
-        "rate": "Php 49,000.00/month",
-        "comp": 22272.73,
-        "bank": "BPI - Bank of Philippine Islands",
-        "acct": "4039910464",
-        "acctname": "Flordelyne May Pancho",
-        "country": "Philippines",
-        "city": "Davao City",
-        "address": "Blk 3 Lt 4, Lemon Street, Southpointe Homes, Catalunan Grande, Davao City, 8000",
-        "postal": "8000",
-        "email": "pflordelyne@gmail.com",
-        "remarks": "1 absence",
-        "dailyHrs": 8,
-        "vanote": "1 absence recorded — comp adjusted"
-      },
-      {
-        "id": "KuyaVA16",
-        "name": "Fajardo, Juvainne Jaychelle",
-        "type": "PT",
-        "days": "11/11",
-        "hrs": 44,
-        "rate": "Php 20,000.00/month",
-        "comp": 10000,
-        "bank": "GCash",
-        "acct": "9934635183",
-        "acctname": "Juvainne Jaychelle Fajardo",
-        "country": "",
-        "city": "",
-        "address": "",
-        "postal": "",
-        "email": "",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA18",
-        "name": "Teniso, Rozzel",
-        "type": "PT",
-        "days": "11/11",
-        "hrs": null,
-        "rate": "Php 23,000.00/month",
-        "comp": null,
-        "bank": "Metrobank",
-        "acct": "2143214973201",
-        "acctname": "ROZZEL TENISO",
-        "country": "",
-        "city": "",
-        "address": "",
-        "postal": "",
-        "email": "",
-        "remarks": "⚠ No comp entered",
-        "dailyHrs": 4,
-        "vanote": "Compensation not yet entered"
-      },
-      {
-        "id": "KuyaVA19",
-        "name": "Esmino, Nicole",
-        "type": "PT",
-        "days": "11/11",
-        "hrs": 44,
-        "rate": "Php 22,500.00/month",
-        "comp": 11250,
-        "bank": "BDO - Banco De Oro",
-        "acct": "4050516309",
-        "acctname": "NICOLE CHILL ESMINO",
-        "country": "Philippines",
-        "city": "Quezon City",
-        "address": "Unit A 149 Barangay Lawa, City of Meycauayan, Bulacan, Philippines 3020",
-        "postal": "1105",
-        "email": "nicolechill.esmino@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA20",
-        "name": "PISO, PAMELA MAY",
-        "type": "FT",
-        "days": "11/11",
-        "hrs": null,
-        "rate": "Php 58,000.00/month",
-        "comp": null,
-        "bank": "BPI",
-        "acct": "4179535365",
-        "acctname": "PAMELA MAY PISO",
-        "country": "",
-        "city": "",
-        "address": "",
-        "postal": "",
-        "email": "",
-        "remarks": "⚠ No comp entered",
-        "dailyHrs": 8,
-        "vanote": "Compensation not yet entered"
-      },
-      {
-        "id": "KuyaVA21",
-        "name": "Aum, Maria Kristina",
-        "type": "FT",
-        "days": "11/11",
-        "hrs": 88,
-        "rate": "Php 50,240.00/month",
-        "comp": 12560,
-        "bank": "BPI - Bank of Philippine Islands",
-        "acct": "2519243841",
-        "acctname": "MARIA KRISTINA V. AUM",
-        "country": "Philippines",
-        "city": "Surigao City",
-        "address": "359 OO497 Burgos Gonzales St., Surigao City, Surigao del Norte, Philippines 8400",
-        "postal": "8400",
-        "email": "pamelamaypaz@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA24",
-        "name": "Medina, Kohzinni",
-        "type": "PT",
-        "days": "11/11",
-        "hrs": 44,
-        "rate": "Php 21,000.00/month",
-        "comp": 8113.64,
-        "bank": "GCash",
-        "acct": "09212564308",
-        "acctname": "Kohzzini Airah C. Medina",
-        "country": "Philippines",
-        "city": "San Pablo City",
-        "address": "0446 Azores Street., Brgy. Bagong Bayan, San Pablo City, Laguna, 4000",
-        "postal": "4000",
-        "email": "01kacmedina@gmail.com",
-        "remarks": "",
-        "dailyHrs": 6,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA26",
-        "name": "Velarde, Jinefer",
-        "type": "FT",
-        "days": "11/11",
-        "hrs": 88,
-        "rate": "Php 35,000.00/month",
-        "comp": 17500,
-        "bank": "UnionBank",
-        "acct": "109384345268",
-        "acctname": "Jinefer Velardo",
-        "country": "Philippines",
-        "city": "San Pedro City",
-        "address": "#5 Narra Ave Brgy Narra San Pedro Laguna, Philippines",
-        "postal": "4000",
-        "email": "velardojinefer@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA25",
-        "name": "Maglines, Rona",
-        "type": "PT",
-        "days": "11/11",
-        "hrs": 44,
-        "rate": "Php 35,000.00/month",
-        "comp": 8750,
-        "bank": "BPI - Bank of Philippine Islands",
-        "acct": "09524772185",
-        "acctname": "RONA MAGLINES",
-        "country": "Philippines",
-        "city": "Davao City",
-        "address": "Door 6, San Francisco St., Buhangin, Davao City, Philippines 8000",
-        "postal": "8000",
-        "email": "maglinesrona@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "Odoo Spec",
-        "name": "Baliño, Evelyn",
-        "type": "PT",
-        "days": "11/11",
-        "hrs": 44,
-        "rate": "Php 35,000.00/month",
-        "comp": 13125,
-        "bank": "UnionBank",
-        "acct": "1093 5673 1926",
-        "acctname": "Evelyn Balino/Evelyn Baliño",
-        "country": "Philippines",
-        "city": "Bacoor City",
-        "address": "B6 L8 Yakal St Casimiro Westville Homes Ligas 3 Bacoor Cavite, Philippines 4102",
-        "postal": "4102",
-        "email": "balinoeve@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      }
-    ]
-  },
-  "feb20": {
-    "label": "February 1–15, 2026",
-    "schedule": "February 20th Pay Schedule",
-    "note": "",
-    "employees": [
-      {
-        "id": "KuyaVA05",
-        "name": "Fabiliar, Marc",
-        "type": "PT",
-        "days": "10",
-        "hrs": 40,
-        "rate": "Php 24,810.00/month",
-        "comp": 12405,
-        "bank": "BPI",
-        "acct": "0646648868",
-        "acctname": "Marc Gersonm Fabillar",
-        "country": "Philippines",
-        "city": "Dumaguete",
-        "address": "",
-        "postal": "6200",
-        "email": "marcfabillar@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "HR Manager",
-        "name": "Langi, Gerald",
-        "type": "FT",
-        "days": "10",
-        "hrs": 80,
-        "rate": "Php 80,000.00/month",
-        "comp": 40000,
-        "bank": "PNB",
-        "acct": "308710051537",
-        "acctname": "Gerald R. Langi",
-        "country": "",
-        "city": "",
-        "address": "",
-        "postal": "",
-        "email": "",
-        "remarks": "",
-        "dailyHrs": 8,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA02",
-        "name": "Dugang, John Kevin",
-        "type": "PT",
-        "days": "10",
-        "hrs": 40,
-        "rate": "Php 34,310.00/month",
-        "comp": 17155,
-        "bank": "BPI",
-        "acct": "0209034196",
-        "acctname": "John Kevin Dugang",
-        "country": "Philippines",
-        "city": "Cebu City",
-        "address": "",
-        "postal": "6000",
-        "email": "johnkevindugang@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA04",
-        "name": "Rondina, Mel Adrian",
-        "type": "FT",
-        "days": "10",
-        "hrs": 80,
-        "rate": "Php 35,000.00/month",
-        "comp": 17500,
-        "bank": "Land Bank",
-        "acct": "4476 0129 67",
-        "acctname": "Mel Adrian G. Rondina",
-        "country": "",
-        "city": "",
-        "address": "",
-        "postal": "",
-        "email": "",
-        "remarks": "",
-        "dailyHrs": 8,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA13",
-        "name": "Pancho, Flordelyne",
-        "type": "FT",
-        "days": "10",
-        "hrs": 80,
-        "rate": "Php 49,000.00/month",
-        "comp": 24500,
-        "bank": "BPI - Bank of Philippine Islands",
-        "acct": "4039910464",
-        "acctname": "Flordelyne May Pancho",
-        "country": "Philippines",
-        "city": "Davao City",
-        "address": "Blk 3 Lt 4, Lemon Street, Southpointe Homes, Catalunan Grande, Davao City, 8000",
-        "postal": "8000",
-        "email": "pflordelyne@gmail.com",
-        "remarks": "",
-        "dailyHrs": 8,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA16",
-        "name": "Fajardo, Juvainne Jaychelle",
-        "type": "PT",
-        "days": "10",
-        "hrs": 40,
-        "rate": "Php 20,000.00/month",
-        "comp": 10000,
-        "bank": "GCash",
-        "acct": "9934635183",
-        "acctname": "Juvainne Jaychelle Fajardo",
-        "country": "",
-        "city": "",
-        "address": "",
-        "postal": "",
-        "email": "",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA18",
-        "name": "Teniso, Rozzel",
-        "type": "PT",
-        "days": "10",
-        "hrs": null,
-        "rate": "Php 23,000.00/month",
-        "comp": null,
-        "bank": "Metrobank",
-        "acct": "2143214973201",
-        "acctname": "ROZZEL TENISO",
-        "country": "",
-        "city": "",
-        "address": "",
-        "postal": "",
-        "email": "",
-        "remarks": "⚠ No comp entered",
-        "dailyHrs": 4,
-        "vanote": "Compensation not yet entered"
-      },
-      {
-        "id": "KuyaVA19",
-        "name": "Esmino, Nicole",
-        "type": "PT",
-        "days": "10",
-        "hrs": 40,
-        "rate": "Php 22,500.00/month",
-        "comp": 11250,
-        "bank": "BDO - Banco De Oro",
-        "acct": "4050516309",
-        "acctname": "NICOLE CHILL ESMINO",
-        "country": "Philippines",
-        "city": "Quezon City",
-        "address": "Unit A 149 Barangay Lawa, City of Meycauayan, Bulacan, Philippines 3020",
-        "postal": "1105",
-        "email": "nicolechill.esmino@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA20",
-        "name": "PISO, PAMELA MAY",
-        "type": "FT",
-        "days": "10",
-        "hrs": null,
-        "rate": "Php 58,000.00/month",
-        "comp": null,
-        "bank": "BPI",
-        "acct": "4179535365",
-        "acctname": "PAMELA MAY PISO",
-        "country": "",
-        "city": "",
-        "address": "",
-        "postal": "",
-        "email": "",
-        "remarks": "⚠ No comp entered",
-        "dailyHrs": 8,
-        "vanote": "Compensation not yet entered"
-      },
-      {
-        "id": "KuyaVA21",
-        "name": "Aum, Maria Kristina",
-        "type": "FT",
-        "days": "10",
-        "hrs": 80,
-        "rate": "Php 50,240.00/month",
-        "comp": 12560,
-        "bank": "BPI - Bank of Philippine Islands",
-        "acct": "2519243841",
-        "acctname": "MARIA KRISTINA V. AUM",
-        "country": "Philippines",
-        "city": "Surigao City",
-        "address": "359 OO497 Burgos Gonzales St., Surigao City, Surigao del Norte, Philippines 8400",
-        "postal": "8400",
-        "email": "pamelamaypaz@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA24",
-        "name": "Medina, Kohzinni",
-        "type": "PT",
-        "days": "10",
-        "hrs": 60,
-        "rate": "Php 31,500.00/month",
-        "comp": 7875,
-        "bank": "GCash",
-        "acct": "09212564308",
-        "acctname": "Kohzzini Airah C. Medina",
-        "country": "Philippines",
-        "city": "San Pablo City",
-        "address": "0446 Azores Street., Brgy. Bagong Bayan, San Pablo City, Laguna, 4000",
-        "postal": "4000",
-        "email": "01kacmedina@gmail.com",
-        "remarks": "",
-        "dailyHrs": 6,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA26",
-        "name": "Velarde, Jinefer",
-        "type": "FT",
-        "days": "10",
-        "hrs": 80,
-        "rate": "Php 70,000.00/month",
-        "comp": 17500,
-        "bank": "UnionBank",
-        "acct": "109384345268",
-        "acctname": "Jinefer Velardo",
-        "country": "Philippines",
-        "city": "San Pedro City",
-        "address": "#5 Narra Ave Brgy Narra San Pedro Laguna, Philippines",
-        "postal": "4000",
-        "email": "velardojinefer@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA25",
-        "name": "Maglines, Rona",
-        "type": "PT",
-        "days": "10",
-        "hrs": 40,
-        "rate": "Php 35,000.00/month",
-        "comp": 8750,
-        "bank": "BPI - Bank of Philippine Islands",
-        "acct": "09524772185",
-        "acctname": "RONA MAGLINES",
-        "country": "Philippines",
-        "city": "Davao City",
-        "address": "Door 6, San Francisco St., Buhangin, Davao City, Philippines 8000",
-        "postal": "8000",
-        "email": "maglinesrona@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "Odoo Spec",
-        "name": "Baliño, Evelyn",
-        "type": "PT",
-        "days": "10",
-        "hrs": 40,
-        "rate": "Php 35,000.00/month",
-        "comp": 4375,
-        "bank": "UnionBank",
-        "acct": "1093 5673 1926",
-        "acctname": "Evelyn Balino/Evelyn Baliño",
-        "country": "Philippines",
-        "city": "Bacoor City",
-        "address": "B6 L8 Yakal St Casimiro Westville Homes Ligas 3 Bacoor Cavite, Philippines 4102",
-        "postal": "4102",
-        "email": "balinoeve@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      }
-    ]
-  },
-  "mar5": {
-    "label": "March 16–28, 2026",
-    "schedule": "March 5th Pay Schedule",
-    "note": "",
-    "employees": [
-      {
-        "id": "KuyaVA05",
-        "name": "Fabiliar, Marc",
-        "type": "PT",
-        "days": "10",
-        "hrs": 40,
-        "rate": "Php 24,810.00/month",
-        "comp": 12405,
-        "bank": "BPI",
-        "acct": "0646648868",
-        "acctname": "Marc Gersonm Fabillar",
-        "country": "Philippines",
-        "city": "Dumaguete",
-        "address": "",
-        "postal": "6200",
-        "email": "marcfabillar@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "HR Manager",
-        "name": "Langi, Gerald",
-        "type": "FT",
-        "days": "10",
-        "hrs": 80,
-        "rate": "Php 80,000.00/month",
-        "comp": 46500,
-        "bank": "PNB",
-        "acct": "308710051537",
-        "acctname": "Gerald R. Langi",
-        "country": "",
-        "city": "",
-        "address": "",
-        "postal": "",
-        "email": "",
-        "remarks": "",
-        "dailyHrs": 8,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA02",
-        "name": "Dugang, John Kevin",
-        "type": "PT",
-        "days": "10",
-        "hrs": 40,
-        "rate": "Php 34,310.00/month",
-        "comp": 17155,
-        "bank": "BPI",
-        "acct": "0209034196",
-        "acctname": "John Kevin Dugang",
-        "country": "Philippines",
-        "city": "Cebu City",
-        "address": "",
-        "postal": "6000",
-        "email": "johnkevindugang@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA04",
-        "name": "Rondina, Mel Adrian",
-        "type": "FT",
-        "days": "10",
-        "hrs": 80,
-        "rate": "Php 35,000.00/month",
-        "comp": 17500,
-        "bank": "Land Bank",
-        "acct": "4476 0129 67",
-        "acctname": "Mel Adrian G. Rondina",
-        "country": "",
-        "city": "",
-        "address": "",
-        "postal": "",
-        "email": "",
-        "remarks": "",
-        "dailyHrs": 8,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA13",
-        "name": "Pancho, Flordelyne",
-        "type": "FT",
-        "days": "10",
-        "hrs": 80,
-        "rate": "Php 49,000.00/month",
-        "comp": 24500,
-        "bank": "BPI - Bank of Philippine Islands",
-        "acct": "4039910464",
-        "acctname": "Flordelyne May Pancho",
-        "country": "Philippines",
-        "city": "Davao City",
-        "address": "Blk 3 Lt 4, Lemon Street, Southpointe Homes, Catalunan Grande, Davao City, 8000",
-        "postal": "8000",
-        "email": "pflordelyne@gmail.com",
-        "remarks": "",
-        "dailyHrs": 8,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA16",
-        "name": "Fajardo, Juvainne Jaychelle",
-        "type": "PT",
-        "days": "10",
-        "hrs": 40,
-        "rate": "Php 20,000.00/month",
-        "comp": 10000,
-        "bank": "GCash",
-        "acct": "9934635183",
-        "acctname": "Juvainne Jaychelle Fajardo",
-        "country": "",
-        "city": "",
-        "address": "",
-        "postal": "",
-        "email": "",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA18",
-        "name": "Teniso, Rozzel",
-        "type": "PT",
-        "days": "10",
-        "hrs": null,
-        "rate": "Php 23,000.00/month",
-        "comp": null,
-        "bank": "Metrobank",
-        "acct": "2143214973201",
-        "acctname": "ROZZEL TENISO",
-        "country": "",
-        "city": "",
-        "address": "",
-        "postal": "",
-        "email": "",
-        "remarks": "⚠ No comp entered",
-        "dailyHrs": 4,
-        "vanote": "Compensation not yet entered"
-      },
-      {
-        "id": "KuyaVA19",
-        "name": "Esmino, Nicole",
-        "type": "PT",
-        "days": "10",
-        "hrs": 40,
-        "rate": "Php 22,500.00/month",
-        "comp": 11250,
-        "bank": "BDO - Banco De Oro",
-        "acct": "4050516309",
-        "acctname": "NICOLE CHILL ESMINO",
-        "country": "Philippines",
-        "city": "Quezon City",
-        "address": "Unit A 149 Barangay Lawa, City of Meycauayan, Bulacan, Philippines 3020",
-        "postal": "1105",
-        "email": "nicolechill.esmino@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA20",
-        "name": "PISO, PAMELA MAY",
-        "type": "FT",
-        "days": "10",
-        "hrs": null,
-        "rate": "Php 58,000.00/month",
-        "comp": null,
-        "bank": "BPI",
-        "acct": "4179535365",
-        "acctname": "PAMELA MAY PISO",
-        "country": "",
-        "city": "",
-        "address": "",
-        "postal": "",
-        "email": "",
-        "remarks": "⚠ No comp entered",
-        "dailyHrs": 8,
-        "vanote": "Compensation not yet entered"
-      },
-      {
-        "id": "KuyaVA21",
-        "name": "Aum, Maria Kristina",
-        "type": "FT",
-        "days": "10",
-        "hrs": 80,
-        "rate": "Php 50,240.00/month",
-        "comp": 22810,
-        "bank": "BPI - Bank of Philippine Islands",
-        "acct": "2519243841",
-        "acctname": "MARIA KRISTINA V. AUM",
-        "country": "Philippines",
-        "city": "Surigao City",
-        "address": "359 OO497 Burgos Gonzales St., Surigao City, Surigao del Norte, Philippines 8400",
-        "postal": "8400",
-        "email": "pamelamaypaz@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA24",
-        "name": "Medina, Kohzinni",
-        "type": "PT",
-        "days": "10",
-        "hrs": 60,
-        "rate": "Php 31,500.00/month",
-        "comp": 7875,
-        "bank": "GCash",
-        "acct": "09212564308",
-        "acctname": "Kohzzini Airah C. Medina",
-        "country": "Philippines",
-        "city": "San Pablo City",
-        "address": "0446 Azores Street., Brgy. Bagong Bayan, San Pablo City, Laguna, 4000",
-        "postal": "4000",
-        "email": "01kacmedina@gmail.com",
-        "remarks": "",
-        "dailyHrs": 6,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA26",
-        "name": "Velarde, Jinefer",
-        "type": "FT",
-        "days": "10",
-        "hrs": 80,
-        "rate": "Php 70,000.00/month",
-        "comp": 17500,
-        "bank": "UnionBank",
-        "acct": "109384345268",
-        "acctname": "Jinefer Velardo",
-        "country": "Philippines",
-        "city": "San Pedro City",
-        "address": "#5 Narra Ave Brgy Narra San Pedro Laguna, Philippines",
-        "postal": "4000",
-        "email": "velardojinefer@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA25",
-        "name": "Maglines, Rona",
-        "type": "PT",
-        "days": "10",
-        "hrs": 60,
-        "rate": "Php 35,000.00/month",
-        "comp": 26250,
-        "bank": "BPI - Bank of Philippine Islands",
-        "acct": "09524772185",
-        "acctname": "RONA MAGLINES",
-        "country": "Philippines",
-        "city": "Davao City",
-        "address": "Door 6, San Francisco St., Buhangin, Davao City, Philippines 8000",
-        "postal": "8000",
-        "email": "maglinesrona@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      },
-      {
-        "id": "Odoo Spec",
-        "name": "Baliño, Evelyn",
-        "type": "PT",
-        "days": "10",
-        "hrs": 40,
-        "rate": "Php 35,000.00/month",
-        "comp": 17500,
-        "bank": "UnionBank",
-        "acct": "1093 5673 1926",
-        "acctname": "Evelyn Balino/Evelyn Baliño",
-        "country": "Philippines",
-        "city": "Bacoor City",
-        "address": "B6 L8 Yakal St Casimiro Westville Homes Ligas 3 Bacoor Cavite, Philippines 4102",
-        "postal": "4102",
-        "email": "balinoeve@gmail.com",
-        "remarks": "",
-        "dailyHrs": 4,
-        "vanote": ""
-      }
-    ]
-  },
-  "period_1773758331475": {
-    "label": "March 1-15, 2026",
-    "schedule": "March 20th Payroll",
-    "note": "",
-    "employees": [
-      {
-        "id": "KuyaVA21",
-        "name": "Aum, Maria Kristina",
-        "type": "FT",
-        "dailyHrs": 8,
-        "days": "10",
-        "hrs": 80,
-        "rate": "Php 50240/month",
-        "comp": 25120,
-        "bank": "BPI - Bank of Philippine Islands",
-        "acct": "2519243841",
-        "acctname": "MARIA KRISTINA V. AUM",
-        "country": "Philippines",
-        "city": "Surigao City",
-        "address": "359 OO497 Burgos Gonzales St., Surigao City, Surigao del Norte, Philippines 8400",
-        "postal": "8400",
-        "email": "pamelamaypaz@gmail.com",
-        "remarks": "",
-        "nonbillable": false,
-        "vanote": ""
-      },
-      {
-        "id": "HR Manager",
-        "name": "Langi, Gerald",
-        "type": "FT",
-        "dailyHrs": 8,
-        "days": "10",
-        "hrs": 80,
-        "rate": "Php 80000/month",
-        "comp": 46500,
-        "bank": "PNB",
-        "acct": "308710051537",
-        "acctname": "Gerald R. Langi",
-        "country": "Philippines",
-        "city": "Dumaguete City",
-        "address": "Brgy. Bantayan",
-        "postal": "4600",
-        "email": "hr@kuyasolutions.com",
-        "remarks": "",
-        "nonbillable": true,
-        "vanote": "Positive Adjustment:\n\nVA/Client Retention Bonus: Php 6,500.00"
-      },
-      {
-        "id": "KuyaVA25",
-        "name": "Maglines, Rona",
-        "type": "FT",
-        "dailyHrs": 8,
-        "days": "10",
-        "hrs": 80,
-        "rate": "Php 70000/month",
-        "comp": 26250,
-        "bank": "BPI - Bank of Philippine Islands",
-        "acct": "09524772185",
-        "acctname": "RONA MAGLINES",
-        "country": "Philippines",
-        "city": "Davao City",
-        "address": "Door 6, San Francisco St., Buhangin, Davao City, Philippines 8000",
-        "postal": "8000",
-        "email": "maglinesrona@gmail.com",
-        "remarks": "",
-        "nonbillable": false,
-        "vanote": "Negative Adjustment:\n\nSalary Holding Policy - New Contract (1/4) = Php 8,750.00"
-      },
-      {
-        "id": "KuyaVA13",
-        "name": "Pancho, Flordelyne",
-        "type": "FT",
-        "dailyHrs": 8,
-        "days": "10",
-        "hrs": 80,
-        "rate": "Php 49000/month",
-        "comp": 24500,
-        "bank": "BPI - Bank of Philippine Islands",
-        "acct": "4039910464",
-        "acctname": "Flordelyne May Pancho",
-        "country": "Philippines",
-        "city": "Davao City",
-        "address": "Blk 3 Lt 4, Lemon Street, Southpointe Homes, Catalunan Grande, Davao City, 8000",
-        "postal": "8000",
-        "email": "pflordelyne@gmail.com",
-        "remarks": "",
-        "nonbillable": false,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA04",
-        "name": "Rondina, Mel Adrian",
-        "type": "FT",
-        "dailyHrs": 8,
-        "days": "10",
-        "hrs": 80,
-        "rate": "Php 35000/month",
-        "comp": 17500,
-        "bank": "Land Bank",
-        "acct": "4476 0129 67",
-        "acctname": "Mel Adrian G. Rondina",
-        "country": "Philippines",
-        "city": "N/A",
-        "address": "N/A",
-        "postal": "N/A",
-        "email": "N/A",
-        "remarks": "",
-        "nonbillable": true,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA26",
-        "name": "Velarde, Jinefer",
-        "type": "FT",
-        "dailyHrs": 8,
-        "days": "10",
-        "hrs": 80,
-        "rate": "Php 70000/month",
-        "comp": 35000,
-        "bank": "UnionBank",
-        "acct": "109384345268",
-        "acctname": "Jinefer Velardo",
-        "country": "Philippines",
-        "city": "San Pedro City",
-        "address": "#5 Narra Ave Brgy Narra San Pedro Laguna, Philippines",
-        "postal": "4000",
-        "email": "velardojinefer@gmail.com",
-        "remarks": "",
-        "nonbillable": false,
-        "vanote": ""
-      },
-      {
-        "id": "Odoo Spec",
-        "name": "Baliño, Evelyn",
-        "type": "PT",
-        "dailyHrs": 4,
-        "days": "9.5",
-        "hrs": 38,
-        "rate": "Php 35000/month",
-        "comp": 16625,
-        "bank": "UnionBank",
-        "acct": "1093 5673 1926",
-        "acctname": "Evelyn Balino/Evelyn Baliño",
-        "country": "Philippines",
-        "city": "Bacoor City",
-        "address": "B6 L8 Yakal St Casimiro Westville Homes Ligas 3 Bacoor Cavite, Philippines 4102",
-        "postal": "4102",
-        "email": "balinoeve@gmail.com",
-        "remarks": "",
-        "nonbillable": false,
-        "vanote": "Negative Adjustment:\n\nHalf Day = March 6, 2026"
-      },
-      {
-        "id": "KuyaVA02",
-        "name": "Dugang, John Kevin",
-        "type": "PT",
-        "dailyHrs": 4,
-        "days": "10",
-        "hrs": 40,
-        "rate": "Php 34310/month",
-        "comp": 17155,
-        "bank": "BPI",
-        "acct": "0209034196",
-        "acctname": "John Kevin Dugang",
-        "country": "Philippines",
-        "city": "Cebu City",
-        "address": "San Carlos",
-        "postal": "6000",
-        "email": "johnkevindugang@gmail.com",
-        "remarks": "",
-        "nonbillable": false,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA19",
-        "name": "Esmino, Nicole",
-        "type": "PT",
-        "dailyHrs": 4,
-        "days": "10",
-        "hrs": 40,
-        "rate": "Php 22500/month",
-        "comp": 11250,
-        "bank": "BDO - Banco De Oro",
-        "acct": "4050516309",
-        "acctname": "NICOLE CHILL ESMINO",
-        "country": "Philippines",
-        "city": "Quezon City",
-        "address": "Unit A 149 Barangay Lawa, City of Meycauayan, Bulacan, Philippines 3020",
-        "postal": "1105",
-        "email": "nicolechill.esmino@gmail.com",
-        "remarks": "",
-        "nonbillable": false,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA05",
-        "name": "Fabiliar, Marc",
-        "type": "PT",
-        "dailyHrs": 4,
-        "days": "10",
-        "hrs": 40,
-        "rate": "Php 24810/month",
-        "comp": 12405,
-        "bank": "BPI",
-        "acct": "0646648868",
-        "acctname": "Marc Gersonm Fabillar",
-        "country": "Philippines",
-        "city": "Dumaguete",
-        "address": "Dumaguete",
-        "postal": "6200",
-        "email": "marcfabillar@gmail.com",
-        "remarks": "",
-        "nonbillable": false,
-        "vanote": ""
-      },
-      {
-        "id": "KuyaVA24",
-        "name": "Medina, Kohzinni",
-        "type": "PT",
-        "dailyHrs": 6,
-        "days": "10",
-        "hrs": 60,
-        "rate": "Php 31500/month",
-        "comp": 15511.36,
-        "bank": "GCash",
-        "acct": "09212564308",
-        "acctname": "Kohzzini Airah C. Medina",
-        "country": "Philippines",
-        "city": "San Pablo City",
-        "address": "0446 Azores Street., Brgy. Bagong Bayan, San Pablo City, Laguna, 4000",
-        "postal": "4000",
-        "email": "01kacmedina@gmail.com",
-        "remarks": "",
-        "nonbillable": false,
-        "vanote": "Negative Adjustment:\n\nPayroll Discrepancy (March 5th Payroll) = Php 238.64"
-      }
-    ]
-  }
+  jan5:{label:"January 1–16, 2026",schedule:"January 5th Pay Schedule",note:"",employees:[
+    {id:"KuyaVA05",  name:"Fabiliar, Marc",             type:"PT",days:"12/12",hrs:48, rate:"Php 24,810.00/month",comp:12405,   bank:"BPI",       acct:"0646648868",    acctname:"Marc Gersonm Fabillar",country:"Philippines",city:"Dumaguete",address:"",postal:"6200",email:"marcfabillar@gmail.com",   remarks:"",dailyHrs:4,vanote:""},
+    {id:"HR Manager",name:"Langi, Gerald",               type:"FT",days:"12/12",hrs:96, rate:"Php 80,000.00/month",comp:40000,   bank:"PNB",       acct:"308710051537",  acctname:"Gerald R. Langi",country:"",city:"",address:"",postal:"",email:"",            remarks:"",dailyHrs:8,vanote:""},
+    {id:"KuyaVA02",  name:"Dugang, John Kevin",          type:"PT",days:"12/12",hrs:48, rate:"Php 34,310.00/month",comp:17155,   bank:"BPI",       acct:"0209034196",     acctname:"John Kevin Dugang",country:"Philippines",city:"Cebu City",address:"",postal:"6000",email:"johnkevindugang@gmail.com",          remarks:"",dailyHrs:4,vanote:""},
+    {id:"KuyaVA04",  name:"Rondina, Mel Adrian",         type:"FT",days:"12/12",hrs:96, rate:"Php 35,000.00/month",comp:17500,   bank:"Land Bank", acct:"4476 0129 67",  acctname:"Mel Adrian G. Rondina",country:"",city:"",address:"",postal:"",email:"",      remarks:"",dailyHrs:8,vanote:""},
+    {id:"KuyaIntern",name:"Macaraeg, John Christopher",  type:"FT",days:"12/12",hrs:96, rate:"Php 7,000.00/month", comp:3500,    bank:"UnionBank", acct:"109340437616",  acctname:"John Christopher Macaraeg",country:"",city:"",address:"",postal:"",email:"", remarks:"",dailyHrs:8,vanote:""},
+    {id:"KuyaVA13",  name:"Pancho, Flordelyne",          type:"FT",days:"12/12",hrs:96, rate:"Php 49,000.00/month",comp:24500,   bank:"BPI - Bank of Philippine Islands",       acct:"4039910464",    acctname:"Flordelyne May Pancho",country:"Philippines",city:"Davao City",address:"Blk 3 Lt 4, Lemon Street, Southpointe Homes, Catalunan Grande, Davao City, 8000",postal:"8000",email:"pflordelyne@gmail.com",      remarks:"",dailyHrs:8,vanote:""},
+    {id:"KuyaVA16",  name:"Fajardo, Juvainne Jaychelle", type:"PT",days:"12/12",hrs:48, rate:"Php 20,000.00/month",comp:10000,   bank:"GCash",     acct:"9934635183",    acctname:"Juvainne Jaychelle Fajardo",country:"",city:"",address:"",postal:"",email:"", remarks:"",dailyHrs:4,vanote:""},
+    {id:"KuyaVA18",  name:"Teniso, Rozzel",              type:"PT",days:"12/12",hrs:48, rate:"Php 23,000.00/month",comp:null,    bank:"Metrobank", acct:"2143214973201", acctname:"ROZZEL TENISO",country:"",city:"",address:"",postal:"",email:"",              remarks:"⚠ No comp entered",dailyHrs:4,vanote:"Compensation not yet entered"},
+    {id:"KuyaVA19",  name:"Esmino, Nicole",              type:"PT",days:"12/12",hrs:48, rate:"Php 22,500.00/month",comp:11250,   bank:"BDO - Banco De Oro",       acct:"4050516309",    acctname:"NICOLE CHILL ESMINO",country:"Philippines",city:"Quezon City",address:"Unit A 149 Barangay Lawa, City of Meycauayan, Bulacan, Philippines 3020",postal:"1105",email:"nicolechill.esmino@gmail.com",        remarks:"",dailyHrs:4,vanote:""},
+    {id:"KuyaVA20",  name:"PISO, PAMELA MAY",            type:"FT",days:"12/12",hrs:96, rate:"Php 58,000.00/month",comp:null,    bank:"BPI",       acct:"4179535365",    acctname:"PAMELA MAY PISO",country:"",city:"",address:"",postal:"",email:"",            remarks:"⚠ No comp entered",dailyHrs:8,vanote:"Compensation not yet entered"},
+    {id:"KuyaVA21",  name:"Aum, Maria Kristina",         type:"PT",days:"12/12",hrs:48, rate:"Php 20,500.00/month",comp:12437.5, bank:"BPI - Bank of Philippine Islands",       acct:"2519243841",    acctname:"MARIA KRISTINA V. AUM",country:"Philippines",city:"Surigao City",address:"359 OO497 Burgos Gonzales St., Surigao City, Surigao del Norte, Philippines 8400",postal:"8400",email:"pamelamaypaz@gmail.com",      remarks:"",dailyHrs:4,vanote:""},
+    {id:"KuyaVA24",  name:"Medina, Kohzinni",            type:"PT",days:"12/12",hrs:48, rate:"Php 21,000.00/month",comp:5250,    bank:"GCash",     acct:"09212564308",   acctname:"Kohzzini Airah C. Medina",   country:"Philippines",city:"San Pablo City",address:"0446 Azores Street., Brgy. Bagong Bayan, San Pablo City, Laguna, 4000",postal:"4000",email:"01kacmedina@gmail.com",remarks:"",dailyHrs:6,vanote:""},
+    {id:"KuyaVA26",  name:"Velarde, Jinefer",            type:"PT",days:"12/12",hrs:48, rate:"Php 35,000.00/month",comp:8750,    bank:"UnionBank",acct:"109384345268",  acctname:"Jinefer Velardo",country:"Philippines",city:"San Pedro City",address:"#5 Narra Ave Brgy Narra San Pedro Laguna, Philippines",postal:"4000",email:"velardojinefer@gmail.com",            remarks:"",dailyHrs:4,vanote:""},
+    {id:"KuyaVA25",  name:"Maglines, Rona",              type:"PT",days:"12/12",hrs:48, rate:"Php 35,000.00/month",comp:8750,    bank:"BPI - Bank of Philippine Islands",     acct:"09524772185",    acctname:"RONA MAGLINES",country:"Philippines",city:"Davao City",address:"Door 6, San Francisco St., Buhangin, Davao City, Philippines 8000",postal:"8000",email:"maglinesrona@gmail.com",              remarks:"",dailyHrs:4,vanote:""},
+    {id:"Odoo Spec", name:"Baliño, Evelyn",              type:"PT",days:"13/13",hrs:52, rate:"Php 35,000.00/month",comp:10340.9, bank:"UnionBank", acct:"1093 5673 1926",acctname:"Evelyn Balino/Evelyn Baliño",country:"Philippines",city:"Bacoor City",address:"B6 L8 Yakal St Casimiro Westville Homes Ligas 3 Bacoor Cavite, Philippines 4102",postal:"4102",email:"balinoeve@gmail.com",remarks:"",dailyHrs:4,vanote:""}
+  ]},
+  jan20:{label:"January 17–31, 2026",schedule:"January 20th Pay Schedule",note:"",employees:[
+    {id:"KuyaVA05",  name:"Fabiliar, Marc",             type:"PT",days:"11/11",hrs:44,  rate:"Php 24,810.00/month",comp:12405,    bank:"BPI",       acct:"0646648868",    acctname:"Marc Gersonm Fabillar",country:"Philippines",city:"Dumaguete",address:"",postal:"6200",email:"marcfabillar@gmail.com",   remarks:"",dailyHrs:4,vanote:""},
+    {id:"HR Manager",name:"Langi, Gerald",               type:"FT",days:"11/11",hrs:88,  rate:"Php 80,000.00/month",comp:40000,    bank:"PNB",       acct:"308710051537",  acctname:"Gerald R. Langi",country:"",city:"",address:"",postal:"",email:"",            remarks:"",dailyHrs:8,vanote:""},
+    {id:"KuyaVA02",  name:"Dugang, John Kevin",          type:"PT",days:"11/11",hrs:44,  rate:"Php 34,310.00/month",comp:17155,    bank:"BPI",       acct:"0209034196",     acctname:"John Kevin Dugang",country:"Philippines",city:"Cebu City",address:"",postal:"6000",email:"johnkevindugang@gmail.com",          remarks:"",dailyHrs:4,vanote:""},
+    {id:"KuyaVA04",  name:"Rondina, Mel Adrian",         type:"FT",days:"11/11",hrs:88,  rate:"Php 35,000.00/month",comp:17500,    bank:"Land Bank", acct:"4476 0129 67",  acctname:"Mel Adrian G. Rondina",country:"",city:"",address:"",postal:"",email:"",      remarks:"",dailyHrs:8,vanote:""},
+    {id:"KuyaVA13",  name:"Pancho, Flordelyne",          type:"FT",days:"11/11",hrs:88,  rate:"Php 49,000.00/month",comp:24500,    bank:"BPI - Bank of Philippine Islands",       acct:"4039910464",    acctname:"Flordelyne May Pancho",country:"Philippines",city:"Davao City",address:"Blk 3 Lt 4, Lemon Street, Southpointe Homes, Catalunan Grande, Davao City, 8000",postal:"8000",email:"pflordelyne@gmail.com",      remarks:"",dailyHrs:8,vanote:""},
+    {id:"KuyaVA16",  name:"Fajardo, Juvainne Jaychelle", type:"PT",days:"11/11",hrs:44,  rate:"Php 20,000.00/month",comp:10000,    bank:"GCash",     acct:"9934635183",    acctname:"Juvainne Jaychelle Fajardo",country:"",city:"",address:"",postal:"",email:"", remarks:"",dailyHrs:4,vanote:""},
+    {id:"KuyaVA18",  name:"Teniso, Rozzel",              type:"PT",days:"11/11",hrs:null, rate:"Php 23,000.00/month",comp:null,     bank:"Metrobank", acct:"2143214973201", acctname:"ROZZEL TENISO",country:"",city:"",address:"",postal:"",email:"",              remarks:"⚠ No comp entered",dailyHrs:4,vanote:"Compensation not yet entered"},
+    {id:"KuyaVA19",  name:"Esmino, Nicole",              type:"PT",days:"11/11",hrs:44,  rate:"Php 22,500.00/month",comp:11250,    bank:"BDO - Banco De Oro",       acct:"4050516309",    acctname:"NICOLE CHILL ESMINO",country:"Philippines",city:"Quezon City",address:"Unit A 149 Barangay Lawa, City of Meycauayan, Bulacan, Philippines 3020",postal:"1105",email:"nicolechill.esmino@gmail.com",        remarks:"",dailyHrs:4,vanote:""},
+    {id:"KuyaVA20",  name:"PISO, PAMELA MAY",            type:"PT",days:"11/11",hrs:44,  rate:"Php 58,000.00/month",comp:null,     bank:"BPI",       acct:"4179535365",    acctname:"PAMELA MAY PISO",country:"",city:"",address:"",postal:"",email:"",            remarks:"⚠ No comp entered",dailyHrs:8,vanote:"Compensation not yet entered"},
+    {id:"KuyaVA21",  name:"Aum, Maria Kristina",         type:"FT",days:"11/11",hrs:44,  rate:"Php 50,240.00/month",comp:12560,    bank:"BPI - Bank of Philippine Islands",       acct:"2519243841",    acctname:"MARIA KRISTINA V. AUM",country:"Philippines",city:"Surigao City",address:"359 OO497 Burgos Gonzales St., Surigao City, Surigao del Norte, Philippines 8400",postal:"8400",email:"pamelamaypaz@gmail.com",      remarks:"",dailyHrs:4,vanote:""},
+    {id:"KuyaVA24",  name:"Medina, Kohzinni",            type:"PT",days:"11/11",hrs:44,  rate:"Php 21,000.00/month",comp:5250,     bank:"GCash",     acct:"09212564308",    acctname:"Kohzzini Airah C. Medina",country:"Philippines",city:"San Pablo City",address:"0446 Azores Street., Brgy. Bagong Bayan, San Pablo City, Laguna, 4000",postal:"4000",email:"01kacmedina@gmail.com",   remarks:"",dailyHrs:6,vanote:""},
+    {id:"KuyaVA26",  name:"Velarde, Jinefer",            type:"FT",days:"11/11",hrs:88,  rate:"Php 35,000.00/month",comp:15113.64, bank:"UnionBank",acct:"109384345268",  acctname:"Jinefer Velardo",country:"Philippines",city:"San Pedro City",address:"#5 Narra Ave Brgy Narra San Pedro Laguna, Philippines",postal:"4000",email:"velardojinefer@gmail.com",            remarks:"",dailyHrs:4,vanote:""},
+    {id:"KuyaVA25",  name:"Maglines, Rona",              type:"PT",days:"11/11",hrs:44,  rate:"Php 35,000.00/month",comp:8750,     bank:"BPI - Bank of Philippine Islands",     acct:"09524772185",    acctname:"RONA MAGLINES",country:"Philippines",city:"Davao City",address:"Door 6, San Francisco St., Buhangin, Davao City, Philippines 8000",postal:"8000",email:"maglinesrona@gmail.com",              remarks:"",dailyHrs:4,vanote:""},
+    {id:"Odoo Spec", name:"Baliño, Evelyn",              type:"PT",days:"8/11", hrs:44,  rate:"Php 35,000.00/month",comp:3977.27,  bank:"UnionBank", acct:"1093 5673 1926",acctname:"Evelyn Balino/Evelyn Baliño",country:"Philippines",city:"Bacoor City",address:"B6 L8 Yakal St Casimiro Westville Homes Ligas 3 Bacoor Cavite, Philippines 4102",postal:"4102",email:"balinoeve@gmail.com",remarks:"3 absences",dailyHrs:4,vanote:"3 absences deducted this cut-off"}
+  ]},
+  feb5:{label:"January 1–31, 2026",schedule:"February 5th Pay Schedule",note:"",employees:[
+    {id:"KuyaVA05",  name:"Fabiliar, Marc",             type:"PT",days:"12/12",hrs:44,  rate:"Php 24,810.00/month",comp:12405,    bank:"BPI",       acct:"0646648868",    acctname:"Marc Gersonm Fabillar",country:"Philippines",city:"Dumaguete",address:"",postal:"6200",email:"marcfabillar@gmail.com",   remarks:"",dailyHrs:4,vanote:""},
+    {id:"HR Manager",name:"Langi, Gerald",               type:"FT",days:"11/11",hrs:88,  rate:"Php 80,000.00/month",comp:40000,    bank:"PNB",       acct:"308710051537",  acctname:"Gerald R. Langi",country:"",city:"",address:"",postal:"",email:"",            remarks:"",dailyHrs:8,vanote:""},
+    {id:"KuyaVA02",  name:"Dugang, John Kevin",          type:"PT",days:"11/11",hrs:44,  rate:"Php 34,310.00/month",comp:17155,    bank:"BPI",       acct:"0209034196",     acctname:"John Kevin Dugang",country:"Philippines",city:"Cebu City",address:"",postal:"6000",email:"johnkevindugang@gmail.com",          remarks:"",dailyHrs:4,vanote:""},
+    {id:"KuyaVA04",  name:"Rondina, Mel Adrian",         type:"FT",days:"11/11",hrs:88,  rate:"Php 35,000.00/month",comp:17500,    bank:"Land Bank", acct:"4476 0129 67",  acctname:"Mel Adrian G. Rondina",country:"",city:"",address:"",postal:"",email:"",      remarks:"",dailyHrs:8,vanote:""},
+    {id:"KuyaVA13",  name:"Pancho, Flordelyne",          type:"FT",days:"10/11",hrs:88,  rate:"Php 49,000.00/month",comp:22272.73, bank:"BPI - Bank of Philippine Islands",       acct:"4039910464",    acctname:"Flordelyne May Pancho",country:"Philippines",city:"Davao City",address:"Blk 3 Lt 4, Lemon Street, Southpointe Homes, Catalunan Grande, Davao City, 8000",postal:"8000",email:"pflordelyne@gmail.com",      remarks:"1 absence",dailyHrs:8,vanote:"1 absence recorded — comp adjusted"},
+    {id:"KuyaVA16",  name:"Fajardo, Juvainne Jaychelle", type:"PT",days:"11/11",hrs:44,  rate:"Php 20,000.00/month",comp:10000,    bank:"GCash",     acct:"9934635183",    acctname:"Juvainne Jaychelle Fajardo",country:"",city:"",address:"",postal:"",email:"", remarks:"",dailyHrs:4,vanote:""},
+    {id:"KuyaVA18",  name:"Teniso, Rozzel",              type:"PT",days:"11/11",hrs:null, rate:"Php 23,000.00/month",comp:null,     bank:"Metrobank", acct:"2143214973201", acctname:"ROZZEL TENISO",country:"",city:"",address:"",postal:"",email:"",              remarks:"⚠ No comp entered",dailyHrs:4,vanote:"Compensation not yet entered"},
+    {id:"KuyaVA19",  name:"Esmino, Nicole",              type:"PT",days:"11/11",hrs:44,  rate:"Php 22,500.00/month",comp:11250,    bank:"BDO - Banco De Oro",       acct:"4050516309",    acctname:"NICOLE CHILL ESMINO",country:"Philippines",city:"Quezon City",address:"Unit A 149 Barangay Lawa, City of Meycauayan, Bulacan, Philippines 3020",postal:"1105",email:"nicolechill.esmino@gmail.com",        remarks:"",dailyHrs:4,vanote:""},
+    {id:"KuyaVA20",  name:"PISO, PAMELA MAY",            type:"FT",days:"11/11",hrs:null, rate:"Php 58,000.00/month",comp:null,     bank:"BPI",       acct:"4179535365",    acctname:"PAMELA MAY PISO",country:"",city:"",address:"",postal:"",email:"",            remarks:"⚠ No comp entered",dailyHrs:8,vanote:"Compensation not yet entered"},
+    {id:"KuyaVA21",  name:"Aum, Maria Kristina",         type:"FT",days:"11/11",hrs:88,  rate:"Php 50,240.00/month",comp:12560,    bank:"BPI - Bank of Philippine Islands",       acct:"2519243841",    acctname:"MARIA KRISTINA V. AUM",country:"Philippines",city:"Surigao City",address:"359 OO497 Burgos Gonzales St., Surigao City, Surigao del Norte, Philippines 8400",postal:"8400",email:"pamelamaypaz@gmail.com",      remarks:"",dailyHrs:4,vanote:""},
+    {id:"KuyaVA24",  name:"Medina, Kohzinni",            type:"PT",days:"11/11",hrs:44,  rate:"Php 21,000.00/month",comp:8113.64,  bank:"GCash",     acct:"09212564308",    acctname:"Kohzzini Airah C. Medina",country:"Philippines",city:"San Pablo City",address:"0446 Azores Street., Brgy. Bagong Bayan, San Pablo City, Laguna, 4000",postal:"4000",email:"01kacmedina@gmail.com",   remarks:"",dailyHrs:6,vanote:""},
+    {id:"KuyaVA26",  name:"Velarde, Jinefer",            type:"FT",days:"11/11",hrs:88,  rate:"Php 35,000.00/month",comp:17500,    bank:"UnionBank",acct:"109384345268",  acctname:"Jinefer Velardo",country:"Philippines",city:"San Pedro City",address:"#5 Narra Ave Brgy Narra San Pedro Laguna, Philippines",postal:"4000",email:"velardojinefer@gmail.com",            remarks:"",dailyHrs:4,vanote:""},
+    {id:"KuyaVA25",  name:"Maglines, Rona",              type:"PT",days:"11/11",hrs:44,  rate:"Php 35,000.00/month",comp:8750,     bank:"BPI - Bank of Philippine Islands",     acct:"09524772185",    acctname:"RONA MAGLINES",country:"Philippines",city:"Davao City",address:"Door 6, San Francisco St., Buhangin, Davao City, Philippines 8000",postal:"8000",email:"maglinesrona@gmail.com",              remarks:"",dailyHrs:4,vanote:""},
+    {id:"Odoo Spec", name:"Baliño, Evelyn",              type:"PT",days:"11/11",hrs:44,  rate:"Php 35,000.00/month",comp:13125,    bank:"UnionBank", acct:"1093 5673 1926",acctname:"Evelyn Balino/Evelyn Baliño",country:"Philippines",city:"Bacoor City",address:"B6 L8 Yakal St Casimiro Westville Homes Ligas 3 Bacoor Cavite, Philippines 4102",postal:"4102",email:"balinoeve@gmail.com",remarks:"",dailyHrs:4,vanote:""}
+  ]},
+  feb20:{label:"February 1–15, 2026",schedule:"February 20th Pay Schedule",note:"",employees:[
+    {id:"KuyaVA05",  name:"Fabiliar, Marc",             type:"PT",days:"10",hrs:40,  rate:"Php 24,810.00/month",comp:12405,  bank:"BPI",       acct:"0646648868",    acctname:"Marc Gersonm Fabillar",country:"Philippines",city:"Dumaguete",address:"",postal:"6200",email:"marcfabillar@gmail.com",   remarks:"",dailyHrs:4,vanote:""},
+    {id:"HR Manager",name:"Langi, Gerald",               type:"FT",days:"10",hrs:80,  rate:"Php 80,000.00/month",comp:40000,  bank:"PNB",       acct:"308710051537",  acctname:"Gerald R. Langi",country:"",city:"",address:"",postal:"",email:"",            remarks:"",dailyHrs:8,vanote:""},
+    {id:"KuyaVA02",  name:"Dugang, John Kevin",          type:"PT",days:"10",hrs:40,  rate:"Php 34,310.00/month",comp:17155,  bank:"BPI",       acct:"0209034196",     acctname:"John Kevin Dugang",country:"Philippines",city:"Cebu City",address:"",postal:"6000",email:"johnkevindugang@gmail.com",          remarks:"",dailyHrs:4,vanote:""},
+    {id:"KuyaVA04",  name:"Rondina, Mel Adrian",         type:"FT",days:"10",hrs:80,  rate:"Php 35,000.00/month",comp:17500,  bank:"Land Bank", acct:"4476 0129 67",  acctname:"Mel Adrian G. Rondina",country:"",city:"",address:"",postal:"",email:"",      remarks:"",dailyHrs:8,vanote:""},
+    {id:"KuyaVA13",  name:"Pancho, Flordelyne",          type:"FT",days:"10",hrs:80,  rate:"Php 49,000.00/month",comp:24500,  bank:"BPI - Bank of Philippine Islands",       acct:"4039910464",    acctname:"Flordelyne May Pancho",country:"Philippines",city:"Davao City",address:"Blk 3 Lt 4, Lemon Street, Southpointe Homes, Catalunan Grande, Davao City, 8000",postal:"8000",email:"pflordelyne@gmail.com",      remarks:"",dailyHrs:8,vanote:""},
+    {id:"KuyaVA16",  name:"Fajardo, Juvainne Jaychelle", type:"PT",days:"10",hrs:40,  rate:"Php 20,000.00/month",comp:10000,  bank:"GCash",     acct:"9934635183",    acctname:"Juvainne Jaychelle Fajardo",country:"",city:"",address:"",postal:"",email:"", remarks:"",dailyHrs:4,vanote:""},
+    {id:"KuyaVA18",  name:"Teniso, Rozzel",              type:"PT",days:"10",hrs:null, rate:"Php 23,000.00/month",comp:null,   bank:"Metrobank", acct:"2143214973201", acctname:"ROZZEL TENISO",country:"",city:"",address:"",postal:"",email:"",              remarks:"⚠ No comp entered",dailyHrs:4,vanote:"Compensation not yet entered"},
+    {id:"KuyaVA19",  name:"Esmino, Nicole",              type:"PT",days:"10",hrs:40,  rate:"Php 22,500.00/month",comp:11250,  bank:"BDO - Banco De Oro",       acct:"4050516309",    acctname:"NICOLE CHILL ESMINO",country:"Philippines",city:"Quezon City",address:"Unit A 149 Barangay Lawa, City of Meycauayan, Bulacan, Philippines 3020",postal:"1105",email:"nicolechill.esmino@gmail.com",        remarks:"",dailyHrs:4,vanote:""},
+    {id:"KuyaVA20",  name:"PISO, PAMELA MAY",            type:"FT",days:"10",hrs:null, rate:"Php 58,000.00/month",comp:null,   bank:"BPI",       acct:"4179535365",    acctname:"PAMELA MAY PISO",country:"",city:"",address:"",postal:"",email:"",            remarks:"⚠ No comp entered",dailyHrs:8,vanote:"Compensation not yet entered"},
+    {id:"KuyaVA21",  name:"Aum, Maria Kristina",         type:"FT",days:"10",hrs:80,  rate:"Php 50,240.00/month",comp:12560,  bank:"BPI - Bank of Philippine Islands",       acct:"2519243841",    acctname:"MARIA KRISTINA V. AUM",country:"Philippines",city:"Surigao City",address:"359 OO497 Burgos Gonzales St., Surigao City, Surigao del Norte, Philippines 8400",postal:"8400",email:"pamelamaypaz@gmail.com",      remarks:"",dailyHrs:4,vanote:""},
+    {id:"KuyaVA24",  name:"Medina, Kohzinni",            type:"PT",days:"10",hrs:60,  rate:"Php 31,500.00/month",comp:7875,   bank:"GCash",     acct:"09212564308",    acctname:"Kohzzini Airah C. Medina",country:"Philippines",city:"San Pablo City",address:"0446 Azores Street., Brgy. Bagong Bayan, San Pablo City, Laguna, 4000",postal:"4000",email:"01kacmedina@gmail.com",   remarks:"",dailyHrs:6,vanote:""},
+    {id:"KuyaVA26",  name:"Velarde, Jinefer",            type:"FT",days:"10",hrs:80,  rate:"Php 70,000.00/month",comp:17500,  bank:"UnionBank",acct:"109384345268",  acctname:"Jinefer Velardo",country:"Philippines",city:"San Pedro City",address:"#5 Narra Ave Brgy Narra San Pedro Laguna, Philippines",postal:"4000",email:"velardojinefer@gmail.com",            remarks:"",dailyHrs:4,vanote:""},
+    {id:"KuyaVA25",  name:"Maglines, Rona",              type:"PT",days:"10",hrs:40,  rate:"Php 35,000.00/month",comp:8750,   bank:"BPI - Bank of Philippine Islands",     acct:"09524772185",    acctname:"RONA MAGLINES",country:"Philippines",city:"Davao City",address:"Door 6, San Francisco St., Buhangin, Davao City, Philippines 8000",postal:"8000",email:"maglinesrona@gmail.com",              remarks:"",dailyHrs:4,vanote:""},
+    {id:"Odoo Spec", name:"Baliño, Evelyn",              type:"PT",days:"10",hrs:40,  rate:"Php 35,000.00/month",comp:4375,   bank:"UnionBank", acct:"1093 5673 1926",acctname:"Evelyn Balino/Evelyn Baliño",country:"Philippines",city:"Bacoor City",address:"B6 L8 Yakal St Casimiro Westville Homes Ligas 3 Bacoor Cavite, Philippines 4102",postal:"4102",email:"balinoeve@gmail.com",remarks:"",dailyHrs:4,vanote:""}
+  ]},
+  mar5:{label:"March 16–28, 2026",schedule:"March 5th Pay Schedule",note:"",employees:[
+    {id:"KuyaVA05",  name:"Fabiliar, Marc",             type:"PT",days:"10",hrs:40,  rate:"Php 24,810.00/month",comp:12405,  bank:"BPI",       acct:"0646648868",    acctname:"Marc Gersonm Fabillar",country:"Philippines",city:"Dumaguete",address:"",postal:"6200",email:"marcfabillar@gmail.com",   remarks:"",dailyHrs:4,vanote:""},
+    {id:"HR Manager",name:"Langi, Gerald",               type:"FT",days:"10",hrs:80,  rate:"Php 80,000.00/month",comp:46500,  bank:"PNB",       acct:"308710051537",  acctname:"Gerald R. Langi",country:"",city:"",address:"",postal:"",email:"",            remarks:"",dailyHrs:8,vanote:""},
+    {id:"KuyaVA02",  name:"Dugang, John Kevin",          type:"PT",days:"10",hrs:40,  rate:"Php 34,310.00/month",comp:17155,  bank:"BPI",       acct:"0209034196",     acctname:"John Kevin Dugang",country:"Philippines",city:"Cebu City",address:"",postal:"6000",email:"johnkevindugang@gmail.com",          remarks:"",dailyHrs:4,vanote:""},
+    {id:"KuyaVA04",  name:"Rondina, Mel Adrian",         type:"FT",days:"10",hrs:80,  rate:"Php 35,000.00/month",comp:17500,  bank:"Land Bank", acct:"4476 0129 67",  acctname:"Mel Adrian G. Rondina",country:"",city:"",address:"",postal:"",email:"",      remarks:"",dailyHrs:8,vanote:""},
+    {id:"KuyaVA13",  name:"Pancho, Flordelyne",          type:"FT",days:"10",hrs:80,  rate:"Php 49,000.00/month",comp:24500,  bank:"BPI - Bank of Philippine Islands",       acct:"4039910464",    acctname:"Flordelyne May Pancho",country:"Philippines",city:"Davao City",address:"Blk 3 Lt 4, Lemon Street, Southpointe Homes, Catalunan Grande, Davao City, 8000",postal:"8000",email:"pflordelyne@gmail.com",      remarks:"",dailyHrs:8,vanote:""},
+    {id:"KuyaVA16",  name:"Fajardo, Juvainne Jaychelle", type:"PT",days:"10",hrs:40,  rate:"Php 20,000.00/month",comp:10000,  bank:"GCash",     acct:"9934635183",    acctname:"Juvainne Jaychelle Fajardo",country:"",city:"",address:"",postal:"",email:"", remarks:"",dailyHrs:4,vanote:""},
+    {id:"KuyaVA18",  name:"Teniso, Rozzel",              type:"PT",days:"10",hrs:null, rate:"Php 23,000.00/month",comp:null,   bank:"Metrobank", acct:"2143214973201", acctname:"ROZZEL TENISO",country:"",city:"",address:"",postal:"",email:"",              remarks:"⚠ No comp entered",dailyHrs:4,vanote:"Compensation not yet entered"},
+    {id:"KuyaVA19",  name:"Esmino, Nicole",              type:"PT",days:"10",hrs:40,  rate:"Php 22,500.00/month",comp:11250,  bank:"BDO - Banco De Oro",       acct:"4050516309",    acctname:"NICOLE CHILL ESMINO",country:"Philippines",city:"Quezon City",address:"Unit A 149 Barangay Lawa, City of Meycauayan, Bulacan, Philippines 3020",postal:"1105",email:"nicolechill.esmino@gmail.com",        remarks:"",dailyHrs:4,vanote:""},
+    {id:"KuyaVA20",  name:"PISO, PAMELA MAY",            type:"FT",days:"10",hrs:null, rate:"Php 58,000.00/month",comp:null,   bank:"BPI",       acct:"4179535365",    acctname:"PAMELA MAY PISO",country:"",city:"",address:"",postal:"",email:"",            remarks:"⚠ No comp entered",dailyHrs:8,vanote:"Compensation not yet entered"},
+    {id:"KuyaVA21",  name:"Aum, Maria Kristina",         type:"FT",days:"10",hrs:80,  rate:"Php 50,240.00/month",comp:22810,  bank:"BPI - Bank of Philippine Islands",       acct:"2519243841",    acctname:"MARIA KRISTINA V. AUM",country:"Philippines",city:"Surigao City",address:"359 OO497 Burgos Gonzales St., Surigao City, Surigao del Norte, Philippines 8400",postal:"8400",email:"pamelamaypaz@gmail.com",      remarks:"",dailyHrs:4,vanote:""},
+    {id:"KuyaVA24",  name:"Medina, Kohzinni",            type:"PT",days:"10",hrs:60,  rate:"Php 31,500.00/month",comp:7875,   bank:"GCash",     acct:"09212564308",    acctname:"Kohzzini Airah C. Medina",country:"Philippines",city:"San Pablo City",address:"0446 Azores Street., Brgy. Bagong Bayan, San Pablo City, Laguna, 4000",postal:"4000",email:"01kacmedina@gmail.com",   remarks:"",dailyHrs:6,vanote:""},
+    {id:"KuyaVA26",  name:"Velarde, Jinefer",            type:"FT",days:"10",hrs:80,  rate:"Php 70,000.00/month",comp:17500,  bank:"UnionBank",acct:"109384345268",  acctname:"Jinefer Velardo",country:"Philippines",city:"San Pedro City",address:"#5 Narra Ave Brgy Narra San Pedro Laguna, Philippines",postal:"4000",email:"velardojinefer@gmail.com",            remarks:"",dailyHrs:4,vanote:""},
+    {id:"KuyaVA25",  name:"Maglines, Rona",              type:"PT",days:"10",hrs:60,  rate:"Php 35,000.00/month",comp:26250,  bank:"BPI - Bank of Philippine Islands",     acct:"09524772185",    acctname:"RONA MAGLINES",country:"Philippines",city:"Davao City",address:"Door 6, San Francisco St., Buhangin, Davao City, Philippines 8000",postal:"8000",email:"maglinesrona@gmail.com",              remarks:"",dailyHrs:4,vanote:""},
+    {id:"Odoo Spec", name:"Baliño, Evelyn",              type:"PT",days:"10",hrs:40,  rate:"Php 35,000.00/month",comp:17500,  bank:"UnionBank", acct:"1093 5673 1926",acctname:"Evelyn Balino/Evelyn Baliño",country:"Philippines",city:"Bacoor City",address:"B6 L8 Yakal St Casimiro Westville Homes Ligas 3 Bacoor Cavite, Philippines 4102",postal:"4102",email:"balinoeve@gmail.com",remarks:"",dailyHrs:4,vanote:""}
+  ]}
 };
-let periodOrder = ["jan5","jan20","feb5","feb20","mar5","period_1773758331475"];
+
+let periodOrder = ['jan5','jan20','feb5','feb20','mar5'];
 let currentPeriod = 'jan5';
 let editIndex = -1;
 let vaNoteIndex = -1;
@@ -2687,7 +811,7 @@ function render() {
       <td style="font-size:11px;color:var(--muted)">${e.rate}</td>
       <td class="r">${e.comp != null ? '<span class="comp-val">₱ ' + fmt2(e.comp) + '</span>' : '<span class="net-null">Not entered</span>'}</td>
       <td>${bankCard(e, i)}</td>
-      <td>${e.remarks ? '<span class="remark">' + e.remarks.replace(/\n/g,'<br>') + '</span>' : ''}</td>
+      <td>${e.remarks ? '<span class="remark">' + e.remarks + '</span>' : ''}</td>
       <td class="va-note-cell">${noteCell}</td>
       <td class="no-print" style="text-align:center;white-space:nowrap">
         <button onclick="openSplitModal(${i})" style="font-size:10px;padding:2px 5px;border-radius:4px;cursor:pointer;${splitBtnStyle}" title="${hasSplit ? 'Edit split hours' : 'Add split hours'}">⚡</button>
@@ -2917,8 +1041,6 @@ function switchPeriod(k) {
   currentPeriod = k; editIndex = -1;
   document.getElementById('empPanel').classList.remove('open');
   document.getElementById('notesPanel').classList.remove('open');
-  const sel = document.getElementById('periodSelect');
-  if (sel) sel.value = k;
   persistData();
   render();
 }
@@ -2957,27 +1079,6 @@ function createSchedule() {
 }
 document.getElementById('scheduleModal').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
 
-// ── Delete Schedule ───────────────────────────────────────────────
-function deleteCurrentSchedule() {
-  if (periodOrder.length <= 1) {
-    alert('You must have at least one pay schedule. Add a new one before deleting this one.');
-    return;
-  }
-  const name = PERIODS[currentPeriod].schedule;
-  if (!confirm('Delete "' + name + '"? This cannot be undone.')) return;
-  snapshot('Delete schedule — ' + name);
-  const idx = periodOrder.indexOf(currentPeriod);
-  periodOrder.splice(idx, 1);
-  delete PERIODS[currentPeriod];
-  // Switch to nearest remaining period
-  currentPeriod = periodOrder[Math.min(idx, periodOrder.length - 1)];
-  rebuildDropdown();
-  rebuildBillingDropdown();
-  document.getElementById('periodSelect').value = currentPeriod;
-  persistData();
-  render();
-}
-
 // ── Tab switcher ──────────────────────────────────────────────────
 function switchTab(tab) {
   ['payroll','billing'].forEach(t => {
@@ -2988,9 +1089,6 @@ function switchTab(tab) {
 }
 
 // ── Monthly Billing ───────────────────────────────────────────────
-const billingRemovedEmps = new Set();
-function removeBillingRow(uid){billingRemovedEmps.add(uid);renderBilling();}
-function restoreAllBillingRows(){billingRemovedEmps.clear();renderBilling();}
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 function extractMonth(scheduleStr) {
@@ -3011,47 +1109,16 @@ function getCalcHrs(e) {
   return dw > 0 ? dw * dh : (e.hrs || 0);
 }
 
-function is20th(scheduleStr) {
-  // Returns true if this is a 20th pay schedule (mid-month billing)
-  return /20th|20 |payroll/i.test(scheduleStr);
-}
-
-function is5th(scheduleStr) {
-  // Returns true if this is a 5th pay schedule (end-of-month billing)
-  return /5th|5 /i.test(scheduleStr);
-}
-
 function buildBillingMonths() {
-  // Billing logic: Month X = 20th of Month X + 5th of Month X+1
-  // e.g. March Billing = March 20th + April 5th
-  const MONTH_LIST = ['January','February','March','April','May','June',
-                      'July','August','September','October','November','December'];
-
-  // Separate 20th and 5th schedules
-  const schedules20 = []; // { key, month }
-  const schedules5  = []; // { key, month }
-
+  // Group periods by detected month
+  const months = {};
   periodOrder.forEach(k => {
     const p = PERIODS[k];
     const m = extractMonth(p.schedule);
     if (!m) return;
-    if (is20th(p.schedule)) schedules20.push({ key: k, month: m });
-    else if (is5th(p.schedule)) schedules5.push({ key: k, month: m });
+    if (!months[m]) months[m] = [];
+    months[m].push(k);
   });
-
-  // Pair each 20th with the following month's 5th
-  const months = {};
-  schedules20.forEach(s20 => {
-    const monthIdx = MONTH_LIST.indexOf(s20.month);
-    if (monthIdx === -1) return;
-    const nextMonth = MONTH_LIST[(monthIdx + 1) % 12];
-    // Find matching 5th of next month
-    const matching5 = schedules5.find(s5 => s5.month === nextMonth);
-    if (!months[s20.month]) months[s20.month] = [];
-    months[s20.month][0] = s20.key;           // slot 0 = 20th (current month)
-    if (matching5) months[s20.month][1] = matching5.key; // slot 1 = 5th (next month)
-  });
-
   return months;
 }
 
@@ -3066,23 +1133,13 @@ function rebuildBillingDropdown() {
     sel.appendChild(o);
     return;
   }
-  const MONTH_ORDER = ['January','February','March','April','May','June',
-                       'July','August','September','October','November','December'];
-  // Sort months in calendar order
-  const sortedMonths = Object.keys(months).sort((a,b) =>
-    MONTH_ORDER.indexOf(a) - MONTH_ORDER.indexOf(b));
-  sortedMonths.forEach(m => {
+  Object.keys(months).forEach(m => {
     const o = document.createElement('option');
     o.value = m;
-    o.textContent = m + ' ' + new Date().getFullYear() + ' Billing';
+    o.textContent = m + ' ' + new Date().getFullYear();
     sel.appendChild(o);
   });
-  // Restore previous selection OR default to the latest month
-  if (prev && months[prev]) {
-    sel.value = prev;
-  } else {
-    sel.value = sortedMonths[sortedMonths.length - 1];
-  }
+  if (prev && months[prev]) sel.value = prev;
 }
 
 function renderBilling() {
@@ -3117,18 +1174,16 @@ function renderBilling() {
     });
   });
 
-  const allEmps  = Object.values(empMap).filter(e => !billingRemovedEmps.has(e.id || e.name));
-  const _rb = document.getElementById('billingRestoreBtn');
-  if(_rb){_rb.style.display=billingRemovedEmps.size>0?'inline-block':'none';_rb.textContent='↺ Restore Removed ('+billingRemovedEmps.size+')';}
+  const allEmps  = Object.values(empMap);
   const billable = allEmps.filter(e => !e.nonbillable);
   const internal = allEmps.filter(e => e.nonbillable);
   const scheduleNames = keys.map(k => PERIODS[k].schedule);
-  const cutoff1 = scheduleNames[0] || '20th Pay Schedule';
-  const cutoff2 = scheduleNames[1] || '5th Pay Schedule';
+  const cutoff1 = scheduleNames[0] || '1st Cut-off';
+  const cutoff2 = scheduleNames[1] || '2nd Cut-off';
   const billableTotal = billable.reduce((s,e) => s + e.hrs[0] + e.hrs[1], 0);
   const internalTotal = internal.reduce((s,e) => s + e.hrs[0] + e.hrs[1], 0);
 
-  document.getElementById('billingTitle').textContent = month + ' ' + new Date().getFullYear() + ' - Monthly Billing Hours';
+  document.getElementById('billingTitle').textContent = month + ' ' + new Date().getFullYear() + ' - Monthly Billable Hours';
   document.getElementById('billingMeta').textContent  = 'For client billing - generated ' + new Date().toLocaleDateString('en-PH',{year:'numeric',month:'long',day:'numeric'});
   document.getElementById('bKpiCount').textContent   = billable.length;
   document.getElementById('bKpiHours').textContent   = billableTotal;
@@ -3143,11 +1198,10 @@ function renderBilling() {
   const colHead = '<tr><th>Employee</th><th>Type</th><th>Daily Hrs</th>' +
     '<th class="r">' + cutoff1 + '</th>' +
     '<th class="r">' + cutoff2 + '</th>' +
-    '<th class="r" style="color:var(--orange)">Total Hrs</th>' + '<th class="no-print" style="width:48px"></th></tr>';
+    '<th class="r" style="color:var(--orange)">Total Hrs</th></tr>';
 
   function buildRows(emps, dim) {
     return emps.map(function(e) {
-      var uid      = e.id || e.name;
       var total    = e.hrs[0] + e.hrs[1];
       var hrColor  = dim ? '#555' : 'var(--orange)';
       var rowStyle = dim ? 'opacity:0.6' : '';
@@ -3167,7 +1221,7 @@ function renderBilling() {
           '<td style="text-align:center"><span style="font-size:11px;background:var(--black3);border:1px solid var(--border);padding:2px 8px;border-radius:12px;color:' + dlyColor + '">' + e.dailyHrs + ' hrs</span></td>' +
           '<td class="r" style="color:var(--muted)">' + (e.hrs[0] ? e.hrs[0] : '-') + '</td>' +
           '<td class="r" style="color:var(--muted)">' + (e.hrs[1] ? e.hrs[1] : '-') + '</td>' +
-          '<td class="r"><span style="font-weight:700;color:' + hrColor + ';font-size:13px">' + total + '</span></td>' + '<td class="no-print" style="text-align:center"><button onclick="removeBillingRow(\'' + uid + '\')" style="background:none;border:1px solid #2d0a0a;border-radius:4px;cursor:pointer;color:var(--red);font-size:11px;padding:2px 7px" title="Remove">✕</button></td></tr>';
+          '<td class="r"><span style="font-weight:700;color:' + hrColor + ';font-size:13px">' + total + '</span></td></tr>';
       }
 
       // Split employee — show name row + FT sub-row + PT sub-row
@@ -3193,7 +1247,7 @@ function renderBilling() {
         '<td><span style="font-size:9px;color:var(--muted)">mixed</span></td>' +
         '<td style="text-align:center"><span style="font-size:11px;color:var(--muted)">—</span></td>' +
         splitCells(0) + splitCells(1) +
-        '<td class="r"><span style="font-weight:700;color:' + hrColor + ';font-size:13px">' + total + '</span></td>' + '<td class="no-print" style="text-align:center"><button onclick="removeBillingRow(\'' + uid + '\')" style="background:none;border:1px solid #2d0a0a;border-radius:4px;cursor:pointer;color:var(--red);font-size:11px;padding:2px 7px" title="Remove">✕</button></td></tr>';
+        '<td class="r"><span style="font-weight:700;color:' + hrColor + ';font-size:13px">' + total + '</span></td></tr>';
     }).join('');
   }
 
@@ -3201,23 +1255,23 @@ function renderBilling() {
 
   // BILLABLE section
   html += '<thead>' +
-    '<tr><th colspan="7" style="background:#0a1f0a;color:#4ade80;font-size:11px;letter-spacing:.7px;padding:10px 16px;border-bottom:1px solid #1a3a1a">' +
+    '<tr><th colspan="6" style="background:#0a1f0a;color:#4ade80;font-size:11px;letter-spacing:.7px;padding:10px 16px;border-bottom:1px solid #1a3a1a">' +
     'BILLABLE - Hours included in client invoice</th></tr>' +
     colHead + '</thead>' +
     '<tbody>' + (billable.length ? buildRows(billable, false) :
-      '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px;font-size:12px">No billable employees this month.</td></tr>') +
+      '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px;font-size:12px">No billable employees this month.</td></tr>') +
     '</tbody>' +
     '<tfoot><tr>' +
     '<td colspan="3" style="color:var(--orange);font-family:\'Syne\',sans-serif;letter-spacing:1px;font-weight:700">BILLABLE TOTAL</td>' +
     '<td class="r" style="color:var(--white);font-weight:700">' + billable.reduce(function(s,e){return s+e.hrs[0];},0) + '</td>' +
     '<td class="r" style="color:var(--white);font-weight:700">' + billable.reduce(function(s,e){return s+e.hrs[1];},0) + '</td>' +
     '<td class="r tot-net" style="font-size:16px">' + billableTotal + '</td>' +
-    '<td class="no-print"></td></tr></tfoot>';
+    '</tr></tfoot>';
 
   // NON-BILLABLE section
   if (internal.length) {
     html += '<thead>' +
-      '<tr><th colspan="7" style="background:#1a1008;color:#888;font-size:11px;letter-spacing:.7px;padding:10px 16px;border-top:2px solid var(--border);border-bottom:1px solid var(--border)">' +
+      '<tr><th colspan="6" style="background:#1a1008;color:#888;font-size:11px;letter-spacing:.7px;padding:10px 16px;border-top:2px solid var(--border);border-bottom:1px solid var(--border)">' +
       'NON-BILLABLE - For reference only, excluded from invoice</th></tr>' +
       colHead + '</thead>' +
       '<tbody>' + buildRows(internal, true) + '</tbody>' +
@@ -3226,7 +1280,7 @@ function renderBilling() {
       '<td class="r" style="color:#555;font-weight:700">' + internal.reduce(function(s,e){return s+e.hrs[0];},0) + '</td>' +
       '<td class="r" style="color:#555;font-weight:700">' + internal.reduce(function(s,e){return s+e.hrs[1];},0) + '</td>' +
       '<td class="r" style="color:#555;font-weight:700;font-size:16px">' + internalTotal + '</td>' +
-      '<td class="no-print"></td></tr></tfoot>';
+      '</tr></tfoot>';
   }
 
   html += '</table></div>';
@@ -3364,22 +1418,16 @@ function parseCSVFile(file) {
 
       // Build notes string from non-zero values only
       const noteParts = [];
-
-      // Group 1: ABS, Late/UT/OB, Bonuses
-      if (absent  !== 0) noteParts.push('• Absent: ' + absent.toLocaleString('en-PH', {minimumFractionDigits:2}));
-      if (lateUT  !== 0) noteParts.push('• Late/UT/OB: ' + lateUT.toLocaleString('en-PH', {minimumFractionDigits:2}));
-      if (bonuses !== 0) noteParts.push('• Bonuses: ' + bonuses.toLocaleString('en-PH', {minimumFractionDigits:2}));
-
-      // Group 2: Positive Adjustment
-      if (adjPos  !== 0) noteParts.push('• Positive Adj: +' + adjPos.toLocaleString('en-PH', {minimumFractionDigits:2}));
-
-      // Group 3: Negative Adjustment
-      if (adjNeg  !== 0) noteParts.push('• Negative Adj: ' + adjNeg.toLocaleString('en-PH', {minimumFractionDigits:2}));
-      if (totalAdj !== 0) noteParts.push('• Total Adj: ' + totalAdj.toLocaleString('en-PH', {minimumFractionDigits:2}));
+      if (absent  !== 0) noteParts.push('Absent: ' + absent.toLocaleString('en-PH', {minimumFractionDigits:2}));
+      if (lateUT  !== 0) noteParts.push('Late/UT/OB: ' + lateUT.toLocaleString('en-PH', {minimumFractionDigits:2}));
+      if (bonuses !== 0) noteParts.push('Bonuses: ' + bonuses.toLocaleString('en-PH', {minimumFractionDigits:2}));
+      if (adjPos  !== 0) noteParts.push('ADJ (+): ' + adjPos.toLocaleString('en-PH', {minimumFractionDigits:2}));
+      if (adjNeg  !== 0) noteParts.push('ADJ (−): ' + adjNeg.toLocaleString('en-PH', {minimumFractionDigits:2}));
+      if (totalAdj !== 0) noteParts.push('Total Adj: ' + totalAdj.toLocaleString('en-PH', {minimumFractionDigits:2}));
 
       importParsed.push({
         empId, empName, netPay,
-        notes: noteParts.join('\n'),
+        notes: noteParts.join(' | '),
       });
     }
 
@@ -3514,43 +1562,116 @@ function saveSplit() {
 document.addEventListener('DOMContentLoaded', () => {
   const sm = document.getElementById('splitModal');
   if (sm) sm.addEventListener('click', e => { if (e.target === sm) closeSplitModal(); });
+  const cm = document.getElementById('cloudSetupModal');
+  if (cm) cm.addEventListener('click', e => { if (e.target === cm) closeCloudSetup(); });
 });
 
-// ── localStorage Persistence ──────────────────────────────────────
-const LS_KEY = 'kuya_payroll_v1';
+// ── Cloud Sync (JSONBin.io) + localStorage fallback ───────────────
+const LS_KEY      = 'kuya_payroll_v1';
+const LS_CONF_KEY = 'kuya_jsonbin_config';
 
-function persistData() {
+let cloudConfig = { binId: '', apiKey: '' };   // filled from localStorage or setup modal
+let cloudSyncing = false;
+let cloudSaveTimer = null;
+let lastCloudHash  = '';
+
+function getCloudConfig() {
   try {
-    const payload = {
-      periodOrder,
-      currentPeriod,
-      periods: PERIODS
-    };
-    localStorage.setItem(LS_KEY, JSON.stringify(payload));
+    const raw = localStorage.getItem(LS_CONF_KEY);
+    if (raw) { const c = JSON.parse(raw); if (c.binId && c.apiKey) { cloudConfig = c; return true; } }
+  } catch(e) {}
+  return false;
+}
+function saveCloudConfig(binId, apiKey) {
+  cloudConfig = { binId: binId.trim(), apiKey: apiKey.trim() };
+  localStorage.setItem(LS_CONF_KEY, JSON.stringify(cloudConfig));
+}
+
+function payloadHash(p) {
+  // quick hash to avoid redundant saves
+  return JSON.stringify({ o: p.periodOrder, c: p.currentPeriod, pk: Object.keys(p.periods) }).length +
+    JSON.stringify(p.periods).length;
+}
+
+async function cloudLoad() {
+  if (!cloudConfig.binId || !cloudConfig.apiKey) return false;
+  try {
+    setSyncStatus('loading');
+    const res = await fetch('https://api.jsonbin.io/v3/b/' + cloudConfig.binId + '/latest', {
+      headers: { 'X-Master-Key': cloudConfig.apiKey }
+    });
+    if (!res.ok) { setSyncStatus('error', 'Load failed (' + res.status + ')'); return false; }
+    const json = await res.json();
+    const saved = json.record;
+    if (!saved || !saved.periods) { setSyncStatus('ok'); return false; }
+    periodOrder   = saved.periodOrder   || periodOrder;
+    currentPeriod = saved.currentPeriod || currentPeriod;
+    Object.keys(saved.periods).forEach(k => { PERIODS[k] = saved.periods[k]; });
+    Object.keys(PERIODS).forEach(k => { if (!saved.periods[k]) delete PERIODS[k]; });
+    lastCloudHash = payloadHash(saved);
+    setSyncStatus('ok');
+    return true;
   } catch(e) {
-    console.warn('Could not save to localStorage:', e);
+    setSyncStatus('error', 'Network error');
+    console.warn('cloudLoad error:', e);
+    return false;
   }
 }
 
-function loadData() {
+async function cloudSave() {
+  if (!cloudConfig.binId || !cloudConfig.apiKey) {
+    localPersist(); return;
+  }
+  const payload = { periodOrder, currentPeriod, periods: PERIODS };
+  const h = payloadHash(payload);
+  if (h === lastCloudHash) return; // nothing changed
+  setSyncStatus('saving');
+  try {
+    const res = await fetch('https://api.jsonbin.io/v3/b/' + cloudConfig.binId, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': cloudConfig.apiKey
+      },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) { setSyncStatus('error', 'Save failed (' + res.status + ')'); localPersist(); return; }
+    lastCloudHash = h;
+    localPersist(); // also keep local copy
+    setSyncStatus('ok');
+  } catch(e) {
+    setSyncStatus('error', 'Network error');
+    localPersist();
+    console.warn('cloudSave error:', e);
+  }
+}
+
+// Debounced save — batches rapid edits
+function persistData() {
+  localPersist();
+  if (!cloudConfig.binId) return;
+  clearTimeout(cloudSaveTimer);
+  cloudSaveTimer = setTimeout(cloudSave, 1200);
+}
+
+function localPersist() {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({ periodOrder, currentPeriod, periods: PERIODS }));
+  } catch(e) {}
+}
+
+function loadLocalData() {
   try {
     const raw = localStorage.getItem(LS_KEY);
     if (!raw) return false;
     const saved = JSON.parse(raw);
     if (!saved || !saved.periods) return false;
-
-    // Restore into live variables
-    periodOrder = saved.periodOrder || periodOrder;
+    periodOrder   = saved.periodOrder   || periodOrder;
     currentPeriod = saved.currentPeriod || currentPeriod;
-    // Merge saved periods into PERIODS (keeps default structure if keys missing)
     Object.keys(saved.periods).forEach(k => { PERIODS[k] = saved.periods[k]; });
-    // Remove any keys not in saved (e.g. deleted periods)
     Object.keys(PERIODS).forEach(k => { if (!saved.periods[k]) delete PERIODS[k]; });
     return true;
-  } catch(e) {
-    console.warn('Could not load from localStorage:', e);
-    return false;
-  }
+  } catch(e) { return false; }
 }
 
 function clearSavedData() {
@@ -3559,17 +1680,175 @@ function clearSavedData() {
   location.reload();
 }
 
-// ── Init ─────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  const hadData = loadData();
+// ── Sync Status Indicator ─────────────────────────────────────────
+function setSyncStatus(state, msg) {
+  const el = document.getElementById('syncStatus');
+  if (!el) return;
+  const states = {
+    loading: { icon:'⟳', text:'Loading from cloud…', color:'#60a5fa' },
+    saving:  { icon:'⟳', text:'Saving to cloud…',    color:'#fb923c' },
+    ok:      { icon:'☁',  text:'Cloud sync active — all devices see live changes', color:'#4ade80' },
+    error:   { icon:'⚠',  text: msg || 'Sync error',  color:'#ef4444' },
+    offline: { icon:'💾', text:'Local only — set up cloud sync to share with team', color:'#777' },
+  };
+  const s = states[state] || states.offline;
+  el.innerHTML = '<span style="font-size:14px">' + s.icon + '</span> ' + s.text;
+  el.style.color = s.color;
+  el.style.borderColor = s.color + '55';
+  el.style.background = s.color + '11';
+}
+
+// ── Cloud Setup Modal ─────────────────────────────────────────────
+function openCloudSetup() {
+  const c = cloudConfig;
+  document.getElementById('cs_binId').value  = c.binId  || '';
+  document.getElementById('cs_apiKey').value = c.apiKey || '';
+  document.getElementById('cloudSetupModal').classList.add('open');
+}
+function closeCloudSetup() { document.getElementById('cloudSetupModal').classList.remove('open'); }
+
+async function saveCloudSetup() {
+  const binId  = document.getElementById('cs_binId').value.trim();
+  const apiKey = document.getElementById('cs_apiKey').value.trim();
+  const status = document.getElementById('cs_status');
+  if (!binId || !apiKey) { status.textContent = '⚠ Both fields are required.'; status.style.color='#ef4444'; return; }
+  status.textContent = '⟳ Testing connection…'; status.style.color='#fb923c';
+  try {
+    const res = await fetch('https://api.jsonbin.io/v3/b/' + binId + '/latest', {
+      headers: { 'X-Master-Key': apiKey }
+    });
+    if (!res.ok) { status.textContent = '✗ Connection failed (HTTP ' + res.status + '). Check your Bin ID and API key.'; status.style.color='#ef4444'; return; }
+    status.textContent = '✓ Connected! Loading latest data…'; status.style.color='#4ade80';
+    saveCloudConfig(binId, apiKey);
+    setTimeout(async () => {
+      closeCloudSetup();
+      await cloudLoad();
+      rebuildDropdown();
+      rebuildBillingDropdown();
+      document.getElementById('periodSelect').value = currentPeriod;
+      render();
+      setSyncStatus('ok');
+    }, 800);
+  } catch(e) {
+    status.textContent = '✗ Network error. Check your internet connection.'; status.style.color='#ef4444';
+  }
+}
+
+async function createNewBin() {
+  const apiKey = document.getElementById('cs_apiKey').value.trim();
+  const status = document.getElementById('cs_status');
+  if (!apiKey) { status.textContent = '⚠ Enter your Master API Key first.'; status.style.color='#ef4444'; return; }
+  status.textContent = '⟳ Creating new bin…'; status.style.color='#fb923c';
+  try {
+    const res = await fetch('https://api.jsonbin.io/v3/b', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': apiKey,
+        'X-Bin-Name': 'KUYA-Payroll',
+        'X-Bin-Private': 'true'
+      },
+      body: JSON.stringify({ periodOrder, currentPeriod, periods: PERIODS })
+    });
+    if (!res.ok) { status.textContent = '✗ Failed to create bin (HTTP ' + res.status + ').'; status.style.color='#ef4444'; return; }
+    const json = await res.json();
+    const newBinId = json.metadata.id;
+    document.getElementById('cs_binId').value = newBinId;
+    status.textContent = '✓ Bin created! ID: ' + newBinId + ' — click Save & Connect.'; status.style.color='#4ade80';
+    lastCloudHash = '';
+  } catch(e) {
+    status.textContent = '✗ Network error.'; status.style.color='#ef4444';
+  }
+}
+
+// ── Init ──────────────────────────────────────────────────────────
+const hasCloud = getCloudConfig();
+const hadLocal = loadLocalData();
+
+document.getElementById('genDate').textContent = 'Generated: ' + new Date().toLocaleDateString('en-PH',{year:'numeric',month:'long',day:'numeric'});
+
+if (hasCloud) {
+  // Show local data first (instant), then refresh from cloud
   rebuildDropdown();
   rebuildBillingDropdown();
-  const sel = document.getElementById('periodSelect');
-  if (sel) sel.value = currentPeriod;
+  document.getElementById('periodSelect').value = currentPeriod;
   render();
-  showStorageBadge(hadData);
   updateUndoBtn();
-});
+  setSyncStatus('loading');
+  cloudLoad().then(loaded => {
+    if (loaded) {
+      rebuildDropdown();
+      rebuildBillingDropdown();
+      document.getElementById('periodSelect').value = currentPeriod;
+      render();
+    }
+    setSyncStatus('ok');
+  });
+  // Poll for changes from teammates every 30 seconds
+  setInterval(async () => {
+    const before = JSON.stringify({ p: periodOrder, c: currentPeriod });
+    const loaded = await cloudLoad();
+    if (loaded) {
+      const after = JSON.stringify({ p: periodOrder, c: currentPeriod });
+      rebuildDropdown();
+      rebuildBillingDropdown();
+      document.getElementById('periodSelect').value = currentPeriod;
+      render();
+    }
+  }, 30000);
+} else {
+  rebuildDropdown();
+  rebuildBillingDropdown();
+  document.getElementById('periodSelect').value = currentPeriod;
+  render();
+  updateUndoBtn();
+  setSyncStatus('offline');
+}
+showStorageBadge(hadLocal || hasCloud);
 </script>
-</body>
+
+<!-- Storage status badge -->
+<div id="storageBadge" style="display:none;position:fixed;bottom:70px;left:50%;transform:translateX(-50%);font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:600;padding:8px 18px;border-radius:30px;border:1px solid;box-shadow:0 4px 20px rgba(0,0,0,.5);opacity:1;transition:opacity .4s;pointer-events:none;z-index:9999;white-space:nowrap;align-items:center;gap:6px"></div>
+
+<!-- Sync status bar -->
+<div id="syncStatus" style="position:fixed;bottom:0;left:0;right:0;font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:600;padding:6px 20px;border-top:1px solid;display:flex;align-items:center;gap:8px;z-index:9990;transition:all .3s;cursor:pointer" onclick="openCloudSetup()" title="Click to configure cloud sync"></div>
+
+<!-- Undo toast -->
+<div id="undoToast" style="position:fixed;bottom:36px;left:50%;transform:translateX(-50%) translateY(10px);background:#0f0f0f;border:1px solid #f5931e;color:#f5931e;font-family:Plus Jakarta Sans,sans-serif;font-size:12px;font-weight:600;padding:10px 20px;border-radius:30px;box-shadow:0 4px 24px rgba(0,0,0,.7);opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;z-index:9999;white-space:nowrap"></div>
+
+<!-- Cloud Setup Modal -->
+<div class="modal-overlay" id="cloudSetupModal">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-title">☁ Cloud Sync Setup</div>
+    <div class="modal-sub" style="line-height:1.7">Connect a free <strong style="color:var(--white)">JSONBin.io</strong> storage bin so every teammate sees live changes from any device — no server needed.<br>
+    <span style="font-size:11px;color:#60a5fa">👉 Step 1: Go to <strong>jsonbin.io</strong> → Sign up free → Dashboard → API Keys → copy your <em>Master Key</em>.<br>
+    Step 2: Paste the key below, then click <strong>Create New Bin</strong> (first time) or enter an existing Bin ID.<br>
+    Step 3: Click <strong>Save &amp; Connect</strong>. Share the same Bin ID + Key with your team.</span>
+    </div>
+
+    <div class="modal-field">
+      <label>Master API Key <span style="color:#ef4444">*</span></label>
+      <input id="cs_apiKey" placeholder='Starts with "$2b$10$…"' style="font-family:monospace;font-size:12px">
+    </div>
+    <div class="modal-field">
+      <label>Bin ID <span style="color:var(--muted);font-weight:400">(leave blank to auto-create)</span></label>
+      <div style="display:flex;gap:8px">
+        <input id="cs_binId" placeholder="e.g. 6628f3e…" style="font-family:monospace;font-size:12px;flex:1">
+        <button class="btn btn-blue" onclick="createNewBin()" title="Auto-create a new bin with your current data">Create New Bin</button>
+      </div>
+    </div>
+
+    <div id="cs_status" style="font-size:12px;min-height:20px;margin-top:4px;font-weight:600"></div>
+
+    <div style="background:var(--note-bg);border:1px solid var(--note-border);border-radius:8px;padding:10px 14px;font-size:11px;color:var(--note-yellow);margin-top:14px;line-height:1.6">
+      <strong>🔒 Privacy:</strong> Your bin is private by default — only people with your Master Key can read it. Keep the key secure and only share it with trusted team members. JSONBin free tier allows unlimited reads/writes for small payloads.
+    </div>
+
+    <div class="modal-actions" style="margin-top:18px">
+      <button class="btn btn-orange" onclick="saveCloudSetup()">✓ Save &amp; Connect</button>
+      <button class="btn btn-outline" onclick="closeCloudSetup()">Cancel</button>
+      <button class="btn btn-outline" onclick="saveCloudConfig('','');setSyncStatus('offline');closeCloudSetup();" style="margin-left:auto;color:#ef4444;border-color:#ef4444;opacity:0.7" title="Disconnect cloud sync">Disconnect</button>
+    </div>
+  </div>
+</div>
 </html>
