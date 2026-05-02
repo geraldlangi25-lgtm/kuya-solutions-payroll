@@ -1813,7 +1813,7 @@ if (hasCloud) {
   updateUndoBtn();
   setSyncStatus('loading');
   cloudLoad().then(loaded => {
-    if (loaded) {
+   if (loaded && !hasPendingLocalChanges) {
       rebuildDropdown();
       rebuildBillingDropdown();
       document.getElementById('periodSelect').value = currentPeriod;
