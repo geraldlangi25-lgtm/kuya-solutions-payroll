@@ -1622,9 +1622,10 @@ function saveCloudConfig(binId, apiKey) {
 }
 
 function payloadHash(p) {
-  // quick hash to avoid redundant saves
-  return JSON.stringify({ o: p.periodOrder, c: p.currentPeriod, pk: Object.keys(p.periods) }).length +
-    JSON.stringify(p.periods).length;
+  const str = JSON.stringify(p.periods) + '|' + JSON.stringify(p.periodOrder) + '|' + (p.currentPeriod || '');
+  let h = 5381;
+  for (let i = 0; i < str.length; i++) { h = ((h << 5) + h) + str.charCodeAt(i); h |= 0; }
+  return h;
 }
 
 async function cloudLoad() {
@@ -1654,11 +1655,12 @@ async function cloudLoad() {
 
 async function cloudSave() {
   if (!cloudConfig.binId || !cloudConfig.apiKey) {
-    localPersist(); return;
-  }
+  localPersist(); hasPendingLocalChanges = false; return;
+}
+
   const payload = { periodOrder, currentPeriod, periods: PERIODS };
   const h = payloadHash(payload);
-  if (h === lastCloudHash) return; // nothing changed
+  if (h === lastCloudHash) { hasPendingLocalChanges = false; return; }
   setSyncStatus('saving');
   try {
     const res = await fetch('https://api.jsonbin.io/v3/b/' + cloudConfig.binId, {
@@ -1672,6 +1674,7 @@ async function cloudSave() {
     if (!res.ok) { setSyncStatus('error', 'Save failed (' + res.status + ')'); localPersist(); return; }
     lastCloudHash = h;
     localPersist(); // also keep local copy
+    hasPendingLocalChanges = false;
     setSyncStatus('ok');
   } catch(e) {
     setSyncStatus('error', 'Network error');
@@ -1686,9 +1689,7 @@ function persistData() {
   localPersist();
   if (!cloudConfig.binId) { hasPendingLocalChanges = false; return; }
   clearTimeout(cloudSaveTimer);
-  cloudSaveTimer = setTimeout(() => {
-    cloudSave().then(() => { hasPendingLocalChanges = false; });    // clear after cloud save
-  }, 1200);
+  cloudSaveTimer = setTimeout(cloudSave, 1200);
 }
 
 function localPersist() {
