@@ -1607,6 +1607,7 @@ let cloudConfig = { binId: '', apiKey: '' };   // filled from localStorage or se
 let cloudSyncing = false;
 let cloudSaveTimer = null;
 let lastCloudHash  = '';
+let hasPendingLocalChanges = false;   // ← ADD THIS LINE
 
 function getCloudConfig() {
   try {
@@ -1681,10 +1682,13 @@ async function cloudSave() {
 
 // Debounced save — batches rapid edits
 function persistData() {
+  hasPendingLocalChanges = true;                                    // mark dirty
   localPersist();
-  if (!cloudConfig.binId) return;
+  if (!cloudConfig.binId) { hasPendingLocalChanges = false; return; }
   clearTimeout(cloudSaveTimer);
-  cloudSaveTimer = setTimeout(cloudSave, 1200);
+  cloudSaveTimer = setTimeout(() => {
+    cloudSave().then(() => { hasPendingLocalChanges = false; });    // clear after cloud save
+  }, 1200);
 }
 
 function localPersist() {
@@ -1817,18 +1821,18 @@ if (hasCloud) {
     }
     setSyncStatus('ok');
   });
-  // Poll for changes from teammates every 30 seconds
-  setInterval(async () => {
-    const before = JSON.stringify({ p: periodOrder, c: currentPeriod });
-    const loaded = await cloudLoad();
-    if (loaded) {
-      const after = JSON.stringify({ p: periodOrder, c: currentPeriod });
-      rebuildDropdown();
-      rebuildBillingDropdown();
-      document.getElementById('periodSelect').value = currentPeriod;
-      render();
-    }
-  }, 30000);
+ // Poll for changes from teammates every 30 seconds
+setInterval(async () => {
+  if (hasPendingLocalChanges) return;   // ← skip if local edits not yet saved
+  const memHash = payloadHash({ periodOrder, currentPeriod, periods: PERIODS });
+  const loaded = await cloudLoad();
+  if (loaded && lastCloudHash !== memHash) {   // ← only re-render if cloud data actually changed
+    rebuildDropdown();
+    rebuildBillingDropdown();
+    document.getElementById('periodSelect').value = currentPeriod;
+    render();
+  }
+}, 30000);
 } else {
   rebuildDropdown();
   rebuildBillingDropdown();
